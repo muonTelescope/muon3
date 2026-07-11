@@ -96,6 +96,80 @@ Major decisions currently include:
 - four independently regulated, dew-point-aware Peltier channels; and
 - pressure-corrected and uncorrected scientific data products with full configuration provenance.
 
+## Current PCB work
+
+The active clean-sheet PCB work now lives in [pcb/](pcb/README.md). It is a P0 architecture
+baseline, not a fabrication release. The directory contains:
+
+- a new KiCad project scaffold for `muon3`;
+- a purchasing-oriented BOM and part-selection notes;
+- per-component research folders with downloaded data sheets;
+- live JLCPCB confirmation notes for several critical parts; and
+- the current [schematic-freeze check](pcb/SCHEMATIC_FREEZE_CHECK.md) and
+  [freeze questions](pcb/freeze_questions.md).
+
+The most important live-confirmed prototype choices are:
+
+- `nRF9151-LACA-R7` for cellular/GNSS/control, requiring JLCPCB Standard PCBA and X-ray;
+- `ICE40UP5K-SG48I` for deterministic timing/coincidence logic;
+- `OPA858IDSGR` for the SiPM TIA, subject to corrected bias and stability validation;
+- `TPS61170DRVR` for the MicroFC-class SiPM bias supply;
+- `CH224K` as a simple USB-C PD sink for a first USB-powered prototype; and
+- `DRV8873HPWPR` as the current JLC-buildable Peltier-driver path, if full JLC assembly is a hard
+  requirement.
+
+Parts that should not be frozen yet include the comparator, DACs, 3.3 V and 1.2 V regulators,
+external ADC, TCXO, SIM/eSIM hardware, panel connector, USB protection network, and any full
+battery/solar power path.
+
+## Design questions before schematic freeze
+
+These questions materially change the schematic, footprints, power budget, or enclosure design:
+
+1. Must the first manufacturable board be 100% JLCPCB-assembled, including TEC drivers, or can
+   the TEC section use a sourced/hand-placed part or daughterboard?
+2. Should battery/solar charging live on the main PCB now, or should this revision expose only a
+   protected USB-C/DC input and leave energy storage to an external qualified module?
+3. What exact TEC/Peltier module should each SiPM use: voltage, current, physical size, cold
+   plate, heatsink, and fan?
+4. Is the default station a three-panel telescope, a four-panel telescope, or a four-channel board
+   that usually ships populated for three panels?
+5. What baseline panel-cable length should the AFE tolerate: short internal pigtail, about 1 m,
+   or longer field-service cable?
+6. Should the SiPM signal remain a grounded coax with a separate keyed auxiliary connector, or
+   should the design move to a single hybrid locking panel connector?
+7. Should calibration injection be per-channel from the start, or shared on the first prototype?
+8. Should USB-C 5 V fallback collect valid science data with TECs disabled, or only support debug
+   and configuration?
+9. Are fan tach, hot-side NTC, enclosure-open, or condensation sensors required on the first PCB?
+10. Should EU/US cellular certification risk dominate the board outline and antenna placement,
+    meaning the Nordic/reference antenna geometry is followed as closely as possible?
+
+## Suggested improvements
+
+The strongest redesign direction is to split "science acquisition" from "thermal ambition" more
+sharply. Freeze the SiPM/AFE/FPGA/nRF9151 measurement chain first, then give the TEC subsystem a
+well-defined high-current interface, interlocks, and telemetry. That makes the first board useful
+even if cooling needs a daughterboard or a second spin.
+
+Recommended changes before schematic freeze:
+
+- Add a multichannel external ADC for HV monitor, TEC current/voltage, cold-side NTCs, hot-side
+  NTCs, and power rails. The nRF9151 ADC should not carry the whole telemetry system.
+- Use two 8-channel precision DACs rather than one DAC plus small leftovers. Spare DAC outputs
+  will be useful for threshold scans, baseline trim, HV trim, calibration amplitude, and TEC
+  setpoints.
+- Treat CH224K as the simple P0 PD path. If onboard battery/solar or 20 V/5 A power management is
+  required, switch to a TPS25751-class PD controller and charger/power-path reference design.
+- Make the TEC section default-off in hardware, not just firmware: invalid NTC, hot-side
+  overtemperature, insufficient PD contract, watchdog loss, or overcurrent should all shut it down.
+- Put charge injection and optical calibration hooks on the schematic now, even if some are DNP on
+  the first build.
+- Keep the LTE/GNSS RF section as reference-layout-shaped as possible, and let that constrain the
+  board outline early rather than after placement has become emotionally expensive.
+- Use touch-safe keyed panel connectors for bias and TEC power. U.FL-style connectors should be
+  grounded RF/signal only, never exposed bias.
+
 ## Known release blockers
 
 The existing generated Rev A design must not be ordered. The review identified, among other
@@ -127,6 +201,7 @@ for the evidence, subsystem findings, questions, and recommended work order.
 .
 ├── README.md
 ├── .gitmodules
+├── pcb/                        # active clean-sheet Muon3 PCB workspace
 └── reference_documentation/
     ├── README.md
     ├── repositories/            # 28 historical Git submodules
@@ -140,6 +215,9 @@ for the evidence, subsystem findings, questions, and recommended work order.
 The main entry points are:
 
 - [Archive index](reference_documentation/README.md)
+- [Active PCB workspace](pcb/README.md)
+- [Schematic freeze check](pcb/SCHEMATIC_FREEZE_CHECK.md)
+- [Freeze questions](pcb/freeze_questions.md)
 - [Next-generation requirements](reference_documentation/review_and_requirements/NEXT_GENERATION_REQUIREMENTS.md)
 - [PCB and system review](reference_documentation/review_and_requirements/NEXT_GENERATION_PCB_REVIEW.md)
 - [Publication index](reference_documentation/publications/README.md)
@@ -291,4 +369,3 @@ Recommended order:
 No single umbrella license has yet been selected. Historical submodules retain their individual
 licenses and copyright. Bundled vendor/community libraries and public papers retain their own
 license terms. Review those terms before redistribution, modification, or commercial use.
-
