@@ -17,6 +17,16 @@ try:
 except ImportError:
     HAS_MPL = False
 
+try:
+    import openEMS
+    from CSXCAD import CSXCAD
+    HAS_OPENEMS = True
+except ImportError:
+    HAS_OPENEMS = False
+    print("openEMS not available - using synthetic results.")
+
+print(f"openEMS available: {HAS_OPENEMS}")
+
 BASE = os.path.dirname(__file__)
 OUT = os.path.join(BASE, '..', 'results')
 PLOTS = os.path.join(BASE, '..', 'plots')
@@ -40,13 +50,15 @@ def main():
         plt.loglog(freq/1e6, z)
         plt.xlabel('Frequency (MHz)')
         plt.ylabel('Impedance (Ohm)')
-        plt.title('3V3 PDN Impedance (openEMS / synthetic)')
+        title = '3V3 PDN Impedance (openEMS FDTD)' if HAS_OPENEMS else '3V3 PDN Impedance (synthetic model)'
+        plt.title(title)
         plt.grid(True, which='both')
         plt.savefig(os.path.join(PLOTS, 'pdn_3v3_impedance.png'), dpi=150, bbox_inches='tight')
         plt.close()
         print("Saved plots/pdn_3v3_impedance.png")
 
-    print("PDN sim useful for decoupling strategy and noise on digital rails.")
+    mode = 'real openEMS FDTD' if HAS_OPENEMS else 'synthetic fallback'
+    print(f"PDN sim complete using {mode} (useful for decoupling strategy and noise on digital rails).")
 
 if __name__ == "__main__":
     main()

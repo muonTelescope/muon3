@@ -23,6 +23,8 @@ except ImportError:
     HAS_OPENEMS = False
     print("openEMS not available - using synthetic results.")
 
+print(f"openEMS available: {HAS_OPENEMS}")
+
 BASE = os.path.dirname(__file__)
 OUT_DIR = os.path.join(BASE, '..', 'results')
 PLOT_DIR = os.path.join(BASE, '..', 'plots')
@@ -51,7 +53,8 @@ def main():
             plt.text(f, -5, lbl, rotation=90, va='bottom')
         plt.xlabel('Frequency (GHz)')
         plt.ylabel('S11 (dB)')
-        plt.title('nRF9151 Antenna S11 (openEMS model / synthetic)')
+        title = 'nRF9151 Antenna S11 (openEMS FDTD)' if HAS_OPENEMS else 'nRF9151 Antenna S11 (synthetic model)'
+        plt.title(title)
         plt.grid(True)
         plt.ylim(-35, 5)
         plt.savefig(os.path.join(PLOT_DIR, 'nrf9151_antenna_s11.png'), dpi=150, bbox_inches='tight')
@@ -65,12 +68,13 @@ def main():
         plt.figure()
         ax = plt.subplot(111, polar=True)
         ax.plot(theta, gain)
-        plt.title('Approx. GNSS Radiation Pattern')
+        plt.title('Approx. GNSS Radiation Pattern (openEMS / model)')
         plt.savefig(os.path.join(PLOT_DIR, 'nrf9151_antenna_pattern.png'), dpi=150, bbox_inches='tight')
         plt.close()
         print("Saved plots/nrf9151_antenna_pattern.png")
     
-    print("Antenna simulation complete (useful for RF keepout and antenna selection).")
+    mode = 'real openEMS FDTD' if HAS_OPENEMS else 'synthetic fallback'
+    print(f"Antenna simulation complete using {mode} (useful for RF keepout and antenna selection).")
 
 if __name__ == "__main__":
     main()

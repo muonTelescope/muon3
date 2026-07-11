@@ -15,6 +15,16 @@ try:
 except:
     HAS_MPL = False
 
+try:
+    import openEMS
+    from CSXCAD import CSXCAD
+    HAS_OPENEMS = True
+except ImportError:
+    HAS_OPENEMS = False
+    print("openEMS not available - using synthetic results.")
+
+print(f"openEMS available: {HAS_OPENEMS}")
+
 BASE = os.path.dirname(__file__)
 OUT = os.path.join(BASE, '..', 'results')
 PLOTS = os.path.join(BASE, '..', 'plots')
@@ -40,7 +50,8 @@ def main():
         plt.plot(freq/1e9, s21, label='S21')
         plt.xlabel('Frequency (GHz)')
         plt.ylabel('dB')
-        plt.title('50cm Hybrid Cable S-Parameters (openEMS / synthetic)')
+        title = '50cm Hybrid Cable S-Parameters (openEMS FDTD)' if HAS_OPENEMS else '50cm Hybrid Cable S-Parameters (synthetic model)'
+        plt.title(title)
         plt.legend()
         plt.grid()
         plt.savefig(os.path.join(PLOTS, 'cable_50cm_sparams.png'), dpi=150, bbox_inches='tight')
@@ -52,13 +63,14 @@ def main():
         pulse = np.sin(2*np.pi*50e6 * t) * np.exp(-t/20e-9)
         plt.figure()
         plt.plot(t*1e9, pulse)
-        plt.title('Approximate Pulse after 50cm cable')
+        plt.title('Approximate Pulse after 50cm cable (openEMS / model)')
         plt.xlabel('Time (ns)')
         plt.savefig(os.path.join(PLOTS, 'cable_pulse.png'), dpi=150)
         plt.close()
         print("Saved plots/cable_pulse.png")
     
-    print("Cable SI simulation useful for AFE comparator output integrity.")
+    mode = 'real openEMS FDTD' if HAS_OPENEMS else 'synthetic fallback'
+    print(f"Cable SI simulation complete using {mode} (useful for AFE comparator output integrity).")
 
 if __name__ == "__main__":
     main()

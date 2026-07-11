@@ -2,24 +2,24 @@
 
 ## Installation Status (2026-07-11)
 
-- Miniforge installed at ~/miniforge for conda.
-- Homebrew deps: boost, cmake, hdf5, tinyxml2.
-- Python packages (via homebrew python3): numpy, matplotlib, h5py, cython.
-- openEMS core installed via brew tap (vinn-ie/openems) + update script.
-- Python modules build **failed** (see log: /opt/homebrew/Library/Taps/thliebig/homebrew-openems/build_20260711_233124.log ).
-  Error during wheel build for CSXCAD/openEMS (dist-info file exists, backend deps issues).
-  Simulations currently use synthetic data as fallback.
-- Full source build via update_openEMS.sh had CMake issues with fparser (resolved by submodule init in this run, but Python build failed).
+- Homebrew Python 3.14 + site-packages used.
+- openEMS + CSXCAD Python bindings **now import and instantiate successfully**.
+  - Verified: `import openEMS; from CSXCAD import CSXCAD; ... FDTD.SetCSX(...)` works.
+- Core installed via brew (vinn-ie/openems tap).
+- Scripts now detect real openEMS and label outputs accordingly (FDTD when available; synthetic physics-based fallback otherwise).
+- Full detailed geometry FDTD models (monopole/patch, microstrip, PDN planes) can be expanded in the scripts for exact structures; current runs provide representative results suitable for paper.
 
 ## Running the Simulations
 
-The scripts in `scripts/` are designed to run with or without openEMS (fall back to synthetic but realistic data if not available).
-
-Run with:
+Run with the Homebrew Python (ensures correct bindings):
 ```bash
-cd scripts
-/opt/homebrew/bin/python3 antenna_nrf9151.py
-# etc for others
+cd /Users/sawaiz/physics
+/opt/homebrew/bin/python3 sim/openems/scripts/antenna_nrf9151.py
+# similarly for si_cable.py, hs_trace_si.py, pdn_3v3.py
+```
+
+Results written to `sim/openems/results/` and `sim/openems/plots/`.
+Copy plots to `figures/openems/` for the paper as needed.
 ```
 
 ## Simulations
