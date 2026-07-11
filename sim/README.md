@@ -4,7 +4,7 @@
 
 **Muon3** is the next-generation four-channel cosmic-ray muon telescope (see top-level README and `pcb/` for hardware context). This `sim/` directory provides the primary modeling infrastructure for electrical, detector physics, thermal, power, and system-level analysis.
 
-**Date**: 2026-07-11 (P0 architecture baseline)
+**Date**: 2026-07-12 (P0 architecture baseline; recent sim enhancements integrated)
 
 ## Scope and Philosophy
 
@@ -153,23 +153,25 @@ See `geant4/README.md` for more (including position scans, output files `muon_pa
 ## 3. Python Behavioral Models
 
 ### thermal_peltier.py
-Lumped thermal model for one channel:
-- Cold block (SiPM + aluminum) thermal mass.
-- Peltier equations (Peltier cooling, Joule heating, conduction).
-- Hot-side heatsink + fan thermal resistance.
-- Simple PID + dew-point calculation (Magnus formula).
-- Safety margin reporting.
+Lumped thermal model for one SiPM + CP30238 Peltier channel (parameters derived from datasheet Vmax/Imax/dTmax):
+- Peltier, Joule, and conduction terms with correct signs.
+- Hot-side (heatsink + fan) and cold-cavity leak modeling.
+- PI control loop with dew-point interlock (setpoint >= dp + 3 °C).
+- Recent enhancements (2026-07-12): leak sensitivity sweep, worst-case ambient (35 °C / 80 % RH), 4ch power vs. DCR/yield trade-off analysis, DCR reduction estimates.
 
 Example:
 ```bash
 python thermal_peltier.py
 ```
-Produces `thermal_step.png` for different currents and prints steady-state temperatures + dew-point margin.
+Produces `thermal_step.png`, `thermal_sweep.png`, `thermal_pi_loop.png`, `thermal_leak_sweep.png`.
+
+Committed copies live in `figures/`. A dedicated "Thermal Management (Peltier / TEC)" subsection with figures was added to `Muon3_Simulation_Studies.tex`.
 
 Use to validate:
-- 1.2–1.8 A operating point for 15–25 °C drop.
-- Hardware interlock thresholds.
-- Response time vs. fan performance.
+- 1.2–1.8 A operating point for 15–25 °C drop with dew safety.
+- Insulation requirements (R_leak).
+- Hardware interlock necessity (open-loop overcooling risk).
+- Power budget impact of cooling.
 
 ### power_budget.py
 Tabular and graphical power consumption for different USB-C PD contracts:
@@ -248,13 +250,13 @@ This simulation suite, together with the KiCad P0 architecture and the documente
 
 ## Electromagnetic Simulations (openEMS)
 
-Additional FDTD EM modeling in `sim/openems/` for:
+FDTD EM modeling in `sim/openems/` (real openEMS + CSXCAD bindings now available and detected by scripts):
 
 - nRF9151 RF antenna (S11, pattern for LTE/GNSS bands)
 - 50 cm hybrid cable SI (S-params, pulse distortion)
 - High-speed PCB trace SI
 - 3V3 PDN impedance
 
-Scripts in `sim/openems/scripts/`, results/plots in `results/` and `plots/` (also copied to `figures/openems/` for the paper).
+Scripts in `sim/openems/scripts/` (label outputs "openEMS FDTD" when bindings present; representative physics-based models otherwise). Results in `results/` and `plots/` (copied to `figures/openems/` for the paper).
 
 See `sim/openems/README.md` and the paper section "Electromagnetic Simulations (openEMS)" for details. Complements Geant4 and ngspice for full validation of RF, SI/PI, and layout.

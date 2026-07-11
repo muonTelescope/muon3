@@ -11,6 +11,7 @@ sim/circuit/plots/
 sim/geant4/build/
 sim/geant4/*.csv
 sim/geant4/plots/
+sim/plots/
 sim/*.png
 sim/thermal_step.png
 sim/tot_model.png

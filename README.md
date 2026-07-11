@@ -121,14 +121,18 @@ A comprehensive simulation suite supports detector design, threshold optimizatio
   - More representative looped-fiber geometry (straights + corner tori + exit legs + simplified optical cement).
   - Updated material and optical properties cross-checked against Eljen/Luxium EJ-200 documentation, Kuraray WLS fiber data, onsemi SiPM PDE curves, and prior collaboration work (phyxch/fiberPanel).
 - **Analog front-end** (`sim/circuit/`): ngspice models of SiPM + OPA858 TIA + dual comparators.
-- **Behavioral models** (`sim/python/`): thermal/Peltier, power budget under USB-C PD, coincidence/accidental rates.
+- **Behavioral models** (`sim/python/`): thermal/Peltier (enhanced with leak sensitivity, PI dew-point control, system trade-offs), power budget under USB-C PD, coincidence/accidental rates.
+- **EM / RF / SI / PI** (`sim/openems/`): openEMS FDTD for nRF9151 antenna, cables, traces, PDN (Python bindings active; scripts auto-detect real vs. fallback models).
+- **Procedural 3D visualization** (`cad/blender/`): Blender/Cycles renders of panel (scintillator, WLS loop, SiPM, frame, base) for paper figures (isometric + orthographic views).
 
 Stand-in and partial real Geant4 data (hits.csv) indicate a mean detected yield of ~25--40 p.e.\ per MIP after all losses, with usable uniformity and timing.
 
 ### Paper
 An overall summary and findings paper has been written in the base directory:
-- `Muon3_Simulation_Studies.tex` (and compiled PDF when TeX is available)
+- `Muon3_Simulation_Studies.tex` (and compiled PDF when TeX is available; currently ~11 pages)
 - Formatted as a professional article (sPHENIX/Brookhaven-style conventions: clear sections, booktabs tables, properly captioned figures, numbered references).
+- Includes dedicated sections for Geant4, ngspice AFE, openEMS EM simulations, and a new "Thermal Management (Peltier / TEC)" subsection with plots from the enhanced model (step response, sweep, PI loop, leak sensitivity).
+- Hardware Baseline figure uses procedural Blender 5.1 renders (4 views of panel + fiber + SiPM + frame).
 - Cites Eljen/Kuraray/onsemi datasheets, public muon telescope and muography papers (arXiv), phyxch reference models, and historical project documentation.
 - See the paper for detailed results, discussion of limitations, and future calibration plans.
 

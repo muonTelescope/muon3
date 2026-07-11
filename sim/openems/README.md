@@ -1,6 +1,6 @@
 # openEMS Electromagnetic Simulations for Muon3
 
-## Installation Status (2026-07-11)
+## Installation Status (2026-07-12)
 
 - Homebrew Python 3.14 + site-packages used.
 - openEMS + CSXCAD Python bindings **now import and instantiate successfully**.
@@ -31,7 +31,8 @@ Copy plots to `figures/openems/` for the paper as needed.
 Results in results/, plots in plots/ (copied to ../../figures/openems/ for paper)
 
 ## Integration
-Added to Muon3_Simulation_Studies.tex as "Electromagnetic Simulations (openEMS)" section with figures.
-Paper built with pdflatex (10 pages).
+Added to Muon3_Simulation_Studies.tex as "Electromagnetic Simulations (openEMS)" section with figures (antenna S11/pattern, cable SI, traces, PDN). Results copied to `figures/openems/`.
 
-When openEMS is installed, re-run scripts for full FDTD results.
+Paper built with pdflatex (currently 11 pages, includes separate Thermal subsection).
+
+When openEMS is installed (bindings verified working), re-run scripts for FDTD-capable results (scripts label "openEMS FDTD" vs. fallback).
