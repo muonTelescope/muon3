@@ -114,6 +114,20 @@ Belle II / similar & ~10-30 per side & strips with WLS+SiPM \\
 
 The data is consistent with literature expectations for 1 cm EJ-200 + looped WLS fiber readout (50--150 p.e. range in similar muon telescope setups after losses, or ~20-60 p.e. total for strips). Our ~28 p.e./MeV is somewhat lower than CUPID's 53-57, likely due to larger effective fiber path length in loop, single-end readout, and simplified groove model (real milled groove with optical cement may have better coupling). Improvements implemented: reflector reflectivity increased to 0.96, WLS eff to 0.90. Fixes: proper photon production counting from edep in stepping. Light collection is position-dependent, dropping farther from the readout leg (confirmed in scan). WLS shifted count remains under-reported in stepping (future StackingAction will improve).
 
+\subsection{Comparison to Literature and Potential Improvements}
+We compare our simulated light yield to recent publications using similar technology:
+
+\begin{itemize}
+\item CUPID muon veto \cite{cupid-muon}: 52.9--57.2 p.e./MeV for 1 cm EJ-200 panels with WLS fibers (BCF-92/Y-11) and SiPMs. Optical grease improves yield by ~12.5\%. Efficiency 98\%.
+\item JUNO-TAO TVT modules \cite{juno-tao,juno-tao-compact}: high efficiency (>99\% at 15--30 p.e. threshold) with optimized WLS arrangements in 2 cm thick strips; grease and fiber density key to yield.
+\item CEPC muon R\&D \cite{cepc-muon}: >90\% efficiency at 8 p.e. threshold with extruded scintillator + Y11 fiber + SiPM; time resolution <1.5 ns; domestic components achieve good performance.
+\item Other (e.g. \cite{ar5iv,2401.04630}): 13--40 p.e. per MIP per fiber end in various strip/panel geometries.
+\end{itemize}
+
+Our model yields ~28 p.e./MeV (for ~2.5 MeV deposit), which is 40--50\% lower than CUPID's best. Possible issues in our simulation: (1) conservative trapping/attenuation lengths in WLS model; (2) simplified loop geometry underestimates coupling compared to straight/optimized swirly patterns in refs; (3) single-end readout (many refs use dual-end); (4) no optical filler/grease modeled (refs show +12--50\% gain). 
+
+Potential improvements for hardware: adopt swirly fiber patterns \cite{cupid-muon}, use optical grease/cement optimization, consider dual-end readout for higher yield/uniformity, increase reflector to 98\%+. These could bring our effective yield closer to 50+ p.e./MeV. The current design is conservative and suitable for veto with good efficiency at low thresholds. Future work: refine Geant4 with measured fiber attenuation and groove profiles from CAD.
+
 \begin{figure}[H]
 \centering
 \begin{minipage}{0.48\textwidth}
@@ -149,11 +163,57 @@ The data is consistent with literature expectations for 1 cm EJ-200 + looped WLS
 \end{figure}
 
 \subsection{Analog Front-End and System Performance}
-ngspice modeling of the OPA858 + dual-comparator chain reproduces the expected logarithmic ToT vs.\ NPE relationship, enabling good separation between noise (1--3~p.e.) and muon signals (tens of p.e.) within 10~ns FPGA bins.
+ngspice simulations of the DC-coupled AFE (MicroFC-30035 model $\to$ OPA858 TIA with Rf=2 k$\Omega$, Cf=3.3 pF $\to$ dual TLV3601 comparators at low/high thresholds) were performed for NPE sweeps (1--100), threshold scans, 50 cm cable effects, and HV bias model (TPS61170).
 
-Power budget: 5~V fallback (electronics only) $\approx 2\,\mathrm{W}$; full 4-channel cooling at 20~V reaches $\sim$37~W. Thermal step-response simulations confirm 1.5--1.8~A Peltier operation yields adequate cooling with hardware interlocks required for dew-point safety.
+The simulations confirm the expected logarithmic ToT vs NPE behavior (fit for NPE 10--100: ToT (ns) $\approx 102.9 \ln(\text{NPE}) - 96.0$). This enables reliable discrimination: 1--3 p.e. noise vs. typical muon signals (tens of p.e.) using 10 ns FPGA time bins.
 
-Coincidence studies at a 3~p.e.\ threshold yield $>98\%$ efficiency for typical muon NPE with negligible electronics accidentals when delayed shadow windows are employed.
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/muon3_pulse_family.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/muon3_tot_vs_npe.png}
+\end{minipage}
+\caption{Left: TIA output and low-threshold comparator pulses for NPE=1 to 100 (ngspice). Right: ToT vs NPE with logarithmic fit from real ngspice data.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/muon3_timewalk.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/muon3_amplitude.png}
+\end{minipage}
+\caption{Left: Leading-edge time-walk vs NPE. Right: Peak amplitude (mV) vs NPE from ngspice AFE sweeps.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/muon3_threshold_scan.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/muon3_cable_compare.png}
+\end{minipage}
+\caption{Left: Threshold scan at NPE=30 showing ToT sensitivity. Right: Cable comparison (direct vs 50 cm) impact on pulse fidelity.}
+\end{figure}
+
+Additional ngspice results confirm robustness to cable length and threshold settings. The HV model validates bias stability.
+
+Power budget: 5 V fallback (electronics only) $\approx 2\,\mathrm{W}$; full 4-channel cooling at 20 V reaches $\sim$37 W. Thermal step-response simulations confirm 1.5--1.8 A Peltier operation yields adequate cooling with hardware interlocks required for dew-point safety.
+
+Coincidence studies at a 3 p.e. threshold yield $>98\%$ efficiency for typical muon NPE with negligible electronics accidentals when using delayed shadow windows.
 
 \section{Discussion and Validation}
 
@@ -206,6 +266,15 @@ Particle Data Group, ``Cosmic Rays'' review (standard sea-level flux and spectru
 
 \bibitem{cupid-muon}
 M. Moore et al., ``Performance of a SiPM-based, plastic scintillator muon veto prototype for CUPID'', JINST 20 (2025) P08020 [arXiv:2505.06129].
+
+\bibitem{juno-tao}
+G. Luo et al., ``Performance of plastic scintillator modules for top veto tracker at Taishan Antineutrino Observatory'', arXiv:2406.15973 (2025).
+
+\bibitem{juno-tao-compact}
+M. Li et al., ``Performance of compact plastic scintillator strips with WLS-fiber and PMT/SiPM readout'', Nucl. Sci. Tech. 34 (2023) 31 [arXiv:2210.03912].
+
+\bibitem{cepc-muon}
+H. Zhang et al., ``Design and test for the CEPC muon subdetector based on extruded scintillator and SiPM'', arXiv:2312.02553 (2024).
 
 \end{thebibliography}
 
