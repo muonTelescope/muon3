@@ -4,6 +4,7 @@ import RealityKit
 struct ImmersiveView: View {
     @StateObject private var simManager = SimulationManager()
     @State private var rootEntity: Entity?
+    @State private var isAnimating = false
     
     var body: some View {
         RealityView { content in
@@ -36,9 +37,11 @@ struct ImmersiveView: View {
             }
         } update: { content in
             // Update visualization when data changes
-            if let root = rootEntity, let event = simManager.currentEvent {
+            if let root = rootEntity, let event = simManager.currentEvent, !isAnimating {
+                isAnimating = true
                 Task {
                     await updateVisualization(for: event, root: root)
+                    isAnimating = false
                 }
             }
         }
@@ -49,11 +52,27 @@ struct ImmersiveView: View {
                     simManager.nextEvent()
                 }
         )
+        .overlay(alignment: .bottom) {
+            if let event = simManager.currentEvent {
+                VStack {
+                    let edepStr = String(format: "%.2f", event.edep)
+                    Text("Event \(event.id): \(Int(event.photonsDetected)) p.e. | Edep \(edepStr) MeV")
+                        .font(.caption)
+                        .padding(8)
+                        .background(.ultraThinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    Text("Tap panel or use window controls to advance")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.bottom, 40)
+            }
+        }
     }
     
     private func updateVisualization(for event: SimEvent, root: Entity) async {
         // Remove old particles
-        root.children.filter { $0.name.contains("photon") }.forEach { $0.removeFromParent() }
+        root.children.filter { $0.name.contains("photon") || $0.name.contains("burst") }.forEach { $0.removeFromParent() }
         
         let panelViz = PanelVisualizer()
         await panelViz.animateEvent(event, on: root)

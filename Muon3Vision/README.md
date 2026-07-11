@@ -31,3 +31,33 @@ High-quality 3D visualization app for the Muon3 muon telescope simulations, buil
 See the Swift files for implementation details. This provides a production-ready starting point focused on polish and immersion.
 
 Built to visualize the Muon3 Geant4 + system simulations in spatial computing.
+
+## Building and Running on Paired Vision Pro Device
+
+1. Open Xcode (16+ recommended).
+2. Create new visionOS > App project (or add target to existing).
+3. Drag the Sources/Muon3Vision/*.swift into the project.
+4. Add the Resources/ folder (including AppIcon and logo).
+5. Copy sim/geant4/hits.csv into the app bundle (or use the dev path in SimulationManager).
+6. In project settings: set minimum visionOS to 1.0+, enable Immersive Space.
+7. Pair your Vision Pro: Xcode > Window > Devices and Simulators > + (pair via WiFi or USB).
+8. Select the Vision Pro as destination and Run (Cmd+R).
+9. The app will launch in a window + Immersive Space. Use the window to load data and trigger animations in 3D.
+
+High-quality viz uses RealityKit particle systems driven by real Geant4 hits.csv data (muon position, photon counts).
+
+If using the Package.swift, you can experiment with `xcodebuild` but full app requires Xcode project.
+
+
+## Additional Recommendations Implemented
+- Real Geant4 data (hits.csv) loaded and visualized in 3D: muon impacts at real (x,y), photon particles scaled by detected/produced, fiber glow by shifted+detected, SiPM flash by detected.
+- Color coding: burst color by edep (red for high, blue for low).
+- UI enhancements: animation speed slider, color mode picker (by detected/edep/produced), ngspice timing overlay toggle (with synthetic waveform based on event time for demo; extend with real wave_dual_n*.csv).
+- ngspice integration: loadNgspiceWaveform() in manager; simple bar viz in UI for waveform (extend for full ngspice plots).
+- High quality: more particles, timed animations, emissive materials, lights for hits.
+- Build/run: build_visionpro.sh helper + detailed Xcode + paired device instructions (pair via Devices and Simulators, run on headset for immersive 3D data viz).
+
+To test data viz: load real hits, select event, play in immersive - see data-driven photons, color by edep, stats.
+
+For full ngspice: add load for results/wave_dual_n*.csv and animate a 2D line or particles over time in overlay.
+

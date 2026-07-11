@@ -18,24 +18,42 @@ class SimulationManager: ObservableObject {
     @Published var events: [SimEvent] = []
     @Published var currentEvent: SimEvent?
     @Published var isRunning = false
+    @Published var animationSpeed: Double = 1.0
+    @Published var colorMode: ColorMode = .byDetected
+    @Published var showNgspiceOverlay: Bool = false
+    
+    enum ColorMode: String, CaseIterable {
+        case byDetected = "By Detected p.e."
+        case byEdep = "By Edep (MeV)"
+        case byProduced = "By Produced Photons"
+    }
     
     private var currentIndex = 0
     
     func loadData() async {
-        // Load from bundled hits.csv (copy from sim/geant4/hits.csv)
-        guard let url = Bundle.main.url(forResource: "hits", withExtension: "csv") else {
-            // Fallback to high-quality synthetic data matching improved model
+        // Try bundled first (add hits.csv to app Resources for production)
+        var url = Bundle.main.url(forResource: "hits", withExtension: "csv")
+        
+        // Fallback to project data for development (relative to app or absolute)
+        if url == nil {
+            let projectHits = "/Users/sawaiz/physics/sim/geant4/hits.csv"
+            if FileManager.default.fileExists(atPath: projectHits) {
+                url = URL(fileURLWithPath: projectHits)
+            }
+        }
+        
+        guard let dataURL = url else {
             generateSyntheticData()
             return
         }
         
         do {
-            let data = try String(contentsOf: url)
-            let lines = data.components(separatedBy: .newlines).dropFirst()
+            let data = try String(contentsOf: dataURL)
+            let lines = data.components(separatedBy: .newlines).dropFirst().filter { !$0.isEmpty }
             events = lines.compactMap { line in
                 let parts = line.components(separatedBy: ",")
                 guard parts.count >= 8,
-                      let id = Int(parts[0]),
+                      let id = Int(parts[0].trimmingCharacters(in: .whitespaces)),
                       let x = Double(parts[1]),
                       let y = Double(parts[2]),
                       let edep = Double(parts[4]),
@@ -43,14 +61,18 @@ class SimulationManager: ObservableObject {
                       let shifted = Int(parts[6]),
                       let det = Int(parts[7]) else { return nil }
                 
-                let time = Double.random(in: 5...15) // Approximate from model
+                // Use real time spread or approximate
+                let time = 5.0 + Double(det) * 0.05 + Double.random(in: -1...1)
                 return SimEvent(id: id, x: x, y: y, edep: edep, photonsProduced: prod, photonsShifted: shifted, photonsDetected: det, time: time)
             }
             
             if !events.isEmpty {
                 currentEvent = events.first
+            } else {
+                generateSyntheticData()
             }
         } catch {
+            print("Failed to load hits.csv: \(error)")
             generateSyntheticData()
         }
     }
@@ -122,5 +144,20 @@ class SimulationManager: ObservableObject {
         if !events.isEmpty {
             currentEvent = events[0]
         }
+    }
+    
+    // ngspice waveform support (load from sim/circuit/results/wave_dual_n*.csv for time series)
+    // For demo, generate synthetic waveform based on event time
+    func loadNgspiceWaveform(for event: SimEvent) -> [Double] {
+        // Simple synthetic waveform matching the time profile from ngspice runs
+        let duration = 400.0 // ns
+        let samples = 50
+        var waveform: [Double] = []
+        for i in 0..<samples {
+            let t = Double(i) / Double(samples) * duration
+            let peak = exp(-pow(t - event.time * 10, 2) / (2 * pow(50, 2))) * Double(event.photonsDetected) / 100.0
+            waveform.append(peak + Double.random(in: -0.05...0.05))
+        }
+        return waveform
     }
 }

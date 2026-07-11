@@ -15,8 +15,7 @@ SRC="afe_dual_threshold.cir"
 
 run_one () {
   local tmp; tmp=$(mktemp /tmp/muon3_afe_XXXX.cir)
-  # shellcheck disable=SC2086
-  sed $1 "$SRC" > "$tmp"
+  sed -E -e "$1" "$SRC" > "$tmp"
   local log; log=$(mktemp /tmp/muon3_afe_XXXX.log)
   if ! "$NGSPICE" -b "$tmp" > "$log" 2>&1; then
     echo "ERROR: ngspice failed for: $1"; tail -20 "$log"; exit 1
@@ -32,13 +31,13 @@ echo "=== Muon3 ngspice AFE parametric sweeps (rev 2) ==="
 echo "-- NPE sweep --"
 for n in 1 2 3 5 10 20 30 50 100; do
   echo "  NPE=$n"
-  run_one "-e s/^\.param NPE=.*/.param NPE=$n/" "wave_dual_n${n}.csv"
+  run_one "s/^\.param NPE=.*/.param NPE=$n/" "wave_dual_n${n}.csv"
 done
 
 echo "-- Low-threshold scan at NPE=30 --"
 for vth in 1.789 1.778 1.767 1.745 1.712 1.690; do
   echo "  VTH_LOW=$vth"
-  run_one "-e s/^\.param NPE=.*/.param NPE=30/ -e s/^\.param VTH_LOW=.*/.param VTH_LOW=$vth/" \
+  run_one "s/^\.param NPE=.*/.param NPE=30/; s/^\.param VTH_LOW=.*/.param VTH_LOW=$vth/" \
           "wave_dual_vth${vth}.csv"
 done
 

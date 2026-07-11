@@ -78,6 +78,21 @@ struct ContentView: View {
                         simManager.reset()
                     }
                 }
+                
+                // Additional controls for data viz recommendations
+                VStack {
+                    Text("Animation Speed: \(simManager.animationSpeed, specifier: \"%.1f\")x")
+                    Slider(value: $simManager.animationSpeed, in: 0.1...5.0)
+                    
+                    Picker("Color Mode", selection: $simManager.colorMode) {
+                        ForEach(SimulationManager.ColorMode.allCases, id: \.self) { mode in
+                            Text(mode.rawValue).tag(mode)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    
+                    Toggle("Show ngspice timing overlay (placeholder)", isOn: $simManager.showNgspiceOverlay)
+                }
             }
             .padding()
             .background(.ultraThinMaterial)

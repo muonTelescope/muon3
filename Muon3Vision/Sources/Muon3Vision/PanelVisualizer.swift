@@ -94,8 +94,10 @@ struct PanelVisualizer {
         
         let impactPos = SIMD3<Float>(Float(event.x/1000.0), Float(event.y/1000.0), 0.005)
         
-        // Scintillation burst
-        if let burst = createPhotonBurst(at: impactPos, count: min(80, event.photonsDetected / 2), color: .blue) {
+        // Scintillation burst at impact (real data driven)
+        let burstCount = max(20, min(100, event.photonsProduced / 200))
+        let burstColor: UIColor = event.edep > 3.0 ? .red : (event.edep > 2.5 ? .orange : .blue)  // color by edep
+        if let burst = createPhotonBurst(at: impactPos, count: burstCount, color: burstColor) {
             root.addChild(burst)
             Task {
                 try? await Task.sleep(for: .seconds(1.5))
@@ -103,14 +105,15 @@ struct PanelVisualizer {
             }
         }
         
-        // Animate fiber glow
+        // Animate fiber glow based on shifted + detected (real data)
         if let fiberModel = fiber as? ModelEntity {
             var mat = fiberModel.model?.materials.first as? PhysicallyBasedMaterial ?? PhysicallyBasedMaterial()
-            mat.emissiveIntensity = 3.0 + Float(event.photonsShifted) / 100.0
+            let glow = 2.0 + Float(event.photonsShifted + event.photonsDetected) / 50.0
+            mat.emissiveIntensity = min(glow, 8.0)
             fiberModel.model?.materials = [mat]
             
             Task {
-                try? await Task.sleep(for: .seconds(2.0))
+                try? await Task.sleep(for: .seconds(2.5))
                 if let currentMat = fiberModel.model?.materials.first as? PhysicallyBasedMaterial {
                     var faded = currentMat
                     faded.emissiveIntensity = 1.5
@@ -119,32 +122,33 @@ struct PanelVisualizer {
             }
         }
         
-        // Photon paths
+        // Real photon paths based on detected (high quality viz)
         let sipmPos = sipm.position
-        if let photons = createPhotonStream(from: impactPos, to: sipmPos, count: min(120, event.photonsDetected), color: .green) {
+        let photonCount = max(30, min(150, event.photonsDetected))
+        if let photons = createPhotonStream(from: impactPos, to: sipmPos, count: photonCount, color: .green) {
             root.addChild(photons)
             Task {
-                try? await Task.sleep(for: .seconds(3.0))
+                try? await Task.sleep(for: .seconds(3.5))
                 photons.removeFromParent()
             }
         }
         
-        // SiPM hit response
-        if event.photonsDetected > 10 {
+        // SiPM hit response scaled by real detected photons
+        if event.photonsDetected > 5 {
             if let sipmModel = sipm as? ModelEntity {
                 var mat = sipmModel.model?.materials.first as? PhysicallyBasedMaterial ?? PhysicallyBasedMaterial()
                 mat.emissiveColor = .init(color: .white)
-                mat.emissiveIntensity = 8.0
+                mat.emissiveIntensity = 4.0 + Float(event.photonsDetected) / 20.0
                 sipmModel.model?.materials = [mat]
                 
                 let hitLight = PointLight()
                 hitLight.light.color = .white
-                hitLight.light.intensity = 2000 * Float(event.photonsDetected) / 50.0
+                hitLight.light.intensity = 1500 * Float(event.photonsDetected) / 50.0
                 hitLight.position = sipmPos
                 root.addChild(hitLight)
                 
                 Task {
-                    try? await Task.sleep(for: .seconds(0.8))
+                    try? await Task.sleep(for: .seconds(1.0))
                     hitLight.removeFromParent()
                     if let current = sipmModel.model?.materials.first as? PhysicallyBasedMaterial {
                         var reset = current
@@ -156,11 +160,11 @@ struct PanelVisualizer {
             }
         }
         
-        // Logo pulse on detection for high quality feedback
+        // Logo pulse on real detection
         if let logoModel = logo as? ModelEntity {
-            logoModel.scale = [1.2, 1.2, 1.2]
+            logoModel.scale = [1.3, 1.3, 1.3]
             Task {
-                try? await Task.sleep(for: .seconds(0.4))
+                try? await Task.sleep(for: .seconds(0.5))
                 logoModel.scale = [1.0, 1.0, 1.0]
             }
         }
