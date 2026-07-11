@@ -60,6 +60,12 @@ The controller baseline uses:
 - iCE40UP5K FPGA for deterministic timing/coincidence.
 - Peltier (DRV8873) + fan control with dew-point safety.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.65\textwidth]{figures/muon3_panel_isometric.png}
+\caption{Blender render of the Muon3 scintillator panel concept: EJ-200 plate (blue translucent), looped WLS fiber (green emissive), SiPM readout (dark), and base/PCB holder. (Procedural model for visualization.)}
+\end{figure}
+
 \subsection{Simulation Components}
 \begin{description}
   \item[Geant4 optical model] Full particle transport (muons), scintillation, WLS shifting, optical photon propagation, boundary processes, and SiPM photon counting. Primary generator now samples realistic cosmic muon energy spectrum (power-law) and $\cos^2\theta$ angular distribution.
