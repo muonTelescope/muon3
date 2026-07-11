@@ -24,7 +24,7 @@ Detector Response, System Performance, and Design Validation}}
 \begin{abstract}
 We present comprehensive simulation studies for the Muon3 four-channel cosmic muon telescope, which employs 200$\times$200$\times$10~mm EJ-200 plastic scintillator panels read out via looped Kuraray Y-11-equivalent wavelength-shifting (WLS) fibers and onsemi MicroFC-30035 silicon photomultipliers (SiPMs). The simulation suite includes a detailed Geant4 optical model (scintillation, WLS transport, surface effects), analog front-end modeling (ngspice), and system-level behavioral simulations (thermal, power, coincidence rates). 
 
-Key results include a mean detected photoelectron yield of approximately 25--66~p.e.\ per minimum-ionizing muon (after all losses, depending on position and exact run), good position uniformity within the loop, and power/thermal budgets supporting portable operation. Improvements over prior stand-in models include realistic cosmic muon spectra and angular distributions, refined material and surface properties drawn from literature, and a more representative fiber-loop geometry. Real Geant4 runs (500 events) confirmed ~2.5 MeV edep and tens of detected p.e. in the improved model.
+The current hardware baseline includes nRF9151 primary comms + RP2040 telemetry co-processor, TPS25751-class USB-PD + battery charger power path (onboard battery/solar support), two 8-channel precision DACs, and hardware-default-off TEC interlocks. Key results include a mean detected photoelectron yield of approximately 25--66~p.e.\ per minimum-ionizing muon (after all losses, depending on position and exact run), good position uniformity within the loop, and power/thermal budgets supporting portable operation with hardware safety. Improvements over prior stand-in models include realistic cosmic muon spectra and angular distributions, refined material and surface properties drawn from literature, and a more representative fiber-loop geometry. Real Geant4 runs (500 events) confirmed ~2.5 MeV edep and tens of detected p.e. in the improved model.
 
 These studies support threshold setting (nominal 3~p.e.), calibration strategies, and hardware interlock design. All models are parametric and will be anchored to bench measurements from completed panels. The work follows modeling practices established in the sPHENIX and related muon telescope programs.
 \end{abstract}
@@ -32,7 +32,9 @@ These studies support threshold setting (nominal 3~p.e.), calibration strategies
 \section{Introduction}
 \label{sec:intro}
 
-Muon3 is a portable, networked cosmic-ray muon telescope under development at Georgia State University as part of the gLOWCOST and Muon Telescope programs \cite{muontelescope,glowcost}. The baseline detector uses three or more layers of 200$\times$200$\times$10~mm EJ-200 scintillator panels with embedded looped WLS fiber, read out by a single-end MicroFC-30035 SiPM. Readout electronics (OPA858 TIA + dual comparators, iCE40 timing FPGA, nRF9151 telemetry) and Peltier thermal control enable remote, long-duration operation for extensive air shower coincidence, atmospheric monitoring, and directional tracking.
+Muon3 is a portable, networked cosmic-ray muon telescope under development at Georgia State University as part of the gLOWCOST and Muon Telescope programs \cite{muontelescope,glowcost}. The baseline detector uses three or more layers of 200$\times$200$\times$10~mm EJ-200 scintillator panels with embedded looped WLS fiber, read out by a single-end MicroFC-30035 SiPM. 
+
+Readout electronics use OPA858 TIA + dual comparators, iCE40 timing FPGA, with primary comms via nRF9151-LACA and RP2040 telemetry co-processor. Power management uses TPS25751-class PD controller with BQ charger for battery/solar support (up to 20 V/5 A contracts). Two 8-channel precision DACs (DAC80508 class) provide thresholds, HV trim, and control. Hardware interlocks ensure TECs default to off on invalid NTC, hot-side overtemperature, insufficient PD contract, watchdog loss, or overcurrent. Peltier thermal control and remote operation support extensive air shower coincidence, atmospheric monitoring, and directional tracking.
 
 Accurate simulation of the detector response is essential for:
 \begin{itemize}
@@ -49,11 +51,20 @@ This paper summarizes the simulation framework, presents results from improved m
 \subsection{Hardware Baseline}
 Each panel consists of EJ-200 plastic scintillator (density $\approx 1.023\,\mathrm{g/cm^3}$), a milled groove containing a looped multi-clad WLS fiber (Kuraray Y-11 or equivalent), optical cement coupling, and a diffuse high-reflectivity wrapping (aluminized or TiO$_2$-based). A single fiber exit leg is read out by a 3$\times$3~mm$^2$ MicroFC-30035 SiPM.
 
+The controller baseline uses:
+- nRF9151-LACA as primary radio + application processor (LTE-M/NB-IoT + GNSS).
+- RP2040 as dedicated telemetry co-processor (PIO for tachometry/sensors, USB local interface).
+- TPS25751-class PD controller + BQ charger for USB-C PD (up to 20 V/5 A), onboard battery, and solar input.
+- Two 8-channel 16-bit precision DACs (DAC80508 class) for comparator thresholds, HV trim, TEC setpoints, and calibration.
+- Hardware interlocks for TECs (default off on invalid NTC, hot overtemperature, insufficient PD, watchdog, or overcurrent).
+- iCE40UP5K FPGA for deterministic timing/coincidence.
+- Peltier (DRV8873) + fan control with dew-point safety.
+
 \subsection{Simulation Components}
 \begin{description}
   \item[Geant4 optical model] Full particle transport (muons), scintillation, WLS shifting, optical photon propagation, boundary processes, and SiPM photon counting. Primary generator now samples realistic cosmic muon energy spectrum (power-law) and $\cos^2\theta$ angular distribution.
   \item[Analog front-end (ngspice)] DC-coupled SiPM model $\to$ OPA858 TIA $\to$ dual TLV3601 comparators. Produces ToT, amplitude, and pulse shapes.
-  \item[System behavioral models (Python)] Thermal (Peltier + PID), power budget under USB-C PD contracts, and coincidence/accidental rate estimators using Poisson statistics and NPE distributions.
+  \item[System behavioral models (Python)] Thermal (Peltier + PID), power budget under multi-chemistry (USB-C PD + battery + solar), and coincidence/accidental rate estimators using Poisson statistics and NPE distributions.
 \end{description}
 
 All models are parameterized so they can be calibrated to real panel data (single-p.e.\ response, MIP peak position, temperature dependence).
@@ -211,7 +222,7 @@ The simulations confirm the expected logarithmic ToT vs NPE behavior (fit for NP
 
 Additional ngspice results confirm robustness to cable length and threshold settings. The HV model validates bias stability.
 
-Power budget: 5 V fallback (electronics only) $\approx 2\,\mathrm{W}$; full 4-channel cooling at 20 V reaches $\sim$37 W. Thermal step-response simulations confirm 1.5--1.8 A Peltier operation yields adequate cooling with hardware interlocks required for dew-point safety.
+Power budget: 5 V fallback (electronics only) $\approx 2\,\mathrm{W}$; full 4-channel cooling at 20 V reaches $\sim$37 W (supported by TPS25751 + BQ charger path with battery/solar). Thermal step-response simulations confirm 1.5--1.8 A Peltier operation yields adequate cooling with hardware interlocks required for dew-point safety.
 
 Coincidence studies at a 3 p.e. threshold yield $>98\%$ efficiency for typical muon NPE with negligible electronics accidentals when using delayed shadow windows.
 
@@ -230,7 +241,7 @@ Remaining uncertainties (fiber groove polish quality, exact cement refractive in
 The current Geant4 geometry remains an approximation; future work will import a precise CAD groove model via GDML or STEP.
 
 \section{Conclusions}
-The Muon3 simulation suite demonstrates that a simple looped-fiber EJ-200 panel read out by a single MicroFC-30035 SiPM can deliver $\sim$25--40~p.e.\ per MIP with usable uniformity and timing. System-level models confirm that USB-C PD and Peltier thermal control are viable for portable, remote operation. 
+The Muon3 simulation suite demonstrates that a simple looped-fiber EJ-200 panel read out by a single MicroFC-30035 SiPM can deliver $\sim$25--40~p.e.\ per MIP with usable uniformity and timing. System-level models confirm that the current baseline (nRF9151 + RP2040 telemetry, TPS25751-class PD + battery/solar power path, two 8-ch precision DACs, hardware TEC interlocks) supports portable, remote operation with strong safety.
 
 The improved models (realistic cosmic primaries, refined optics and geometry, literature-based parameters) provide a solid foundation for threshold optimization and calibration planning. All simulation artifacts, source code, and this paper are maintained in the public Muon3 repository to support community review and future calibration campaigns.
 
