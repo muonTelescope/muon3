@@ -5,6 +5,11 @@ Preferred MPN: `DRV8873HPWPR`
 Current role: one bidirectional current-regulated driver per SiPM/Peltier
 channel.
 
+Status: frozen 2026-07-11. The 100% JLCPCB assembly decision drops MAX1968 and
+daughterboard options. Load is one Same Sky CP30238 per channel (8.6 V/3 A,
+~2.3 ohm; see `../tec_cp30238/`); set ITRIP at or below 2.5 A and add an output
+LC filter so the module sees quasi-DC current.
+
 Why selected:
 
 - Integrated H-bridge with current regulation, diagnostics, and protection.

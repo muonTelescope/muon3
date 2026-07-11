@@ -1,21 +1,39 @@
 # Muon3 schematic freeze check
 
-Date: 2026-07-11
+Date: 2026-07-11 (updated same day with decision answers)
 
-Status: not frozen. The architecture is converging, but several choices still
-change symbols, footprints, connectors, rail sizing, and thermal safety.
+Status: architecture decisions frozen. All ten freeze questions were answered
+on 2026-07-11 — see [freeze_questions.md](freeze_questions.md). The remaining
+freeze blockers are exact-part selections (comparator, DACs, regulators, ADC,
+hybrid connector, TCXO, SIM hardware, protection network), not architecture.
 
 ## Freeze recommendation
 
 Use a two-step freeze:
 
-1. Freeze the detector, timing, telemetry, and low-power rails after the open
-   questions below are answered.
+1. Freeze the detector, timing, telemetry, and low-power rails now; the open
+   questions are answered.
 2. Keep the TEC/Peltier power stage behind a clearly isolated interface until
-   the actual TEC module, heatsink, fan, and power budget are measured.
+   the one-channel thermal coupon confirms the CP30238 operating point,
+   heatsink, fan, and measured parasitic load.
 
 This keeps the cosmic-ray instrument moving without letting the cooling system
 quietly dominate the whole board.
+
+## Decisions from 2026-07-11
+
+| # | Question | Decision |
+| --- | --- | --- |
+| 1 | JLC-only assembly incl. TEC drivers? | Yes, 100% JLCPCB. DRV8873 frozen; MAX1968/daughterboard dropped. |
+| 2 | Battery/solar on board? | No. Protected USB-C PD input only; storage/solar external. |
+| 3 | Exact TEC module? | Same Sky CP30238, 20x20x3.8 mm, 8.6 V/3 A, Qmax 15 W. See [parts/tec_cp30238/](parts/tec_cp30238/README.md). |
+| 4 | Panel count? | Four-channel board, ships populated for three panels, fourth is expansion. |
+| 5 | Panel cable length? | 50 cm baseline. |
+| 6 | Connector scheme? | Single hybrid locking panel connector per channel (signal, bias, NTCs, TEC, fan/tach). |
+| 7 | Calibration injection? | Per-channel charge and optical injection from the start. |
+| 8 | 5 V fallback science-valid? | Yes; TECs/fans off, science data valid. |
+| 9 | Extra thermal/enclosure sensors? | All required: 4x fan driver+tach, 4x hot-side NTC, enclosure-open, humidity/dew point. |
+| 10 | Nordic antenna geometry dominates? | Yes; reference RF layout constrains outline early. |
 
 ## Live JLCPCB confirmation snapshot
 
@@ -26,73 +44,44 @@ inside the JLCPCB BOM tool immediately before ordering.
 | --- | --- | --- | --- |
 | SiPM HV boost | `TPS61170DRVR`, `C15163` | Extended, WSON-6(2x2), SMT assembly, Economic and Standard PCBA, in stock 3920, available order qty 3731 | Freezeable for prototype, with OVP and bias-margin review. |
 | TIA | `OPA858IDSGR`, `C970232` | JLCPCB page confirms WSON-8-EP(2x2), FET-input amplifier, assembly support, EasyEDA footprint/symbol | Freezeable for prototype after analog bias/common-mode review. |
-| Cellular/GNSS | `nRF9151-LACA-R7`, `C22397843` | LGA-113(12.1x11.1), Standard Only PCBA, MSL 3, X-ray required, SMT assembly | Freezeable only with Nordic reference layout and Standard PCBA. |
-| USB-C PD sink | `CH224K`, `C970725` | ESSOP-10, PD 3.0, advertised 5/9/12/15/20 V output profiles, assembly support | Usable for P0 prototype, but not ideal for full 100 W/battery architecture. |
+| Cellular/GNSS | `nRF9151-LACA-R7`, `C22397843` | LGA-113(12.1x11.1), Standard Only PCBA, MSL 3, X-ray required, SMT assembly | Frozen; Nordic reference layout and Standard PCBA (decision 10). |
+| USB-C PD sink | `CH224K`, `C970725` | ESSOP-10, PD 3.0, advertised 5/9/12/15/20 V output profiles, assembly support | Frozen for this revision (decision 2): USB-C-only input, no onboard battery/solar. |
 | FPGA | `ICE40UP5K-SG48I`, `C2678152` | QFN-48-EP(7x7), JLC assembly support, EasyEDA footprint/symbol | Freezeable; keep VCC/VCCPLL at 1.2 V. |
-| Peltier bridge | `DRV8873HPWPR`, `C2150604` | HTSSOP-24-EP, SMT assembly, in stock 261, available order qty 245 | Freezeable only if we accept H-bridge TEC control and reserve stock early. |
+| Peltier bridge | `DRV8873HPWPR`, `C2150604` | HTSSOP-24-EP, SMT assembly, in stock 261, available order qty 245 | Frozen (decision 1). Reserve stock early or qualify `DRV8876PWPR` as the drop-in fallback. |
 
 ## Parts not ready to freeze
 
 | Block | Current candidate | Reason not frozen | Recommended action |
 | --- | --- | --- | --- |
 | Comparator | `TLV3601IDBVR` | Good timing part, but no live JLC confirmation captured in this pass | Keep as performance reference; find an exact JLC part page or qualify a JLC-stocked alternate. |
-| Threshold/bias DACs | `DAC60508ZRTET`, second DAC TBD | Requirements now prefer two 8-channel DACs; live JLC status not confirmed | Freeze only after choosing one exact DAC family and output count. |
+| Threshold/bias DACs | `DAC60508ZRTET`, second DAC TBD | Requirements prefer two 8-channel DACs; live JLC status not confirmed | Freeze only after choosing one exact DAC family and output count. |
 | 3.3 V buck | `TPS62933` family | Technically excellent, exact JLC orderable number not confirmed | Confirm exact suffix/LCSC code and inductor values. |
 | 1.2 V FPGA rail | small buck or LDO TBD | Load/current margin depends on FPGA use and power tree | Use a real >=200 mA regulator, not the 60 mA XC6206 except as a last-resort low-load fallback. |
-| USB-C PD full-power controller | `TPS25751` class | Requirements now call for 15 V/3 A or 20 V/5 A and possible battery/solar; CH224K is simpler but less managed | Decide whether this board needs full 100 W policy/power-path control now or later. |
-| Battery/solar charger | `BQ25798` class | Architecture decision, not a part-choice detail | Decide onboard battery/solar vs external qualified module. |
-| TEC controller | `MAX1968` vs `DRV8873` | MAX1968 is technically better for quiet TEC current control, but JLC assembly availability is not confirmed | If JLC-only is mandatory, use DRV8873 or another confirmed driver; if thermal performance dominates, allow hand-placed/sourced MAX1968 or daughterboard. |
-| External ADC | TBD | Thermal sensors plus HV monitor exceed practical nRF9151 ADC use | Add a multichannel ADC; choose I2C/SPI, resolution, and JLC-stocked MPN. |
-| Panel connector | TBD | Mechanically and electrically defining; affects all channel sheets | Select keyed connector/cable before schematic freeze. |
+| External ADC | TBD | Eight NTC channels, HV monitor, TEC current/voltage, and rails now confirmed in scope (decision 9) | Add a multichannel ADC; choose I2C/SPI, resolution, and JLC-stocked MPN. |
+| Hybrid panel connector | TBD | Decision 6 fixes the architecture (single hybrid locking connector) but not the family | Select a keyed locking family rated for 3 A TEC contacts plus shielded signal at 50 cm; per-channel. |
+| Fan drive | Low-side FET (AO3400-class) + tach input per channel | Simple JLC-basic path; exact FET/flyback/tach conditioning not yet drawn | Draw four fan channels with tach interlock; confirm fan MPN tach suffix. |
 | SIM/eSIM | TBD | Physical SIM holder and optional MFF2 eSIM exact footprints still open | Pick nano-SIM holder and DNP eSIM footprint from JLC. |
 | TCXO | TBD | Timing target needs exact stability, output format, voltage, and footprint | Choose 25 MHz or other final FPGA clock source after timing architecture is frozen. |
 | USB/protection | TBD | Safety/reliability critical | Select TVS, eFuse/current limit, reverse protection, and rail telemetry parts. |
 
-## Proposed freeze choices
+## Frozen architecture choices
 
-- Detector: freeze around MicroFC-30035, but require exact package suffix and
-  overvoltage target before final HV range.
-- AFE: freeze OPA858 plus TLV3601-class dual threshold only after comparator
-  sourcing is confirmed.
-- Logic: freeze iCE40UP5K-SG48I plus nRF9151-LACA-R7.
-- USB-C: use CH224K for a P0 USB-C-powered prototype without battery/solar, but
-  move to TPS25751-class architecture if the board must manage 15 V/3 A,
-  20 V/5 A, battery charging, solar input, and safe power-path arbitration.
-- TEC: if "completely JLCPCB assembled" is strict, freeze DRV8873-class
-  current-limited H-bridge. If "best thermal control" is allowed to override
-  JLC convenience, use MAX1968 or a TEC daughterboard.
-- DACs: freeze two 8-channel DACs rather than one 8-channel plus crumbs. The
-  spare outputs are cheap insurance for baseline trim, HV trim, TEC setpoints,
-  and calibration injection.
-- External ADC: add it now. The nRF9151 ADC should not be the whole analog
-  telemetry system.
-
-## Questions that affect schematic freeze
-
-1. Should the first manufacturable board be JLC-only even if that makes the TEC
-   driver less ideal, or may the TEC section use a sourced/hand-placed part or
-   daughterboard?
-2. Should battery/solar charging be on this PCB now, or should this revision
-   only expose a protected DC/USB-C input and leave battery/solar to an external
-   qualified module?
-3. What is the baseline TEC module per channel: voltage, maximum current,
-   physical size, cold-plate mounting, heatsink, and fan assumption?
-4. Is the baseline station three panels or four panels? The controller has four
-   analog channels, but the mechanical stack and coincidence masks depend on the
-   intended default.
-5. What panel cable length should the AFE tolerate: short internal pigtail
-   under 20 cm, roughly 1 m, or longer outdoor/service cable?
-6. Should the SiPM signal stay coax-only with separate power/thermal connector,
-   or should we choose a single hybrid locking panel connector?
-7. Should the board include an optical/electrical calibration pulser connector
-   per channel, or only a shared calibration input for the first prototype?
-8. Do we need EU and US cellular certification risk minimized by using a
-   pre-certified antenna/reference layout exactly, even if the board outline is
-   less convenient?
-9. Should USB-C fallback at 5 V still collect science data with TECs disabled,
-   or is 5 V only a debug/configuration mode?
-10. Should the initial board include environmental sealing/condensation
-    interlock connectors for fan/hot-side sensors, or just cold-side NTCs?
+- Detector: MicroFC-30035; exact package suffix and overvoltage target still
+  set the final HV range.
+- AFE: OPA858 plus TLV3601-class dual thresholds per channel; comparator
+  sourcing must be confirmed before symbol freeze.
+- Logic: iCE40UP5K-SG48I plus nRF9151-LACA-R7.
+- USB-C: CH224K PD sink, USB-C-only input this revision (decision 2). A
+  TPS25751-class architecture is deferred to a future revision if onboard
+  battery/solar ever moves on board.
+- TEC: DRV8873 H-bridge per channel (decision 1) driving one CP30238 per SiPM
+  (decision 3), hardware-default-off interlocks, ITRIP <= 2.5 A.
+- Calibration: per-channel charge and optical injection (decision 7).
+- Sensors: 4x cold NTC, 4x hot NTC, 4x fan tach, enclosure-open,
+  BME280 humidity/pressure with dew-point interlock (decision 9).
+- DACs: two 8-channel DACs; spare outputs cover baseline trim, HV trim, TEC
+  setpoints, and calibration amplitude.
+- External ADC: required; the nRF9151 ADC must not carry the telemetry system.
 
 ## Evidence notes
 
@@ -104,7 +93,9 @@ inside the JLCPCB BOM tool immediately before ordering.
   MSL 3, and required X-ray inspection.
 - JLCPCB page for `CH224K/C970725` reports PD 3.0, 5/9/12/15/20 V output
   profiles, 4-30 V supply range, and 100 W listing.
-- ADI/MAX1968 data sheet confirms the TEC-specific benefits: direct current
-  control, bipolar +/-3 A operation, ripple cancellation, and a 3.0-5.5 V input
-  rail. That is technically attractive but not yet confirmed as JLC-assembly
-  compatible.
+- Same Sky CP30 datasheet (rev 1.04, 2024-09-12, downloaded to
+  `parts/tec_cp30238/CP30.pdf`) confirms CP30238: 20 x 20 x 3.8 mm, Vmax
+  8.6 V, Imax 3 A, Qmax 15 W at Th=27 degC, dTmax 66 degC, internal
+  resistance 2.07-2.53 ohm. Stocked at Digi-Key as 102-1667-ND.
+- MAX1968 remains technically attractive for quiet TEC current control but is
+  excluded by the 100% JLCPCB assembly decision.

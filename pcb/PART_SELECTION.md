@@ -15,6 +15,8 @@ Alternatives:
 
 CH224K does not replace input protection. The final sheet needs a fuse/eFuse, TVS, reverse-current control and bulk capacitance selected for the negotiated power level.
 
+Decision 2026-07-11: this revision is USB-C-PD-input-only. No onboard battery or solar charging; energy storage lives in an external qualified module presenting USB-C PD or a clean DC input. A TPS25751-class full power-path architecture is deferred until charging ever moves onto the board.
+
 ### 3.3 V and 1.2 V rails
 
 Do not reuse AMS1117. A synchronous 12 V-capable buck is required for 3.3 V because cellular transmit bursts and FPGA load make a linear regulator inefficient. The exact buck remains a release-blocking selection until an in-stock part is checked for input rating, transient response, light-load mode, thermal margin and Nordic supply requirements.
@@ -66,9 +68,13 @@ Use an exact 25 MHz TCXO only after specifying frequency stability over the full
 
 ## Thermal control
 
+### TEC module — Same Sky CP30238, one per channel (selected 2026-07-11)
+
+20 x 20 x 3.8 mm, Vmax 8.6 V, Imax 3.0 A, Qmax 15 W, dTmax 66 degC, ~2.3 Ω internal resistance. Off-board part in the panel thermal stack, wired through the hybrid connector; stocked at Digi-Key (102-1667-ND). Operating point roughly 1.2–1.8 A for a 15–25 degC drop; a 12 V/3 A PD contract supports all four channels at the low end, and 5 V fallback runs with cooling off. Thermal stack per channel: aluminum cold block with cold-side NTC, ≥40 x 40 x 20 mm hot-side heatsink with hot-side NTC, and a 40 mm 12 V tach fan. See `parts/tec_cp30238/` for the full selection note and datasheet.
+
 ### DRV8873HPWPR — C2150604, one per channel
 
-Preferred because it is an integrated bidirectional H-bridge with SPI diagnostics, current regulation/sensing, thermal protection and adequate peak-current headroom. It was publicly stocked but at relatively low quantity, so reserve it or qualify the alternate before layout freeze.
+Frozen 2026-07-11 by the 100% JLCPCB assembly decision; MAX1968 and daughterboard options are dropped. Preferred because it is an integrated bidirectional H-bridge with SPI diagnostics, current regulation/sensing, thermal protection and adequate peak-current headroom. It was publicly stocked but at relatively low quantity, so reserve it or qualify the alternate before layout freeze. Set ITRIP at or below 2.5 A, under the CP30238 3.0 A limit, and use an output LC filter so the module sees quasi-DC current.
 
 Alternatives:
 
@@ -77,9 +83,15 @@ Alternatives:
 
 Each channel requires a local fuse/current limit, bulk ceramic capacitance, filtered current readback and a hardware overtemperature shutdown independent of firmware. The power budget is negotiated: cooling is reduced or disabled unless a suitable PD contract is present.
 
+### Fan drive — one channel per TEC (added 2026-07-11)
+
+Four 12 V fan channels using a JLC-basic low-side N-MOSFET (AO3400A class) with flyback diode and a conditioned tach input each. Fan target is a 40 mm 12 V ball-bearing fan with tach (Delta AFB0412HHB tach variant or Sunon MF40202VX class; confirm the exact tach-equipped suffix before ordering). Tach loss is a thermal interlock: the affected TEC channel defaults off.
+
 ## Sensors and connectors
 
-BME280 (`C92489`) is retained for atmospheric pressure, humidity and board temperature. Four separate NTC inputs are required—one per SiPM/Peltier assembly. MPPC panel connectors must carry bias, signal return, NTC and Peltier conductors with touch-safe polarization. The legacy scheme that put SiPM HV on the exposed U.FL shell is prohibited. U.FL may still be used for signal-only coax or the LTE/GNSS antenna connections with the shell at ground.
+BME280 (`C92489`) is retained for atmospheric pressure, humidity and board temperature, and feeds the dew-point interlock. Decision 2026-07-11: eight separate NTC inputs are required—one cold-side and one hot-side per SiPM/Peltier assembly—plus four fan tach inputs and an enclosure-open switch input. This confirms the need for a multichannel external ADC.
+
+Decision 2026-07-11: each panel uses a single hybrid locking connector carrying shielded SiPM signal, bias, both NTCs, TEC power, and fan power/tach over a 50 cm cable, with touch-safe polarization. The separate-coax-plus-auxiliary scheme is retired. The exact connector family is still to be selected and must support 3 A continuous on the TEC contacts. The legacy scheme that put SiPM HV on the exposed U.FL shell is prohibited. U.FL remains in use for the LTE/GNSS antenna connections with the shell at ground.
 
 ## Sourcing rules
 

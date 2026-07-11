@@ -39,21 +39,23 @@ Open `muon3.kicad_pro` in KiCad 9 or later. The root schematic contains five she
 
 No fabricated board should use the architecture-only sheets as a substitute for completed electrical schematics.
 
-## Schematic-freeze questions
+## Schematic-freeze decisions (answered 2026-07-11)
 
-Answering these will decide whether the P0 schematic becomes a compact JLC-built controller or a
-larger board with integrated power-path and thermal control:
+All ten freeze questions are answered; see [freeze_questions.md](freeze_questions.md) for the
+full record. In summary:
 
-1. Is full JLCPCB assembly mandatory for the TEC/Peltier section?
-2. Should battery/solar charging be integrated now or handled by an external module?
-3. What exact TEC module, heatsink, fan, and cold-plate geometry are we designing around?
-4. Is the baseline station mechanically three panels or four panels?
-5. Should panel cabling be short internal wiring, roughly 1 m, or longer field-service cabling?
-6. Should panel I/O use separate grounded signal coax plus an auxiliary connector, or one hybrid connector?
-7. Should calibration injection be per-channel on the first prototype?
-8. Should 5 V USB-C fallback collect science data with TEC disabled?
-9. Do hot-side NTCs, fan tach, and condensation/sealing interlocks need first-revision connectors?
-10. Should Nordic RF/reference antenna geometry override board-outline convenience?
+1. 100% JLCPCB assembly including the TEC section — `DRV8873` H-bridges frozen.
+2. USB-C PD input only this revision; battery/solar stays in an external qualified module.
+3. TEC module: Same Sky `CP30238` (20 x 20 mm, 8.6 V/3 A) per SiPM, with aluminum cold block,
+   40 mm-class heatsink, and 12 V tach fan — see [parts/tec_cp30238/](parts/tec_cp30238/README.md).
+4. Four-channel board that ships populated for three panels; channel 4 is expansion.
+5. 50 cm baseline panel cable.
+6. One hybrid locking panel connector per channel (signal, bias, NTCs, TEC, fan/tach);
+   exact family still to be selected.
+7. Per-channel charge and optical calibration injection from the start.
+8. USB-C 5 V fallback is a valid science mode with TECs and fans disabled.
+9. Fan tach, hot-side NTCs, enclosure-open, and humidity/dew-point sensing are all in scope.
+10. Nordic reference antenna geometry constrains the board outline from the start.
 
 ## Recommended schematic improvements
 

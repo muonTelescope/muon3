@@ -30,8 +30,8 @@ The baseline station uses three or more detector layers. Each layer is based on:
 - a glued, embedded wavelength-shifting optical fiber routed in a loop;
 - an onsemi MicroFC-30035 SiPM;
 - a local temperature sensor and optional thermoelectric cooler; and
-- a grounded coaxial signal connection plus a separate, keyed auxiliary connection for bias,
-  thermal sensing, and TEC power.
+- a single hybrid locking panel connector carrying the shielded signal, bias, cold- and hot-side
+  thermal sensing, TEC power, and fan power/tach over a 50 cm cable (decided 2026-07-11).
 
 The four-channel controller is intended to provide:
 
@@ -62,7 +62,7 @@ Scintillator panel
 Supporting subsystems include:
 
 ```text
-USB-C PD / battery / solar input
+USB-C PD input (external battery/solar module upstream, per 2026-07-11 decision)
   -> protected power path
   -> quiet analog rail
   -> digital and FPGA rails
@@ -115,35 +115,38 @@ The most important live-confirmed prototype choices are:
 - `OPA858IDSGR` for the SiPM TIA, subject to corrected bias and stability validation;
 - `TPS61170DRVR` for the MicroFC-class SiPM bias supply;
 - `CH224K` as a simple USB-C PD sink for a first USB-powered prototype; and
-- `DRV8873HPWPR` as the current JLC-buildable Peltier-driver path, if full JLC assembly is a hard
-  requirement.
+- `DRV8873HPWPR` as the Peltier-driver path, frozen by the 2026-07-11 decision that full JLCPCB
+  assembly is a hard requirement.
 
 Parts that should not be frozen yet include the comparator, DACs, 3.3 V and 1.2 V regulators,
-external ADC, TCXO, SIM/eSIM hardware, panel connector, USB protection network, and any full
-battery/solar power path.
+external ADC, TCXO, SIM/eSIM hardware, the exact hybrid panel-connector family, and the USB
+protection network. The battery/solar power path is decided out of this revision, and the TEC
+module is selected: one Same Sky `CP30238` per SiPM channel (see
+[pcb/parts/tec_cp30238/](pcb/parts/tec_cp30238/README.md)).
 
-## Design questions before schematic freeze
+## Design decisions from the schematic-freeze review (2026-07-11)
 
-These questions materially change the schematic, footprints, power budget, or enclosure design:
+All ten pre-freeze questions have been answered and recorded in
+[pcb/freeze_questions.md](pcb/freeze_questions.md):
 
-1. Must the first manufacturable board be 100% JLCPCB-assembled, including TEC drivers, or can
-   the TEC section use a sourced/hand-placed part or daughterboard?
-2. Should battery/solar charging live on the main PCB now, or should this revision expose only a
-   protected USB-C/DC input and leave energy storage to an external qualified module?
-3. What exact TEC/Peltier module should each SiPM use: voltage, current, physical size, cold
-   plate, heatsink, and fan?
-4. Is the default station a three-panel telescope, a four-panel telescope, or a four-channel board
-   that usually ships populated for three panels?
-5. What baseline panel-cable length should the AFE tolerate: short internal pigtail, about 1 m,
-   or longer field-service cable?
-6. Should the SiPM signal remain a grounded coax with a separate keyed auxiliary connector, or
-   should the design move to a single hybrid locking panel connector?
-7. Should calibration injection be per-channel from the start, or shared on the first prototype?
-8. Should USB-C 5 V fallback collect valid science data with TECs disabled, or only support debug
-   and configuration?
-9. Are fan tach, hot-side NTC, enclosure-open, or condensation sensors required on the first PCB?
-10. Should EU/US cellular certification risk dominate the board outline and antenna placement,
-    meaning the Nordic/reference antenna geometry is followed as closely as possible?
+1. The first manufacturable board is 100% JLCPCB-assembled, including the TEC drivers. The
+   DRV8873 H-bridge path is frozen; MAX1968 and daughterboard options are dropped.
+2. This revision exposes only a protected USB-C PD input; battery/solar energy storage stays in
+   an external qualified module (chosen as the simpler path).
+3. Each SiPM uses a Same Sky CP30238 TEC (20 x 20 x 3.8 mm, 8.6 V / 3 A, Qmax 15 W) driven at
+   roughly 1.2-1.8 A, with an aluminum cold block, a 40 mm-class hot-side heatsink, and a
+   12 V tach fan. See [pcb/parts/tec_cp30238/](pcb/parts/tec_cp30238/README.md).
+4. The station is a four-channel board that ships populated for three panels; the fourth channel
+   is populated if the science data justifies expansion.
+5. The AFE and cable budget are specified for a 50 cm panel cable.
+6. Each panel connects through a single hybrid locking connector carrying shielded signal, bias,
+   both NTCs, TEC power, and fan power/tach. The separate coax-plus-auxiliary scheme is retired.
+7. Calibration injection (charge and optical) is per-channel from the start.
+8. USB-C 5 V fallback is a valid science mode with TECs and fans disabled; cooling is optional.
+9. Fan drivers with tach, hot-side NTCs, an enclosure-open input, and humidity/dew-point
+   condensation sensing are all required on the first PCB.
+10. Cellular certification risk dominates the outline: the Nordic reference antenna geometry and
+    RF layout are followed as closely as possible.
 
 ## Suggested improvements
 
