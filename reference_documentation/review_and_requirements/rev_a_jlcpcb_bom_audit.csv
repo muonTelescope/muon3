@@ -1,0 +1,39 @@
+Quantity,References,Value_or_MPN,Package,JLCPCB_Part,Stock_Class,Decision
+4,"R106 R116 R126 R136","2k 1%",0402,C4109,"Basic in stock",Keep
+5,"R13 R101 R111 R121 R131","100k 1%",0402,C25741,"Basic in stock",Keep
+4,"R102 R112 R122 R132","10R 1%",0402,C25077,"Basic in stock",Keep
+9,"R10 R103 R104 R113 R114 R123 R124 R133 R134","1k 1%",0402,C11702,"Basic in stock",Keep
+4,"R105 R115 R125 R135","33R 1%",0402,C25105,Basic,Keep
+1,R11,"270k 1%",0603,C22965,Basic,"Verify live stock"
+3,"R12 R32 R33","10k 1%",0402,C25744,Basic,Keep
+1,R15,"62k 1%",0603,C23221,Basic,Keep
+1,R14,"1M 1%",0402,C26083,Basic,"Verify working voltage"
+3,"R16 R30 R31","4.7k 1%",0402,C25900,Basic,Keep
+3,"R35 R36 R37","100R 1%",0402,C25076,Basic,"Remove or add LEDs"
+1,R20,"0R link",0402,TBD,Unresolved,"Assign real 0R part"
+4,"C106 C116 C126 C136","2.2pF C0G",0402,C1559,Catalogued,"Re-simulate TIA"
+16,"C30 C31 C32 C33 C102 C103 C104 C112 C113 C114 C122 C123 C124 C132 C133 C134",100nF,0402,C1525,Basic,Keep
+1,C13,10nF,0402,C15195,Basic,Keep
+5,"C22 C105 C115 C125 C135","1uF 25V X5R",0402,C52923,"Basic in stock",Keep
+2,"C20 C21",10uF,0603,C19702,Catalogued,"Verify voltage and stock"
+4,"C101 C111 C121 C131","100nF 50V",0805,TBD,Unresolved,"Select exact rated part"
+2,"C10 C11","1uF 50V",1206,TBD,Unresolved,"Select exact rated part"
+1,C12,"2.2uF 50V",1206,TBD,Unresolved,"Select using DC-bias curve"
+4,"D2 D3 D4 D5","BAV99,215",SOT-23,C2500,"Basic in stock","Review input protection"
+1,D10,SS510B,SMB,C7420368,"Extended in stock",Keep
+1,L1,SWPA4030S100MT,"SMD 4x4mm",C38117,"Extended in stock","Correct footprint"
+1,L2,100uH,0805,C68035,Catalogued,"Verify exact ratings and stock"
+4,"J2 J3 J4 J5",BWU.FL-IPEX1,SMD,C5137195,"Extended in stock","Redesign unsafe shell HV"
+3,"J1 J9 J10","1x2 2.54mm header",THT,TBD,Unresolved,"Choose exact part"
+1,J6,"1x6 2.54mm header",THT,TBD,Unresolved,"Replace placeholder"
+2,"J7 J8","1x10 2.54mm header",THT,TBD,Unresolved,"Remove for direct nRF9151"
+4,"U101 U111 U121 U131",OPA858IDSGR,"WSON-8-EP 2x2",C970232,"Extended supported","Correct ID and redesign bias"
+4,"U102 U112 U122 U132",TLV3601IDBVR,SOT-23-5,TBD,"Stock unconfirmed","Pre-order/global-source or qualify alternate"
+1,U10,TPS61170DRVR,"WSON-6 2x2",C15163,"Extended in stock","Correct wrong C77205 note"
+1,U11,AMS1117-3.3,SOT-223,C6186,"Basic in stock","Replace with buck"
+1,U12,XC6206P122MR-G,SOT-23,C424699,"Extended in stock","Verify 60mA limit"
+1,U4,DAC7578IPWR,TSSOP-16,TBD,"Stock unconfirmed","Redesign DAC architecture"
+1,U5,BME280,LGA-8,C92489,"Extended in stock",Keep
+1,U6,W25Q128JVSIQ,"SOIC-8 208mil",C97521,"Basic supported","Verify footprint and boot"
+1,U3,ICE40UP5K-SG48I,"QFN-48-EP 7x7",C2678152,"Extended in stock","Correct PLL rail"
+1,X1,"25MHz 3.3V oscillator",2520-4,TBD,Unresolved,"Select exact stocked MPN"
