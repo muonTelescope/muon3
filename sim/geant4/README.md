@@ -53,6 +53,25 @@ make -j$(nproc)
 
 To enable ROOT ntuples, build with `-DWITH_ROOT=ON` and have ROOT in your environment (Geant4 must have been built with analysis/root).
 
+**Building against a system Geant4**
+
+A helper script is provided:
+
+```bash
+cd sim/geant4
+./build_with_system_geant4.sh $HOME/geant4/install     # adjust path
+```
+
+Or manually:
+
+```bash
+mkdir build && cd build
+cmake -DGeant4_DIR=$HOME/geant4/install/lib/Geant4-11.3.0 ..
+make -j
+```
+
+See `build_with_system_geant4.sh` for more details.
+
 **Tuning parameters (critical)**
 Edit `src/PanelDetectorConstruction.cc` or pass via macros/UI commands:
 - Scintillation yield (photons/MeV)
