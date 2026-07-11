@@ -1,10 +1,10 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.0
 import PackageDescription
 
 let package = Package(
     name: "Muon3Vision",
     platforms: [
-        .visionOS(.v1)
+        .visionOS(.v2)
     ],
     products: [
         .library(
@@ -19,6 +19,11 @@ let package = Package(
             path: "Sources/Muon3Vision",
             resources: [
                 .process("Resources")
+            ],
+            // RealityKit entity mutation is main-actor bound; keep Swift 5
+            // language mode so existing async visualization code stays valid.
+            swiftSettings: [
+                .swiftLanguageMode(.v5)
             ]
         ),
     ]

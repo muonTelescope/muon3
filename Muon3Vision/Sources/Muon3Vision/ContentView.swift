@@ -81,7 +81,7 @@ struct ContentView: View {
                 
                 // Additional controls for data viz recommendations
                 VStack {
-                    Text("Animation Speed: \(simManager.animationSpeed, specifier: \"%.1f\")x")
+                    Text("Animation Speed: \(simManager.animationSpeed, specifier: "%.1f")x")
                     Slider(value: $simManager.animationSpeed, in: 0.1...5.0)
                     
                     Picker("Color Mode", selection: $simManager.colorMode) {

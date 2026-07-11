@@ -4,6 +4,7 @@ import SwiftUI
 /// High quality visualization builder for the muon panel.
 /// Focus: Physically accurate look, beautiful particles, smooth interactions.
 /// Now includes logo integration as a floating high-quality emblem.
+@MainActor
 struct PanelVisualizer {
     func buildHighQualityPanel() -> Entity {
         let root = Entity()
@@ -15,7 +16,7 @@ struct PanelVisualizer {
         panelMaterial.baseColor = .init(tint: .init(red: 0.2, green: 0.85, blue: 0.4, alpha: 0.65))
         panelMaterial.roughness = 0.15
         panelMaterial.metallic = 0.0
-        panelMaterial.emissiveColor = .init(color: .init(red: 0.1, green: 0.4, blue: 0.15))
+        panelMaterial.emissiveColor = .init(color: .init(red: 0.1, green: 0.4, blue: 0.15, alpha: 1.0))
         panelMaterial.emissiveIntensity = 0.3
         
         let panelEntity = ModelEntity(mesh: panelMesh, materials: [panelMaterial])
@@ -26,7 +27,7 @@ struct PanelVisualizer {
         // WLS Fiber Loop - High quality glowing tube
         let fiberMaterial = createGlowingFiberMaterial()
         
-        let loopMesh = MeshResource.generateTorus(ringRadius: 0.082, tubeRadius: 0.00065)
+        let loopMesh = PanelVisualizer.makeTorusMesh(ringRadius: 0.082, tubeRadius: 0.00065)
         let loopEntity = ModelEntity(mesh: loopMesh, materials: [fiberMaterial])
         loopEntity.name = "FiberLoop"
         loopEntity.position = [0, 0, 0.0035]
@@ -57,7 +58,7 @@ struct PanelVisualizer {
         // Note: For full texture loading in production, use TextureResource.load(named: "AppIcon-1024")
         // Here we use a placeholder emissive plane as high-quality logo representation
         let logoMesh = MeshResource.generatePlane(width: 0.08, height: 0.08)
-        var logoMaterial = UnlitMaterial(color: .white) // In real app, replace with image texture
+        let logoMaterial = UnlitMaterial(color: .white) // In real app, replace with image texture
         // To use actual logo: load image and apply as texture
         let logo = ModelEntity(mesh: logoMesh, materials: [logoMaterial])
         logo.name = "Muon3VisionLogo"
@@ -76,18 +77,57 @@ struct PanelVisualizer {
         return root
     }
     
+    /// RealityKit has no torus primitive, so build one from a MeshDescriptor.
+    /// Ring lies in the XY plane (the panel plane); tube thickness is along Z.
+    static func makeTorusMesh(ringRadius: Float, tubeRadius: Float,
+                              ringSegments: Int = 96, tubeSegments: Int = 12) -> MeshResource {
+        var positions: [SIMD3<Float>] = []
+        var normals: [SIMD3<Float>] = []
+        var indices: [UInt32] = []
+        positions.reserveCapacity(ringSegments * tubeSegments)
+        for i in 0..<ringSegments {
+            let u = Float(i) / Float(ringSegments) * 2 * .pi
+            let cosU = cos(u), sinU = sin(u)
+            for j in 0..<tubeSegments {
+                let v = Float(j) / Float(tubeSegments) * 2 * .pi
+                let cosV = cos(v), sinV = sin(v)
+                positions.append([(ringRadius + tubeRadius * cosV) * cosU,
+                                  (ringRadius + tubeRadius * cosV) * sinU,
+                                  tubeRadius * sinV])
+                normals.append([cosV * cosU, cosV * sinU, sinV])
+            }
+        }
+        for i in 0..<ringSegments {
+            let iNext = (i + 1) % ringSegments
+            for j in 0..<tubeSegments {
+                let jNext = (j + 1) % tubeSegments
+                let a = UInt32(i * tubeSegments + j)
+                let b = UInt32(iNext * tubeSegments + j)
+                let c = UInt32(iNext * tubeSegments + jNext)
+                let d = UInt32(i * tubeSegments + jNext)
+                indices += [a, b, c, a, c, d]
+            }
+        }
+        var descriptor = MeshDescriptor(name: "fiberTorus")
+        descriptor.positions = MeshBuffers.Positions(positions)
+        descriptor.normals = MeshBuffers.Normals(normals)
+        descriptor.primitives = .triangles(indices)
+        return (try? MeshResource.generate(from: [descriptor]))
+            ?? MeshResource.generateSphere(radius: ringRadius)
+    }
+
     private func createGlowingFiberMaterial() -> PhysicallyBasedMaterial {
         var mat = PhysicallyBasedMaterial()
-        mat.baseColor = .init(tint: .init(red: 0.1, green: 0.9, blue: 0.3))
+        mat.baseColor = .init(tint: .init(red: 0.1, green: 0.9, blue: 0.3, alpha: 1.0))
         mat.roughness = 0.2
         mat.metallic = 0.0
-        mat.emissiveColor = .init(color: .init(red: 0.2, green: 1.0, blue: 0.4))
+        mat.emissiveColor = .init(color: .init(red: 0.2, green: 1.0, blue: 0.4, alpha: 1.0))
         mat.emissiveIntensity = 1.5
         return mat
     }
     
     func animateEvent(_ event: SimEvent, on root: Entity) async {
-        guard let panel = root.findEntity(named: "Panel"),
+        guard let _ = root.findEntity(named: "Panel"),
               let fiber = root.findEntity(named: "FiberLoop"),
               let sipm = root.findEntity(named: "SiPM"),
               let logo = root.findEntity(named: "Muon3VisionLogo") else { return }
@@ -175,7 +215,7 @@ struct PanelVisualizer {
         burst.name = "photonBurst"
         
         let particleMesh = MeshResource.generateSphere(radius: 0.0008)
-        var particleMat = UnlitMaterial(color: color)
+        let particleMat = UnlitMaterial(color: color)
         
         for i in 0..<count {
             let particle = ModelEntity(mesh: particleMesh, materials: [particleMat])
@@ -200,7 +240,7 @@ struct PanelVisualizer {
         stream.name = "photonStream"
         
         let particleMesh = MeshResource.generateSphere(radius: 0.0006)
-        var mat = UnlitMaterial(color: color.withAlphaComponent(0.9))
+        let mat = UnlitMaterial(color: color.withAlphaComponent(0.9))
         
         for i in 0..<count {
             let t = Float(i) / Float(count)

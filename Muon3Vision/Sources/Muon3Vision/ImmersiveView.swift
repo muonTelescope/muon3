@@ -13,10 +13,11 @@ struct ImmersiveView: View {
             content.add(root)
             rootEntity = root
             
-            // Add high-quality environment
-            let environment = try? await EnvironmentResource(named: "studio")
-            if let env = environment {
-                root.components.set(EnvironmentLightingComponent(environment: env))
+            // Add high-quality image-based environment lighting when a
+            // "studio" environment resource is bundled (optional).
+            if let env = try? await EnvironmentResource(named: "studio") {
+                root.components.set(ImageBasedLightComponent(source: .single(env)))
+                root.components.set(ImageBasedLightReceiverComponent(imageBasedLight: root))
             }
             
             // Build the high-quality panel visualization
