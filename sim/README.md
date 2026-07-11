@@ -167,6 +167,12 @@ Produces `thermal_step.png`, `thermal_sweep.png`, `thermal_pi_loop.png`, `therma
 
 Committed copies live in `figures/`. A dedicated "Thermal Management (Peltier / TEC)" subsection with figures was added to `Muon3_Simulation_Studies.tex`.
 
+**Example Thermal Figures:**
+![Thermal Step Response](../figures/thermal_step.png)
+![Thermal Sweep](../figures/thermal_sweep.png)
+![Thermal PI Loop](../figures/thermal_pi_loop.png)
+![Thermal Leak Sweep](../figures/thermal_leak_sweep.png)
+
 Use to validate:
 - 1.2–1.8 A operating point for 15–25 °C drop with dew safety.
 - Insulation requirements (R_leak).
@@ -183,9 +189,12 @@ Run:
 ```bash
 python power_budget.py
 ```
-Generates `power_budget_modes.png`.
+Generates `power_budget_modes.png` (also copied to `figures/power_budget_modes.png`).
 
 Critical for PD contract negotiation and 5 V science-mode validation.
+
+**Example:**
+![Power Budget Modes](../figures/power_budget_modes.png)
 
 ### coincidence_rates.py
 Monte-Carlo estimator:

@@ -138,6 +138,22 @@ An overall summary and findings paper has been written in the base directory:
 
 The paper replaces/augments the earlier short simulation report in `sim/reports/`.
 
+### Selected Figures & Renders
+
+**Procedural Blender panel renders** (used in Hardware Baseline figure):
+
+![Isometric](figures/muon3_panel_isometric.png)
+![Top](figures/muon3_panel_top.png)
+![Side](figures/muon3_panel_side.png)
+![Front](figures/muon3_panel_front.png)
+
+**Thermal / Peltier analysis** (new subsection in paper):
+
+![Thermal Step](figures/thermal_step.png)
+![Thermal Sweep](figures/thermal_sweep.png)
+
+See `figures/`, `cad/blender/`, `sim/`, and the paper for more (openEMS results in `figures/openems/`, Geant4/ngspice yields, power budgets, etc.).
+
 ### How to build and run simulations
 See `sim/geant4/README.md`, `sim/README.md`, and the paper for instructions. Full Geant4 (with visualization and all required libraries) is needed for the complete optical model; stand-in + Python models provide rapid iteration.
 

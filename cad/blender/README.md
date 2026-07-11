@@ -31,3 +31,13 @@ blender -b -P cad/blender/render_muon_panel.py
 - Deprecation warnings for `use_nodes` are benign (Blender 5.x → 6.0 transition).
 
 These renders support the Hardware Baseline section of the paper.
+
+### Example Renders
+
+![Muon3 Panel Isometric](figures/muon3_panel_isometric.png)
+
+![Muon3 Panel Top](figures/muon3_panel_top.png)
+
+![Muon3 Panel Side](figures/muon3_panel_side.png)
+
+![Muon3 Panel Front](figures/muon3_panel_front.png)

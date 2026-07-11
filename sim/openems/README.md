@@ -36,3 +36,17 @@ Added to Muon3_Simulation_Studies.tex as "Electromagnetic Simulations (openEMS)"
 Paper built with pdflatex (currently 11 pages, includes separate Thermal subsection).
 
 When openEMS is installed (bindings verified working), re-run scripts for FDTD-capable results (scripts label "openEMS FDTD" vs. fallback).
+
+### Example Results
+
+**nRF9151 Antenna:**
+![nRF9151 S11](figures/openems/nrf9151_antenna_s11.png)
+![nRF9151 Pattern](figures/openems/nrf9151_antenna_pattern.png)
+
+**Cable SI (50cm):**
+![Cable S-Params](figures/openems/cable_50cm_sparams.png)
+![Cable Pulse](figures/openems/cable_pulse.png)
+
+**HS Trace & PDN:**
+![HS Trace](figures/openems/hs_trace_sparams.png)
+![PDN Impedance](figures/openems/pdn_3v3_impedance.png)
