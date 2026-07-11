@@ -1,21 +1,36 @@
 #!/usr/bin/env python3
 """
 geant4_panel_standin.py
-Lightweight stand-in for the Geant4 muon + optical simulation.
-Generates realistic light yield statistics for the 200x200x10 mm panel + loop fiber + MicroFC-30035.
+Lightweight stand-in OR driver for the real Geant4 muon + optical simulation.
+If a real built muon_panel binary is found (after full Geant4 + example build),
+it will run the real simulation to generate authentic hits.csv.
+Otherwise falls back to a fast synthetic model tuned to project expectations.
 Outputs:
-- results/hits.csv (like real Geant4)
-- plots of yield vs position, photon stats, time profile
+- geant4/hits.csv (compatible with real Geant4)
+- plots/
 - summary numbers for reports
 """
 import os
+import subprocess
 import numpy as np
 import matplotlib.pyplot as plt
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(os.path.dirname(BASE), "geant4")
+PROJECT_ROOT = os.path.dirname(os.path.dirname(BASE))
+OUT = os.path.join(PROJECT_ROOT, "sim", "geant4")
 os.makedirs(OUT, exist_ok=True)
 os.makedirs(os.path.join(OUT, "plots"), exist_ok=True)
+
+REAL_BINARY_CANDIDATES = [
+    os.path.join(PROJECT_ROOT, "sim", "geant4", "build", "muon_panel"),
+    os.path.join(PROJECT_ROOT, "sim", "geant4", "build", "muon_panel.exe"),
+]
+
+def find_real_binary():
+    for p in REAL_BINARY_CANDIDATES:
+        if os.path.exists(p) and os.access(p, os.X_OK):
+            return p
+    return None
 
 np.random.seed(123)
 
@@ -91,7 +106,59 @@ def simulate_panel(n_events=2000):
 
     return n_detected.mean()
 
+def run_real_geant4(n_events=500, macro="run.mac"):
+    """Run the real built muon_panel if available."""
+    binary = find_real_binary()
+    if not binary:
+        return False, "No real muon_panel binary found"
+
+    macro_path = os.path.join(PROJECT_ROOT, "sim", "geant4", "macros", macro)
+    if not os.path.exists(macro_path):
+        macro_path = os.path.join(PROJECT_ROOT, "sim", "geant4", "macros", "run.mac")
+
+    # Temporarily cd so it can find macros if relative
+    cmd = [binary, "-m", macro_path]
+    print(f"Running REAL Geant4 simulation: {' '.join(cmd)}")
+    try:
+        # The real app may write to cwd or have its own output. We run it and then move hits.csv if produced.
+        result = subprocess.run(cmd, cwd=os.path.dirname(binary), capture_output=True, text=True, timeout=300)
+        print(result.stdout[-500:] if result.stdout else "")
+        if result.returncode != 0:
+            print("Real run stderr:", result.stderr[-300:] if result.stderr else "")
+            return False, "Real simulation returned non-zero"
+
+        # The C++ code writes muon_panel_hits.csv in current dir of the binary or cwd.
+        possible_hits = [
+            os.path.join(os.path.dirname(binary), "muon_panel_hits.csv"),
+            os.path.join(os.getcwd(), "muon_panel_hits.csv"),
+            os.path.join(OUT, "muon_panel_hits.csv"),
+        ]
+        for p in possible_hits:
+            if os.path.exists(p):
+                # Move/rename to standard location
+                target = os.path.join(OUT, "hits.csv")
+                if p != target:
+                    os.replace(p, target)
+                print(f"Real hits.csv captured to {target}")
+                return True, target
+        return False, "Real run completed but no hits.csv found (check app output logic)"
+    except Exception as e:
+        return False, f"Failed to run real binary: {e}"
+
 if __name__ == "__main__":
+    real_bin = find_real_binary()
+    if real_bin:
+        success, info = run_real_geant4(300)
+        if success:
+            print("Used REAL Geant4 output.")
+            # Optionally post-process or just use the produced hits.csv
+            print("See sim/geant4/hits.csv (real data)")
+            # Still generate some plots from it if wanted
+            # For now just exit
+            exit(0)
+        else:
+            print(f"Real run failed ({info}), falling back to synthetic stand-in.")
+
     mean_pe = simulate_panel(2500)
     print(f"Geant4 stand-in complete. Mean p.e. ~ {mean_pe:.1f}")
     print("See sim/geant4/hits.csv and plots/")
