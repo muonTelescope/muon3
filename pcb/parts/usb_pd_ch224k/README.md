@@ -11,6 +11,10 @@ Why selected:
 - Small, inexpensive, and much simpler than a full policy-engine PD controller.
 - Supports the fixed-voltage PD profiles needed for this system class.
 
+**Deprecated / superseded** (2026 update): CH224K replaced by TPS25751-class PD controller + BQ charger/power-path to satisfy onboard battery/solar and 20 V/5 A requirements.
+
+This folder retained for reference only.
+
 Design cautions:
 
 - Needs a real USB-C receptacle, CC network, TVS, fuse/eFuse, reverse-current

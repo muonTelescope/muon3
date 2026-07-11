@@ -14,4 +14,9 @@
   (pad "7" smd rect (at 0 0 0) (size 0.8 0.8) (layers "F.Cu" "F.Paste" "F.Mask"))
   (pad "7" thru_hole circle (at 0.2 0.2 0) (size 0.25 0.25) (drill 0.15) (layers "*.Cu" "*.Mask"))
   (pad "7" thru_hole circle (at -0.2 -0.2 0) (size 0.25 0.25) (drill 0.15) (layers "*.Cu" "*.Mask"))
+  (model "${KIPRJMOD}/3dmodels/DFN_WSON_approx.step"
+    (offset (xyz 0 0 0))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 0 0 0))
+  )
 )

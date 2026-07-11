@@ -14,6 +14,8 @@ Currently includes (generated/verified):
 
 All footprints here have been checked against the manufacturer datasheet and JLCPCB assembly rules (where applicable).
 
+Each has an associated 3D STEP model imported under `../../3dmodels/` and referenced via `${KIPRJMOD}` (see 3dmodels/README.md). When fleshing out pad layouts, verify model alignment/rotation in the 3D viewer.
+
 For standard JLCPCB parts, prefer the JLCPCB library (added to fp-lib-table via components/JLCPCB-Kicad-Library).
 
 Add new footprints only after:

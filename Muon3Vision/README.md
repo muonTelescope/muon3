@@ -1,5 +1,12 @@
 # Muon3Vision - Apple Vision Pro Simulation Visualizer
 
+**In plain English:**  
+Muon3Vision is an immersive 3D app for Apple Vision Pro that lets you see inside the muon detector. You can watch simulated cosmic-ray particles passing through the plastic panel, follow the light signals traveling through the optical fibers, and observe how the sensors detect them — all in spatial computing with natural hand and eye interactions.
+
+It visualizes real data from the project's physics simulations.
+
+---
+
 High-quality 3D visualization app for the Muon3 muon telescope simulations, built for Apple Vision Pro (visionOS).
 
 ## Focus

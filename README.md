@@ -1,5 +1,14 @@
 # Muon3: Networked Cosmic-Ray Muon Telescope
 
+**In plain English:**  
+High-energy particles called muons constantly rain down from space. Muon3 builds small, portable detectors ("muon telescopes") that use special plastic panels. When a muon passes through, the plastic gives off a tiny flash of light that is captured by sensitive sensors and fast electronics.
+
+The project aims to network many of these affordable detectors (using cellular links for remote control and data). This lets researchers study cosmic ray air showers, monitor space weather, and do basic directional measurements with muons. It supports both scientific research and university outreach programs such as gLOWCOST at Georgia State University.
+
+This repository holds the full set of simulations, electronics designs, firmware, analysis tools, and documentation.
+
+---
+
 Muon3 is the engineering archive and next-generation development workspace for the
 [Muon Telescope](https://muontelescope.com/) and
 [gLOWCOST](https://cosmic.gsu.edu/glowcost/) detector program led by Georgia State University.
@@ -38,7 +47,7 @@ The baseline station uses three or more detector layers. Each layer is based on:
 - an onsemi MicroFC-30035 SiPM;
 - a local temperature sensor and optional thermoelectric cooler; and
 - a single hybrid locking panel connector carrying the shielded signal, bias, cold- and hot-side
-  thermal sensing, TEC power, and fan power/tach over a 50 cm cable (decided 2026-07-11).
+  thermal sensing, TEC power, and fan power/tach over a 50 cm cable. TECs now require hardware-default-off interlocks (invalid NTC, hot overtemp, insufficient PD, watchdog, overcurrent).
 
 The four-channel controller is intended to provide:
 
@@ -50,7 +59,7 @@ The four-channel controller is intended to provide:
 - per-channel charge and optical self-test injection;
 - GNSS PPS-disciplined timestamps;
 - environmental and power telemetry;
-- USB-C Power Delivery; and
+- USB-C PD + onboard battery/solar support via TPS25751-class controller + charger/power-path; and
 - LTE-M/NB-IoT connectivity through a directly integrated nRF9151-LACA.
 
 ## Proposed system architecture
@@ -494,7 +503,8 @@ pdflatex --version
 
 ```bash
 cd /path/to/physics
-./build_paper.sh
+./build_paper.sh                # basic build
+./build_paper.sh --pull-images  # fetch latest images from Google Photos album first
 ```
 
 Or manually:
@@ -507,4 +517,37 @@ pdflatex -interaction=nonstopmode Muon3_Simulation_Studies.tex
 ```
 
 A pre-generated PDF (`Muon3_Simulation_Studies.pdf`) is included, produced via fpdf2 with embedded plots from the simulations (for environments without native pdflatex).
+
+## Documentation Images, Simulations Data & Additional Information (Google Photos + Drive)
+
+Many photos, test shots, hardware renders, diagrams, simulation outputs (Geant4 hits, ngspice waves, plots), and additional files live in Google Photos and Google Drive (support for multiple accounts) rather than being committed directly to the repo.
+
+**Available connectors** (checked locally):
+- Google Photos Library API + gphotos-sync (for images, test shots, data visuals).
+- Google Drive API v3 + rclone (recommended for sim data, CAD, PDFs, additional info).
+- No active Google Drive for Desktop sync found on this machine.
+
+See `scripts/README.md` for full details, multi-account setup, and usage.
+
+### Quick pulls
+
+**Photos (images/tests/data):**
+```bash
+pip install gphotos-sync
+gphotos-sync --album "Muon3 Documentation" ./figures/google
+# Or with filters for data/tests:
+cd scripts && python pull_google_photos.py --keywords "data,test,simulation" --since 2025-01-01 --dest ../figures/tests
+```
+
+**Drive (simulations + additional info):**
+```bash
+# rclone (best for multiple accounts + sim folders)
+rclone copy gdrive-sims:Muon3/simulations ./sim/additional/drive --progress
+# Or the Python connector:
+cd scripts && python pull_google_drive.py --folder "Muon3/Simulations" --dest ../sim/data/drive
+```
+
+Then copy needed files into `figures/`, `sim/`, Muon3Vision resources, etc.
+
+**Important**: Never commit `client_secret*.json`, `*_token*.json`, or bulk downloads. Use `.gitignore` (already configured) or Git LFS for large assets. Run `./build_paper.sh --pull-images` to auto-fetch before building docs.
 

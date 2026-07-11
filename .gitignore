@@ -38,10 +38,17 @@ gateware/build/
 sim/geant4/build2/
 sim/geant4/build3/
 sim/geant4/testbuild/
+sim/geant4/build_clean/
 # Additional build artifacts
 sim/geant4/build*/
 **/build*/
 **/.build/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.o
+*.d
 # LaTeX temp files (keep the main PDF)
 *.aux
 *.bbl
@@ -56,3 +63,15 @@ sim/geant4/build*/
 Muon3Vision/.build/
 Muon3Vision/Package.resolved
 # Python cache etc already covered
+
+# Google Photos / Google Drive / documentation credentials (never commit)
+scripts/client_secret*.json
+scripts/*token*.json
+scripts/*.token
+docs-images/
+figures/google/
+figures/drive/
+sim/additional/drive/
+# rclone config if using local (prefer not committing)
+.rclone.conf
+rclone.conf

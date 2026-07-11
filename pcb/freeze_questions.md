@@ -9,10 +9,9 @@ architecture decisions for the first manufacturable revision.
    one per channel; MAX1968 and daughterboard options are dropped.
 
 2. **Battery/solar on the main PCB, or external?**
-   "Whatever is easier" — decided as the easier path: this revision exposes
-   only a protected USB-C PD input (CH224K sink plus a real protection
-   network). Energy storage/solar stays in an external qualified module that
-   presents USB-C PD or a clean DC input. No BQ25798-class charger on board.
+   **Updated requirement**: Onboard battery/solar **or** full 20 V / 5 A power management is required.
+   Decision: Adopt TPS25751 + BQ2579x-class charger/power-path on the main PCB.
+   This replaces the CH224K USB-C-PD-input-only approach. External modules remain possible but are no longer the only path. See PART_SELECTION.md power section.
 
 3. **Exact TEC module per SiPM?**
    Same Sky `CP30238`: 20 x 20 x 3.8 mm, 8.6 V / 3 A max, Qmax 15 W,
@@ -46,10 +45,24 @@ architecture decisions for the first manufacturable revision.
    Cooling is an enhancement, not a prerequisite for data validity.
 
 9. **Fan tach, hot-side NTC, enclosure-open, condensation sensors?**
-   All required on the first PCB: four fan drivers with tach readback, four
-   hot-side NTC inputs (eight NTC channels total), enclosure-open switch
-   input, and humidity/dew-point sensing (BME280 plus dew-point interlock
-   logic). This confirms the multichannel external ADC requirement.
+   All required on the first PCB.
+
+10. **Hardware vs firmware safety for TECs (new)**
+    TEC power must default OFF in hardware. Invalid NTC, hot-side overtemp,
+    insufficient PD contract, watchdog loss, or overcurrent must all force
+    shutdown independently of any processor. See PART_SELECTION.md and
+    thermal.kicad_sch for interlock architecture.
+
+11. **Telemetry subsystem (new)**
+    nRF9151 remains primary for cellular. Add RP2040 as dedicated telemetry
+    co-processor (PIO for sensors/tach, USB local interface). Optional path
+    for nRF54-class BLE later if local wireless field access is required.
+    See parts/telemetry_rp2040/.
+
+12. **DAC architecture (new)**
+    Two 8-channel precision DACs (DAC80508 class preferred) instead of one
+    8-ch + small secondary. 16 total outputs for thresholds, HV trim,
+    injection, TEC refs, spares.
 
 10. **Should cellular certification risk dominate outline and antenna
     placement?**

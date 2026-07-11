@@ -17,3 +17,5 @@ Only symbols and footprints independently checked against the selected manufactu
 - Add only verified custom to muon3.* 
 
 See also parts/*/README.md for each component's LCSC, package, and verification notes.
+
+3D models (STEP) for custom footprints and key packages live in `../3dmodels/`. Custom footprints in `muon3.pretty/` now reference them via `${KIPRJMOD}/3dmodels/...`. JLCPCB parts resolve via your KiCad 3D search paths (or copy overrides into 3dmodels/). See `../3dmodels/README.md`.

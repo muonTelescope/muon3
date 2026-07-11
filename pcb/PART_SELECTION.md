@@ -1,21 +1,33 @@
 # Component selection and alternatives
 
-Catalog review date: 2026-07-11. Stock changes continuously; “preferred” means technically preferred and assembly-supported when checked, not permanently guaranteed.
+Catalog review date: 2026-07-11 (updated with new architecture requirements). Stock changes continuously; “preferred” means technically preferred and assembly-supported when checked, not permanently guaranteed.
 
-## Power input and distribution
+## Power input and distribution (updated per new requirements)
 
-### USB-C PD sink — CH224K, C970725
+### USB-C PD + Battery + Solar — TPS25751-class controller + BQ2579x charger
 
-Preferred because it is inexpensive, publicly stocked, supports fixed 5/9/12/15/20 V PD contracts and is available in an exposed-pad package that JLCPCB assembles. Muon3 requests 12 V so the Peltier bridges have useful headroom while logic rails are generated efficiently.
+**New requirement**: onboard battery/solar support **or** full 20 V / 5 A power management is now mandatory.
 
-Alternatives:
+Preferred solution: **TPS25751** (TI USB Type-C & PD 3.2 controller with integrated managed power paths) paired with a **BQ25792** (or BQ25756) battery charger / power-path IC.
 
-- TPS25730DREFR, C22438973: stronger documentation/ecosystem and stocked, but more expensive and substantially more complex.
-- Plain USB-C 5 V sink resistors: useful fallback for electronics-only operation, but cannot provide the intended Peltier power and must disable cooling in firmware.
+- Supports high-power PD contracts (20 V / 5 A capable).
+- Native integration with external TI chargers via I2C.
+- True bidirectional power path: USB-C PD sink + battery charge/discharge + solar/DC input support.
+- Hardware contract status signals usable for safety interlocks ("sufficient power negotiated").
+- Enables onboard Li-ion/LiFePO4 + solar while keeping robust USB-C operation.
 
-CH224K does not replace input protection. The final sheet needs a fuse/eFuse, TVS, reverse-current control and bulk capacitance selected for the negotiated power level.
+Rationale:
+- CH224K was a minimal sink-only part. It cannot provide proper power path, battery management, or the 20 V/5 A headroom + solar path now required.
+- TPS25751 + BQ family is the direct "TPS25751-class full power-path + charger" reference design requested.
+- Allows science operation from battery when no PD source is present, and graceful solar supplementation.
 
-Decision 2026-07-11: this revision is USB-C-PD-input-only. No onboard battery or solar charging; energy storage lives in an external qualified module presenting USB-C PD or a clean DC input. A TPS25751-class full power-path architecture is deferred until charging ever moves onto the board.
+See `parts/power_pd_tps25751/` and `parts/charger_bq25792/`.
+
+Input protection (eFuse/TVS/reverse), bulk caps, and high-current layout for TECs remain mandatory.
+
+### 3.3 V and 1.2 V rails
+
+Synchronous bucks from the post-charger / system rail (now variable 5-20 V bus). 12 V nominal target for TEC headroom when high-power PD or battery is available. 5 V fallback must still boot the electronics safely (with TECs hardware-disabled).
 
 ### 3.3 V and 1.2 V rails
 
@@ -42,17 +54,50 @@ Alternatives:
 
 Two comparators per channel provide a low physics threshold and a higher shower/noise-discrimination threshold. TLV3601IDBVR remains the performance reference but public stock was not confirmed during the audit, so it cannot be the only production option. Before schematic freeze, qualify a stocked push-pull comparator against propagation delay, dispersion, minimum pulse width, input overdrive, common-mode range and power. The PCB should support one exact qualified footprint, not “any SOT-23-5” substitution.
 
-### DACs
+### DACs — two 8-channel precision (DAC80508 class)
 
-The design requires at least nine static analog outputs: eight comparator thresholds plus one HV trim. DAC60508 provides eight channels and a second small DAC can provide HV trim and spare controls. It is preferred functionally due to internal reference options and prior project history, but its public JLC stock was not confirmed. MCP4728 is a lower-resolution, broadly sourced quad alternative; three devices cover twelve outputs but require address planning. Final selection is blocked until live stock and reference accuracy are verified.
+**Requirement**: Use two 8-channel precision DACs.
+
+Preferred: Two **DAC80508** (16-bit, 8-ch, SPI, excellent internal 2.5 V reference 5 ppm/°C).
+
+- Total 16 independent analog outputs.
+- Allocation (example):
+  - DAC A: 8 comparator thresholds (low + high per channel) + charge/optical injection levels.
+  - DAC B: SiPM HV trim, up to 4× TEC current/voltage setpoints, calibration references, spares.
+- Higher resolution + better accuracy/tempco than previous DAC60508 approach.
+- Internal reference reduces BOM parts and drift.
+- JLCPCB has stocked variants (verify current LCSC at layout time).
+
+See `parts/dac_dual_80508/`.
+
+SPI master can be the RP2040 telemetry processor (recommended for real-time updates) or nRF9151. FPGA may assist LDAC timing if needed.
 
 ## Digital, cellular and timing
 
-### nRF9151-LACA-R7 — C22397843
+### Primary comms: nRF9151-LACA-R7 — C22397843
 
-Preferred and assembly-supported. It integrates LTE-M/NB-IoT, GNSS and the application MCU, removing the obsolete carrier headers and external LC76G placeholder. It requires Standard PCBA and X-ray. Reserve stock before production. Follow Nordic's reference design for every supply, RF, SIM and antenna component; do not improvise the LGA fanout.
+Retained as the **primary** radio + application processor.
 
-Both a nano-SIM holder and eSIM footprint are planned. Populate one subscriber identity by default. Onomondo/Telekom nuSIM is a provisioning choice and does not eliminate the physical-SIM option.
+- LTE-M / NB-IoT + GNSS for remote/long-range telemetry (critical for distributed muon telescope stations).
+- Integrates the main app MCU.
+- Follow Nordic reference exactly for RF, supplies, SIM, antenna keepout.
+
+### Telemetry subsystem co-processor — RP2040 (preferred)
+
+**Add RP2040** as dedicated telemetry / interface / low-level I/O co-processor.
+
+Why RP2040 (vs. or in addition to nRF54):
+- nRF9151 keeps cellular. RP2040 excels at the "telemetry subsystem" role:
+  - PIO state machines for precise fan tachometry, custom timing, sensor capture.
+  - Dual M0+ cores separate real-time I/O from USB/logging.
+  - Native high-speed USB for local desktop tools, data download, and co-processor updates.
+  - Extremely cost-effective and available.
+- nRF54 (BLE 5.4) would be excellent for **local Bluetooth** phone/field access.
+- Current decision: RP2040 is the primary addition for telemetry. Board should allow a small optional nRF54 footprint or module later if Bluetooth proves valuable in deployment.
+
+Interconnect: UART/SPI between nRF9151 and RP2040; direct access to FPGA and sensors where latency matters.
+
+See `parts/telemetry_rp2040/`.
 
 ### FPGA — ICE40UP5K-SG48I, C2678152
 
@@ -72,16 +117,38 @@ Use an exact 25 MHz TCXO only after specifying frequency stability over the full
 
 20 x 20 x 3.8 mm, Vmax 8.6 V, Imax 3.0 A, Qmax 15 W, dTmax 66 degC, ~2.3 Ω internal resistance. Off-board part in the panel thermal stack, wired through the hybrid connector; stocked at Digi-Key (102-1667-ND). Operating point roughly 1.2–1.8 A for a 15–25 degC drop; a 12 V/3 A PD contract supports all four channels at the low end, and 5 V fallback runs with cooling off. Thermal stack per channel: aluminum cold block with cold-side NTC, ≥40 x 40 x 20 mm hot-side heatsink with hot-side NTC, and a 40 mm 12 V tach fan. See `parts/tec_cp30238/` for the full selection note and datasheet.
 
-### DRV8873HPWPR — C2150604, one per channel
+### DRV8873HPWPR — C2150604 (or qualified alternate), one per channel
 
-Frozen 2026-07-11 by the 100% JLCPCB assembly decision; MAX1968 and daughterboard options are dropped. Preferred because it is an integrated bidirectional H-bridge with SPI diagnostics, current regulation/sensing, thermal protection and adequate peak-current headroom. It was publicly stocked but at relatively low quantity, so reserve it or qualify the alternate before layout freeze. Set ITRIP at or below 2.5 A, under the CP30238 3.0 A limit, and use an output LC filter so the module sees quasi-DC current.
+Retained for H-bridge (JLC assembly).
 
-Alternatives:
+### Hardware-default-off TEC safety interlock (mandatory)
 
-- DRV8876PWPR: lower cost and similar motor/Peltier use, but its exact live stock and diagnostic differences must be verified.
-- Discrete MOSFET H-bridge: improves sourcing flexibility but greatly increases gate-drive, shoot-through, current-sense and protection design burden.
+**Critical new requirement**: The TEC section must default to OFF in **hardware**, not firmware. The following conditions must independently (or in combination) force the Peltier bridges and fans off, regardless of MCU/FPGA state:
 
-Each channel requires a local fuse/current limit, bulk ceramic capacitance, filtered current readback and a hardware overtemperature shutdown independent of firmware. The power budget is negotiated: cooling is reduced or disabled unless a suitable PD contract is present.
+- Invalid NTC (open, short, or out-of-range on cold-side or hot-side)
+- Hot-side overtemperature
+- Insufficient PD contract / inadequate power available (from TPS25751 status or VBUS monitoring)
+- Watchdog loss (missing heartbeat from nRF9151, RP2040, or preferably the iCE40 FPGA)
+- Overcurrent (per-channel or aggregate)
+
+Implementation approach:
+- Analog window comparators on all NTC voltages.
+- Dedicated hot-side temperature comparator (or thermal fuse + comparator).
+- Power-path / PD "contract good" hardware signal.
+- Retriggerable watchdog timer (monostable or dedicated IC) driven by periodic pulse (FPGA recommended for reliability).
+- Current sense + comparator per bridge (supplements DRV8873 internal limits).
+- Logic (discrete gates, small PLD, or simple MOSFET logic) that ANDs the "all safe" conditions to gate:
+  - Main high-side power switch for the TEC 12 V bus, **and/or**
+  - Individual DRV8873 EN pins.
+- Faults preferably **latching** (overtemp, overcurrent, watchdog) until power cycle or explicit hardware reset.
+- Firmware / RP2040 / nRF9151 can only *request* enable after reading all sensors; they cannot bypass the hardware interlock.
+- Status of each interlock readable by the processors for diagnostics (via comparators or ADC).
+
+This is now a non-negotiable safety gate. See thermal schematic notes and DESIGN_RULES.md.
+
+Fan tach loss should also contribute to disabling its associated channel.
+
+Power budget is still negotiated, but hardware now enforces the limits.
 
 ### Fan drive — one channel per TEC (added 2026-07-11)
 

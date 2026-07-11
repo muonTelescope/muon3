@@ -18,4 +18,9 @@
   (pad "9" thru_hole circle (at -0.3 0.3 0) (size 0.3 0.3) (drill 0.15) (layers "*.Cu" "*.Mask"))
   (pad "9" thru_hole circle (at 0.3 -0.3 0) (size 0.3 0.3) (drill 0.15) (layers "*.Cu" "*.Mask"))
   (pad "9" thru_hole circle (at -0.3 -0.3 0) (size 0.3 0.3) (drill 0.15) (layers "*.Cu" "*.Mask"))
+  (model "${KIPRJMOD}/3dmodels/WSON8_ESOP8.step"
+    (offset (xyz 0 0 0))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 0 0 0))
+  )
 )

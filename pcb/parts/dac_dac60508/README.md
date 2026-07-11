@@ -1,9 +1,11 @@
-# Threshold and trim DACs
+# Threshold and trim DACs (superseded)
 
-Preferred MPN: `DAC60508ZRTET`
+Preferred MPN: `DAC60508ZRTET` (historical)
 
-Current role: eight comparator thresholds. A second DAC or spare channels handle
-HV trim, analog offsets, and thermal setpoints.
+**Updated**: Two 8-channel precision DACs (DAC80508 class) are now required.
+See `../dac_dual_80508/README.md`.
+
+Historical role: eight comparator thresholds + HV trim.
 
 Why selected:
 

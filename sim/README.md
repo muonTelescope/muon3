@@ -1,5 +1,7 @@
 # Muon3 Simulation Models
 
+**In plain English:** Simulations predict how muons will interact with the plastic panels, how much light reaches the sensors, how the electronics will respond, and how much power and cooling will be needed.
+
 **Muon3** is the next-generation four-channel cosmic-ray muon telescope (see top-level README and `pcb/` for hardware context). This `sim/` directory provides the primary modeling infrastructure for electrical, detector physics, thermal, power, and system-level analysis.
 
 **Date**: 2026-07-11 (P0 architecture baseline)

@@ -10,5 +10,7 @@
 - nRF9151 RF layout, antenna keepout, decoupling and LGA escape follow the Nordic reference layout.
 - VCC/VCCPLL for iCE40UP5K are 1.2 V. VCCIO banks are 3.3 V only where the assigned I/O standard permits it.
 - USB fallback at 5 V must boot electronics safely with cooling disabled.
-- Hardware limits override firmware for Peltier overcurrent/overtemperature and HV overvoltage.
+- Hardware limits **always override** firmware for Peltier power: invalid NTC, hot-side overtemperature, insufficient PD contract, watchdog loss, or overcurrent must independently force TECs and fans off (latching where appropriate). Firmware can only request enable.
+- Explicit hardware interlock block required in the thermal section (comparators + logic or load switch enables). Status readable but not bypassable by processors.
+- nRF9151 is primary cellular. RP2040 added as telemetry co-processor (PIO for tach/sensors, USB local interface). Two 8-ch precision DACs (DAC80508 class) for all analog references.
 - Board target: four-layer JLCPCB Standard PCBA, components predominantly on the top side.

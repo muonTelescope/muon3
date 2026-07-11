@@ -1,5 +1,12 @@
 # Muon3 next-generation PCB
 
+**In plain English:**  
+This is where the custom circuit board (PCB) for the muon telescope is being designed. The board reads tiny signals from four light sensors on the detector panels, times the particle arrivals very accurately using an FPGA chip, controls cooling for the sensors with Peltier devices, manages power (including future battery/solar support), and sends data over cellular networks using a built-in modem.
+
+It is a complete clean-sheet design in KiCad 9, currently at an early architecture stage.
+
+---
+
 This directory follows the organization of the legacy `mppcInterface/pcb` directory while starting a clean KiCad project for the next-generation four-channel MicroFC-30035 telescope.
 
 ## Status
@@ -47,7 +54,7 @@ All ten freeze questions are answered; see [freeze_questions.md](freeze_question
 full record. In summary:
 
 1. 100% JLCPCB assembly including the TEC section — `DRV8873` H-bridges frozen.
-2. USB-C PD input only this revision; battery/solar stays in an external qualified module.
+2. TPS25751-class PD + battery charger/power-path on board (battery/solar or 20 V/5 A support required).
 3. TEC module: Same Sky `CP30238` (20 x 20 mm, 8.6 V/3 A) per SiPM, with aluminum cold block,
    40 mm-class heatsink, and 12 V tach fan — see [parts/tec_cp30238/](parts/tec_cp30238/README.md).
 4. Four-channel board that ships populated for three panels; channel 4 is expansion.
@@ -63,8 +70,10 @@ full record. In summary:
 
 - Add a multichannel external ADC for temperatures, HV monitor, TEC telemetry, and rail readback.
 - Prefer two 8-channel DACs so thresholds, baseline trims, HV trim, calibration, and TEC controls have spares.
-- Treat CH224K as a simple first-prototype PD sink; use a TPS25751-class path if battery/solar or 100 W power management is required.
-- Make TEC outputs hardware-default-off on sensor faults, watchdog loss, overcurrent, or insufficient PD contract.
+- **Adopted**: Switch to TPS25751-class PD controller + charger/power-path. Onboard battery/solar or 20 V/5 A management is now required (no longer deferred).
+- **Adopted**: TEC section must default-off in hardware (invalid NTC, hot overtemp, insufficient PD contract, watchdog loss, overcurrent). Firmware cannot override. See thermal interlock block.
+- Add RP2040 (or nRF54 for BLE) as telemetry co-processor subsystem.
+- Use two 8-channel precision DACs (DAC80508 class).
 - Put charge-injection and optical-test hooks in the schematic even if fitted as DNP.
 - Keep SiPM bias off exposed coax shells; use keyed touch-safe connectors for bias and TEC power.
 - Reserve RF keepout and antenna placement before dense digital or power placement begins.
@@ -100,3 +109,16 @@ Full details and usage instructions are in `../sim/README.md`. Summary:
 4. Cross-validate everything against bench measurements before freezing thresholds, DAC settings, or interlock values in the schematic/BOM.
 
 See also `../sim/data/panel_yield_notes.md` for the critical measurements that must be performed on real panels.
+
+## 3D models
+
+STEP models for visualization and MCAD integration have been collected for the major components:
+
+- nRF9151 (LGA), iCE40UP5K (QFN48), USB-C, U.FL/IPEX, BME280, OPA858 (WSON8 approx), TPS61170 (WSON6 proxy), CH224K (ESSOP10 proxy), DRV8873 (HTSSOP24 approx), SiPM proxy, and common SOT/SOIC/QFN packages.
+- Stored in `3dmodels/`.
+- Referenced from custom footprints using `${KIPRJMOD}/3dmodels/NAME.step`.
+- See `3dmodels/README.md` for the full list, sources, and usage notes.
+- Additional legacy panel and assembly STEPs are in `reference_documentation/repositories/cad/`.
+
+When footprints are completed and the board is routed, load in KiCad's 3D viewer and tune offsets/rotations per part. These models also feed any future MCAD export or enclosure design.
+
