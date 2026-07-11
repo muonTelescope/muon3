@@ -38,8 +38,8 @@ def simulate_panel(n_events=2000):
     # MIP dE ~ 2 MeV in 1cm plastic
     dedx = 2.0  # MeV
     scint_yield = 10000  # ph/MeV
-    trapping = 0.035     # effective collection + WLS + transport eff per end (loop single end)
-    pde = 0.40
+    trapping = 0.004     # realistic low collection for loop fiber + WLS + transport + one end (project expects ~20-40 p.e. detected)
+    pde = 0.35
 
     xs = np.random.uniform(-90, 90, n_events)
     ys = np.random.uniform(-90, 90, n_events)
