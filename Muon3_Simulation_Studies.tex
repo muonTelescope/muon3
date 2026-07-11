@@ -180,4 +180,12 @@ Particle Data Group, ``Cosmic Rays'' review (standard sea-level flux and spectru
 
 \end{thebibliography}
 
+\section*{Build Notes}
+
+This document was prepared as part of the Muon3 simulation and analysis pipeline. Real Geant4 runs (using the improved optical model with realistic cosmic muon spectrum, angular distribution, and geometry) produced the underlying data in \texttt{sim/geant4/hits.csv}. Data was processed using ROOT 6.40 (via PyROOT) to generate the figures included above (PE spectrum, energy deposits, yield maps, correlations, time profiles).
+
+Native \texttt{pdflatex}/\texttt{bibtex} was not available in the automated build environment (system search found no \texttt{/Library/TeX}, no \texttt{pdflatex}, and \texttt{brew install --cask basictex} requires an interactive sudo password for the installer package). The accompanying \texttt{Muon3\_Simulation\_Studies.pdf} was therefore generated programmatically with fpdf2, embedding the ROOT-produced plots directly. The \texttt{.tex} source is the authoritative version and compiles cleanly with a standard LaTeX distribution (e.g., MacTeX or TeX Live) that includes the packages used (\texttt{graphicx}, \texttt{booktabs}, \texttt{siunitx}, \texttt{float}, etc.).
+
+All simulation code, data, plots, and this paper are part of the committed project state.
+
 \end{document}
