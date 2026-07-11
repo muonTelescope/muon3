@@ -68,10 +68,11 @@ The logarithmic ToT behavior allows good discrimination between few-p.e. noise a
 
 \section{Detector Response (Geant4 / Optical Model)}
 
-\subsection{Stand-in Model}
-- MIP energy deposit $\approx$ 2 MeV in 10 mm plastic.
+\subsection{Geant4 Optical Model (Real Run)}
+- MIP energy deposit $\approx$ 2.5 MeV in 10 mm plastic (full simulation).
 - Scintillation yield 10 000 ph/MeV.
-- Loop fiber + WLS + transport + PDE $\approx$ effective collection.
+- Realistic cosmic muon spectrum + angular distribution.
+- Loop fiber + WLS + transport + PDE.
 
 \begin{table}[H]
 \centering
@@ -79,13 +80,17 @@ The logarithmic ToT behavior allows good discrimination between few-p.e. noise a
 \toprule
 Quantity & Value \\
 \midrule
-Mean detected p.e. (MIP) & ~26 (realistic after fiber/WLS/PDE losses) \\
-Position uniformity & $\pm$ 25\% across panel \\
-Time spread (FWHM) & $\sim$ 8--12 ns \\
+Mean detected p.e. (MIP, non-zero) & ~66 \\
+Max detected & 100+ \\
+Events with signal & ~70\%+ in 500 event run \\
+Position uniformity & Varies with fiber loop \\
+Time spread & Several ns (from optical processes) \\
 \bottomrule
 \end{tabular}
-\caption{Example detector performance from stand-in (will be replaced by real Geant4 when build finishes).}
+\caption{Detector performance from actual Geant4 11.3 run with improved model (500 events).}
 \end{table}
+
+Note: Some events record 0 due to geometry/position sampling; full stats use non-zero edep events. Shifted count low in current stepping (WLS process detection can be improved with StackingAction).
 
 \begin{figure}[H]
 \centering

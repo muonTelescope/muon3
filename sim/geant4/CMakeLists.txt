@@ -22,6 +22,7 @@ set(SOURCES
   src/PanelRunAction.cc
   src/PanelSteppingAction.cc
   src/PanelSensitiveDetector.cc
+  src/PanelActionInitialization.cc
 )
 
 set(HEADERS
@@ -32,6 +33,7 @@ set(HEADERS
   include/PanelRunAction.hh
   include/PanelSteppingAction.hh
   include/PanelSensitiveDetector.hh
+  include/PanelActionInitialization.hh
 )
 
 add_executable(muon_panel ${SOURCES} ${HEADERS})

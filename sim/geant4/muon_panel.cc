@@ -9,10 +9,7 @@
 
 #include "PanelDetectorConstruction.hh"
 #include "PanelPhysicsList.hh"
-#include "PanelPrimaryGeneratorAction.hh"
-#include "PanelRunAction.hh"
-#include "PanelEventAction.hh"
-#include "PanelSteppingAction.hh"
+#include "PanelActionInitialization.hh"
 
 int main(int argc, char** argv)
 {
@@ -24,12 +21,8 @@ int main(int argc, char** argv)
   // Physics (EM + Optical)
   runManager->SetUserInitialization(new PanelPhysicsList());
 
-  // Actions
-  runManager->SetUserAction(new PanelPrimaryGeneratorAction());
-  runManager->SetUserAction(new PanelRunAction());
-  auto* eventAction = new PanelEventAction();
-  runManager->SetUserAction(eventAction);
-  runManager->SetUserAction(new PanelSteppingAction(eventAction));
+  // Actions via ActionInitialization (required for MT/Default run manager)
+  runManager->SetUserInitialization(new PanelActionInitialization());
 
   // Visualization (optional)
   G4VisManager* visManager = nullptr;

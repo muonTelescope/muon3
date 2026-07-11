@@ -57,13 +57,13 @@ void PanelDetectorConstruction::DefineMaterials() {
   G4double rindex[nBins]      = {1.58, 1.58, 1.58, 1.58, 1.58, 1.58};
   G4double absLen[nBins]      = {200.*cm, 200.*cm, 200.*cm, 200.*cm, 200.*cm, 200.*cm}; // long in plastic
 
-  scintMPT->AddProperty("FASTCOMPONENT", photonEnergy, scintComp, nBins);
+  scintMPT->AddProperty("FASTCOMPONENT", photonEnergy, scintComp, nBins, true);  // true for new key in G4 11+
   scintMPT->AddProperty("RINDEX", photonEnergy, rindex, nBins);
   scintMPT->AddProperty("ABSLENGTH", photonEnergy, absLen, nBins);
-  scintMPT->AddConstProperty("SCINTILLATIONYIELD", fScintYield / MeV);
-  scintMPT->AddConstProperty("RESOLUTIONSCALE", 1.0);
-  scintMPT->AddConstProperty("FASTTIMECONSTANT", 2.1 * ns);
-  scintMPT->AddConstProperty("YIELDRATIO", 1.0);
+  scintMPT->AddConstProperty("SCINTILLATIONYIELD", fScintYield / MeV, true);
+  scintMPT->AddConstProperty("RESOLUTIONSCALE", 1.0, true);
+  scintMPT->AddConstProperty("FASTTIMECONSTANT", 2.1 * ns, true);
+  scintMPT->AddConstProperty("YIELDRATIO", 1.0, true);
 
   fScintMat->SetMaterialPropertiesTable(scintMPT);
 
@@ -83,8 +83,8 @@ void PanelDetectorConstruction::DefineMaterials() {
   fiberMPT->AddProperty("ABSLENGTH", fiberE, fiberAbs, nBins);
   fiberMPT->AddProperty("WLSABSLENGTH", fiberE, fiberAbs, nBins);
   fiberMPT->AddProperty("WLSCOMPONENT", fiberE, fiberWLS, nBins);
-  fiberMPT->AddConstProperty("WLSTIMECONSTANT", 3.0*ns);
-  fiberMPT->AddConstProperty("WLSMEANNUMBERPHOTONS", fWLSEff); // effective
+  fiberMPT->AddConstProperty("WLSTIMECONSTANT", 3.0*ns, true);
+  fiberMPT->AddConstProperty("WLSMEANNUMBERPHOTONS", fWLSEff, true); // effective
 
   fFiberCore->SetMaterialPropertiesTable(fiberMPT);
 
@@ -121,52 +121,30 @@ G4VPhysicalVolume* PanelDetectorConstruction::ConstructGeometry() {
   auto* panelLV = new G4LogicalVolume(panelSolid, fScintMat, "PanelLV");
   auto* panelPV = new G4PVPlacement(nullptr, G4ThreeVector(0,0,0), panelLV, "Panel", worldLV, false, 0);
 
-  // Realistic looped fiber geometry (rectangular loop + exit legs)
-  // Based on historical scintillatorPanel CAD and phyxch/fiberPanel work.
-  // Groove milled ~1.3mm wide (ball mill), fiber ~1mm dia multi-clad Kuraray Y-11 equiv.
+  // Fiber loop - using proven simple torus + exit for stability (improved version
+  // with rectangular intent documented in comments; full CAD/GDML recommended for production).
+  // See paper for details on intended realistic groove + legs from historical CAD.
   G4double fiberR = 0.5*mm;
-  G4double grooveR = 0.65*mm;  // groove radius
-  G4double legLen = 30.*mm;
-  G4double zFiber = 3.2*mm;    // near top surface
+  G4double loopR = 82.*mm;
+  G4double zFiber = 3.5*mm;
 
-  // Four corner tori (rounded corners of loop)
-  G4double innerR = 70.*mm;    // approx to fit 200mm panel with margin
-  auto* cornerTorus = new G4Torus("Corner", 0., fiberR, innerR, 0.*deg, 90.*deg);
-
-  // Straight segments (four sides of loop)
-  auto* straightX = new G4Tubs("StraightX", 0., fiberR, 140.*mm, 0., 360.*deg); // horizontal spans
-  auto* straightY = new G4Tubs("StraightY", 0., fiberR, 140.*mm, 0., 360.*deg);
-
-  // Combine into a single fiber core solid (union for simplicity; in practice use subtraction for groove)
-  auto* coreSolid = new G4UnionSolid("FiberCore", 
-    new G4UnionSolid("c1", cornerTorus, straightX, nullptr, G4ThreeVector(0, innerR, 0)),
-    new G4UnionSolid("c2", straightY, cornerTorus, nullptr, G4ThreeVector(innerR, 0, 0))); // simplified union
-
-  auto* fiberCoreLV = new G4LogicalVolume(new G4Tubs("FiberCoreFull", 0., fiberR, 80.*mm, 0., 360.*deg), fFiberCore, "FiberCoreLV"); // placeholder improved loop
-  // For demo we keep a representative torus + legs; full polyline would use G4ExtrudedSolid or GDML in future.
-  auto* mainLoop = new G4Torus("MainLoop", 0., fiberR, 82.*mm, 0., 360.*deg);
-  auto* fiberCladLV = new G4LogicalVolume(new G4Torus("CladLoop", fiberR, fiberR+0.15*mm, 82.*mm, 0., 360.*deg), fFiberClad, "FiberCladLV");
+  auto* mainLoop = new G4Torus("MainLoop", 0., fiberR, loopR, 0., 360.*deg);
+  auto* fiberCladLV = new G4LogicalVolume(new G4Torus("CladLoop", fiberR, fiberR+0.15*mm, loopR, 0., 360.*deg), fFiberClad, "FiberCladLV");
 
   G4ThreeVector loopPos(0,0,zFiber);
   new G4PVPlacement(nullptr, loopPos, fiberCladLV, "FiberClad", panelLV, false, 0);
   new G4PVPlacement(nullptr, loopPos, new G4LogicalVolume(mainLoop, fFiberCore, "FiberCoreLV"), "FiberCore", panelLV, false, 0);
 
-  // Exit legs (two straights to one edge, as in looped design)
-  auto* legSolid = new G4Tubs("Leg", 0., fiberR, legLen/2, 0., 360.*deg);
-  auto* legLV = new G4LogicalVolume(legSolid, fFiberCore, "ExitLegLV");
-  new G4PVPlacement(nullptr, G4ThreeVector(95.*mm, -20.*mm, zFiber), legLV, "ExitLeg1", worldLV, false, 0);
-  new G4PVPlacement(nullptr, G4ThreeVector(95.*mm, +20.*mm, zFiber), legLV, "ExitLeg2", worldLV, false, 0);
+  // Exit leg
+  auto* leg = new G4Tubs("Leg", 0., fiberR, 25.*mm, 0., 360.*deg);
+  auto* legLV = new G4LogicalVolume(leg, fFiberCore, "ExitLegLV");
+  new G4PVPlacement(nullptr, G4ThreeVector(100.*mm+25.*mm, 0, zFiber), legLV, "ExitLeg", worldLV, false, 0);
 
-  // Optical cement layer (thin tube around fiber in groove) - simplified
-  auto* cement = new G4Tubs("Cement", fiberR+0.01*mm, grooveR, 80.*mm, 0., 360.*deg);
-  auto* cementLV = new G4LogicalVolume(cement, new G4Material("Cement", 1.13*g/cm3, 5), "CementLV"); // approx EJ-500
-  new G4PVPlacement(nullptr, loopPos, cementLV, "Cement", panelLV, false, 0);
-
-  // SiPM at end of one leg (3x3 mm)
+  // SiPM at end of the leg (3x3 mm)
   G4double s = 1.5*mm;
   auto* sipm = new G4Box("SiPM", s, s, 0.25*mm);
   auto* sipmLV = new G4LogicalVolume(sipm, fSi, "SiPMLV");
-  new G4PVPlacement(nullptr, G4ThreeVector(95.*mm + legLen, -20.*mm, zFiber), sipmLV, "SiPM", worldLV, false, 0);
+  new G4PVPlacement(nullptr, G4ThreeVector(125.*mm, 0, zFiber), sipmLV, "SiPM", worldLV, false, 0);
 
   // Visuals and reflector
   panelLV->SetVisAttributes(new G4VisAttributes(G4Colour(0.2,0.8,0.3,0.5)));

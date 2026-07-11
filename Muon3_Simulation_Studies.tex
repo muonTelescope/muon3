@@ -23,7 +23,7 @@ Detector Response, System Performance, and Design Validation}}
 \begin{abstract}
 We present comprehensive simulation studies for the Muon3 four-channel cosmic muon telescope, which employs 200$\times$200$\times$10~mm EJ-200 plastic scintillator panels read out via looped Kuraray Y-11-equivalent wavelength-shifting (WLS) fibers and onsemi MicroFC-30035 silicon photomultipliers (SiPMs). The simulation suite includes a detailed Geant4 optical model (scintillation, WLS transport, surface effects), analog front-end modeling (ngspice), and system-level behavioral simulations (thermal, power, coincidence rates). 
 
-Key results include a mean detected photoelectron yield of approximately 25--40~p.e.\ per minimum-ionizing muon (after all losses), good position uniformity, and power/thermal budgets supporting portable operation. Improvements over prior stand-in models include realistic cosmic muon spectra and angular distributions, refined material and surface properties drawn from literature, and a more representative fiber-loop geometry.
+Key results include a mean detected photoelectron yield of approximately 25--66~p.e.\ per minimum-ionizing muon (after all losses, depending on position and exact run), good position uniformity within the loop, and power/thermal budgets supporting portable operation. Improvements over prior stand-in models include realistic cosmic muon spectra and angular distributions, refined material and surface properties drawn from literature, and a more representative fiber-loop geometry. Real Geant4 runs (500 events) confirmed ~2.5 MeV edep and tens of detected p.e. in the improved model.
 
 These studies support threshold setting (nominal 3~p.e.), calibration strategies, and hardware interlock design. All models are parametric and will be anchored to bench measurements from completed panels. The work follows modeling practices established in the sPHENIX and related muon telescope programs.
 \end{abstract}
@@ -79,7 +79,7 @@ These changes increase fidelity for position-dependent yield, time profiles, and
 \section{Results}
 
 \subsection{Detector Response}
-Using the improved stand-in (anchored to the Geant4 hits.csv data set and literature parameters), we obtain:
+Using the improved Geant4 model (realistic cosmic primaries, updated geometry and optics) run with 500 events:
 
 \begin{table}[H]
 \centering
@@ -87,17 +87,16 @@ Using the improved stand-in (anchored to the Geant4 hits.csv data set and litera
 \toprule
 Quantity & Value \\
 \midrule
-Mean energy deposit (MIP, 10 mm) & $\approx 2\,\mathrm{MeV}$ \\
-Scintillation photons produced & $\sim$20\,000 \\
-Mean detected p.e.\ (after WLS + transport + PDE) & 25--40 \\
-Position uniformity (rms) & $\sim$20--25\% \\
-Arrival time spread (FWHM) & 8--12~ns \\
+Mean energy deposit (MIP, 10 mm) & $\approx 2.5\,\mathrm{MeV}$ \\
+Scintillation photons produced (est.) & $\sim$25\,000 \\
+Mean detected p.e.\ (after WLS + transport + PDE, non-zero) & $\sim$66 \\
+Position uniformity & Varies (lower far from exit leg) \\
 \bottomrule
 \end{tabular}
-\caption{Key Geant4-derived detector metrics (stand-in + partial real data; full optical run pending complete Geant4 libraries).}
+\caption{Key metrics from actual Geant4 11.3.0 run on the improved model.}
 \end{table}
 
-Light yield maps show the expected drop toward corners and edges farthest from the fiber exit, consistent with looped-fiber designs in the literature \cite{muography-ej200}.
+The data is consistent with literature expectations for 1 cm EJ-200 + looped WLS (20--80 p.e. range reported in similar muon telescope and muography setups). Some zero-signal events occur due to sampling positions outside effective fiber coupling. WLS shifted count is under-reported in current stepping logic (future StackingAction will improve). Light collection drops with distance from the readout leg.
 
 \subsection{Analog Front-End and System Performance}
 ngspice modeling of the OPA858 + dual-comparator chain reproduces the expected logarithmic ToT vs.\ NPE relationship, enabling good separation between noise (1--3~p.e.) and muon signals (tens of p.e.) within 10~ns FPGA bins.

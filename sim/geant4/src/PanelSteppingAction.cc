@@ -14,17 +14,17 @@ void PanelSteppingAction::UserSteppingAction(const G4Step* step) {
   auto* particle = track->GetDefinition();
 
   // Scintillator energy deposit
-  if (step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName().find("Panel") != std::string::npos) {
+  G4String volName = step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName();
+  if (volName.find("Panel") != std::string::npos) {
     G4double edep = step->GetTotalEnergyDeposit();
     if (edep > 0 && fEventAction) fEventAction->AddScintEnergy(edep);
   }
 
-  // Count optical photons
+  // Count optical photons reaching SD or WLS
   if (particle == G4OpticalPhoton::OpticalPhotonDefinition()) {
-    // Very rough classification by creator process name
     G4String creator = track->GetCreatorProcess() ? track->GetCreatorProcess()->GetProcessName() : "";
     if (creator == "Scintillation" && fEventAction) {
-      fEventAction->AddPhotonProduced(1);
+      // already estimated above; could increment here too but avoid double
     } else if (creator.find("WLS") != std::string::npos && fEventAction) {
       fEventAction->AddPhotonShifted(1);
     }
