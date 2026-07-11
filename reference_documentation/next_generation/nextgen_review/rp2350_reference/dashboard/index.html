@@ -1,0 +1,560 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Muon Telescope Dashboard (Web Serial)</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 16px; }
+    .row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 12px; min-width: 300px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+    h2 { margin: 0 0 10px 0; font-size: 16px; }
+    button { padding: 8px 10px; }
+    input[type="number"] { width: 120px; }
+    .warn { color: #b45309; }
+    .err { color: #b91c1c; }
+    .ok { color: #15803d; }
+    table { border-collapse: collapse; width: 100%; }
+    td, th { border-bottom: 1px solid #eee; padding: 4px 6px; text-align: right; }
+    td:first-child, th:first-child { text-align: left; }
+    canvas { width: 100%; height: 220px; border: 1px solid #eee; border-radius: 8px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .small { font-size: 12px; color: #444; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  </style>
+</head>
+<body>
+  <h1>Muon Telescope Dashboard</h1>
+  <div class="row">
+    <div class="card">
+      <h2>Connection</h2>
+      <div class="row">
+        <button id="btnConnect">Connect</button>
+        <button id="btnDisconnect" disabled>Disconnect</button>
+      </div>
+      <div class="small" id="connStatus">Disconnected</div>
+      <div class="small mono" id="rxStats"></div>
+      <div class="small mono" id="errFlags"></div>
+    </div>
+
+    <div class="card">
+      <h2>Config</h2>
+      <div class="grid">
+        <label>Report period (ms)<br><input id="periodMs" type="number" value="60000" min="200"></label>
+        <label>Window ticks<br><input id="windowTicks" type="number" value="20" min="1"></label>
+        <label>Holdoff ticks<br><input id="holdoffTicks" type="number" value="20" min="0"></label>
+        <div style="align-self:end;">
+          <button id="btnApplyCfg">Apply</button>
+          <button id="btnReset">Reset counters</button>
+        </div>
+      </div>
+      <div class="small">Tip: set period to 1000–5000ms for realtime graphs.</div>
+    </div>
+
+    <div class="card" style="min-width: 380px;">
+      <h2>BME280</h2>
+      <div class="grid">
+        <div>Temp</div><div class="mono" id="tVal">—</div>
+        <div>Humidity</div><div class="mono" id="hVal">—</div>
+        <div>Pressure</div><div class="mono" id="pVal">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card" style="flex:1; min-width: 520px;">
+      <h2>Rates (Hz)</h2>
+      <canvas id="plot"></canvas>
+      <div class="small">Shows CH0..CH3 and 2-fold total. (Derived from counts / period)</div>
+    </div>
+
+    <div class="card" style="min-width: 380px;">
+      <h2>Counts (latest period)</h2>
+      <table id="countsTable"></table>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card" style="flex:1; min-width: 720px;">
+      <h2>DAC7578 Setpoints</h2>
+      <div class="small">Codes are 0..4095 (12-bit). Labels assumed: DAC0..3 = THRESH0..3, DAC4..7 = CH0_VBOT..CH3_VBOT.</div>
+      <div id="dacControls"></div>
+      <div style="margin-top:8px;">
+        <button id="btnReadDac">Read back</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+'use strict';
+
+// ---------- CRC16-CCITT ----------
+function crc16_ccitt(bytes) {
+  let crc = 0xFFFF;
+  for (let i=0;i<bytes.length;i++) {
+    crc ^= (bytes[i] << 8);
+    for (let b=0;b<8;b++) {
+      crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+      crc &= 0xFFFF;
+    }
+  }
+  return crc;
+}
+
+// ---------- Protocol helpers ----------
+const SOF0 = 0xA5, SOF1 = 0x5A;
+const PKT_REPORT = 0x11;
+const PKT_CMD = 0x80;
+const PKT_ACK = 0x81;
+
+const CMD_SET_REPORT_PERIOD_MS = 0x01;
+const CMD_SET_WINDOW_TICKS = 0x02;
+const CMD_SET_HOLDOFF_TICKS = 0x03;
+const CMD_RESET_COUNTERS = 0x04;
+const CMD_DAC_SET_CH = 0x10;
+const CMD_DAC_SET_ALL = 0x11;
+const CMD_DAC_GET_ALL = 0x12;
+const CMD_GET_STATUS = 0x20;
+
+let seq = 1;
+
+function u16le(v){ return [v & 0xFF, (v >> 8) & 0xFF]; }
+function u32le(v){ return [v & 0xFF, (v >> 8) & 0xFF, (v >> 16) & 0xFF, (v >> 24) & 0xFF]; }
+
+function buildFrame(type, payloadBytes) {
+  const len = payloadBytes.length;
+  const hdr = [SOF0, SOF1, type, len & 0xFF, (len >> 8) & 0xFF];
+  const crcIn = [type, len & 0xFF, (len >> 8) & 0xFF, ...payloadBytes];
+  const crc = crc16_ccitt(crcIn);
+  const frame = new Uint8Array([...hdr, ...payloadBytes, crc & 0xFF, (crc >> 8) & 0xFF]);
+  return frame;
+}
+
+function buildCmd(cmdId, argBytes) {
+  const s = (seq++ & 0xFF);
+  const argLen = argBytes.length;
+  const payload = new Uint8Array([cmdId, s, argLen & 0xFF, (argLen >> 8) & 0xFF, ...argBytes]);
+  return { seq: s, frame: buildFrame(PKT_CMD, Array.from(payload)) };
+}
+
+// ---------- Streaming parser ----------
+class FrameParser {
+  constructor(onFrame) {
+    this.onFrame = onFrame;
+    this.reset();
+  }
+  reset() {
+    this.state = 0;
+    this.type = 0;
+    this.len = 0;
+    this.buf = [];
+    this.crcBytes = [];
+  }
+  feed(chunk) {
+    for (const b of chunk) {
+      switch (this.state) {
+        case 0: this.state = (b === SOF0) ? 1 : 0; break;
+        case 1: this.state = (b === SOF1) ? 2 : 0; break;
+        case 2: this.type = b; this.hdr = [b]; this.state = 3; break;
+        case 3: this.len = b; this.hdr.push(b); this.state = 4; break;
+        case 4:
+          this.len |= (b << 8);
+          this.hdr.push(b);
+          this.buf = [];
+          this.crcBytes = [];
+          this.state = (this.len === 0) ? 6 : 5;
+          break;
+        case 5:
+          this.buf.push(b);
+          if (this.buf.length >= this.len) this.state = 6;
+          break;
+        case 6:
+          this.crcBytes.push(b);
+          if (this.crcBytes.length >= 2) {
+            const got = this.crcBytes[0] | (this.crcBytes[1] << 8);
+            const crcIn = new Uint8Array([...this.hdr, ...this.buf]);
+            const calc = crc16_ccitt(crcIn);
+            if (got === calc) {
+              this.onFrame({ type: this.type, payload: new Uint8Array(this.buf) });
+            } else {
+              stats.crcErr++;
+            }
+            this.reset();
+          }
+          break;
+      }
+    }
+  }
+}
+
+// ---------- UI + state ----------
+const $ = (id) => document.getElementById(id);
+const connStatus = $('connStatus');
+const rxStats = $('rxStats');
+const errFlagsEl = $('errFlags');
+
+let port = null;
+let reader = null;
+let writer = null;
+
+const stats = {
+  bytes: 0,
+  frames: 0,
+  crcErr: 0,
+  lastRxMs: 0,
+};
+
+const labels = {
+  singles: ['CH0','CH1','CH2','CH3'],
+  subsets: [
+    ['CH0&CH1',3], ['CH0&CH2',5], ['CH0&CH3',9], ['CH1&CH2',6], ['CH1&CH3',10], ['CH2&CH3',12],
+    ['CH0&CH1&CH2',7], ['CH0&CH1&CH3',11], ['CH0&CH2&CH3',13], ['CH1&CH2&CH3',14],
+    ['CH0&CH1&CH2&CH3',15]
+  ],
+  dac: ['THRESH0','THRESH1','THRESH2','THRESH3','CH0_VBOT','CH1_VBOT','CH2_VBOT','CH3_VBOT']
+};
+
+let last = {
+  periodIndex: 0,
+  periodMs: 60000,
+  windowTicks: 20,
+  holdoffTicks: 20,
+  singles: [0,0,0,0],
+  subset: {}, // mask->count
+  tempC: null,
+  hum: null,
+  press: null,
+  dac: new Array(8).fill(0),
+  dropped: 0,
+  errFlags: 0,
+  uptimeMs: 0,
+};
+
+// plotting history
+const histN = 300;
+const hist = {
+  t: [],
+  ch0: [], ch1: [], ch2: [], ch3: [],
+  c2: [],
+};
+
+function pushHist(x, obj) {
+  hist.t.push(x);
+  for (const k of ['ch0','ch1','ch2','ch3','c2']) hist[k].push(obj[k]);
+  if (hist.t.length > histN) {
+    hist.t.shift();
+    for (const k of ['ch0','ch1','ch2','ch3','c2']) hist[k].shift();
+  }
+}
+
+function drawPlot() {
+  const canvas = $('plot');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width = canvas.clientWidth * devicePixelRatio;
+  const h = canvas.height = canvas.clientHeight * devicePixelRatio;
+
+  ctx.clearRect(0,0,w,h);
+
+  // axes
+  ctx.strokeStyle = '#ddd';
+  ctx.beginPath();
+  ctx.moveTo(40, 10);
+  ctx.lineTo(40, h-30);
+  ctx.lineTo(w-10, h-30);
+  ctx.stroke();
+
+  if (hist.t.length < 2) return;
+
+  // y scale
+  let ymax = 1;
+  for (const k of ['ch0','ch1','ch2','ch3','c2']) {
+    for (const v of hist[k]) ymax = Math.max(ymax, v);
+  }
+  ymax *= 1.1;
+
+  function plotSeries(series, color) {
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    for (let i=0;i<hist.t.length;i++) {
+      const x = 40 + (i/(hist.t.length-1)) * (w-60);
+      const y = (h-30) - (hist[series][i]/ymax) * (h-50);
+      if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+
+  // simple palette
+  plotSeries('ch0', '#1f77b4');
+  plotSeries('ch1', '#ff7f0e');
+  plotSeries('ch2', '#2ca02c');
+  plotSeries('ch3', '#d62728');
+  plotSeries('c2',  '#9467bd');
+
+  // legend
+  ctx.fillStyle = '#111';
+  ctx.font = `${12*devicePixelRatio}px system-ui`;
+  ctx.fillText(`CH0 CH1 CH2 CH3 2-fold`, 50, 20*devicePixelRatio);
+
+  // y labels
+  ctx.fillStyle = '#444';
+  ctx.fillText(`0`, 10, h-30);
+  ctx.fillText(`${ymax.toFixed(1)} Hz`, 5, 20);
+}
+
+function decodeErrFlags(f) {
+  const flags = [
+    [1<<0,'PIO drops'],
+    [1<<1,'USB backlog'],
+    [1<<2,'BME fail'],
+    [1<<3,'DAC fail'],
+    [1<<4,'I2C recover'],
+    [1<<5,'MAX1932 INT'],
+    [1<<6,'RX CRC'],
+    [1<<7,'RX framing'],
+  ];
+  const bad = flags.filter(([m,_]) => (f & m));
+  if (bad.length === 0) return '<span class="ok">No errors</span>';
+  return '<span class="err">Errors:</span> ' + bad.map(x=>x[1]).join(', ');
+}
+
+function renderCounts() {
+  const tbl = $('countsTable');
+  const rows = [];
+
+  const sec = last.periodMs/1000.0;
+  const hzSingles = last.singles.map(v => v/sec);
+
+  rows.push(`<tr><th>Signal</th><th>Count</th><th>Hz</th></tr>`);
+  for (let i=0;i<4;i++) {
+    rows.push(`<tr><td>${labels.singles[i]}</td><td>${last.singles[i]}</td><td>${hzSingles[i].toFixed(3)}</td></tr>`);
+  }
+  for (const [name, mask] of labels.subsets) {
+    const c = last.subset[mask] ?? 0;
+    rows.push(`<tr><td>${name}</td><td>${c}</td><td>${(c/sec).toFixed(3)}</td></tr>`);
+  }
+  tbl.innerHTML = rows.join('');
+}
+
+function renderBME() {
+  $('tVal').textContent = (last.tempC==null) ? '—' : `${last.tempC.toFixed(2)} °C`;
+  $('hVal').textContent = (last.hum==null) ? '—' : `${last.hum.toFixed(2)} %`;
+  $('pVal').textContent = (last.press==null) ? '—' : `${last.press.toFixed(0)} Pa`;
+}
+
+function renderStatus() {
+  const age = (Date.now() - stats.lastRxMs);
+  connStatus.innerHTML = port ? `<span class="ok">Connected</span> (last packet ${age} ms ago)` : 'Disconnected';
+  rxStats.textContent = `frames=${stats.frames}  bytes=${stats.bytes}  crcErr=${stats.crcErr}  dropped=${last.dropped}  uptime=${(last.uptimeMs/1000).toFixed(1)}s`;
+  errFlagsEl.innerHTML = decodeErrFlags(last.errFlags);
+}
+
+function renderDAC() {
+  const root = $('dacControls');
+  root.innerHTML = '';
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+  for (let i=0;i<8;i++) {
+    const wrap = document.createElement('div');
+    wrap.style.border = '1px solid #eee';
+    wrap.style.borderRadius = '8px';
+    wrap.style.padding = '8px';
+
+    const title = document.createElement('div');
+    title.textContent = `DAC${i} (${labels.dac[i]})`;
+    title.className = 'small';
+    wrap.appendChild(title);
+
+    const input = document.createElement('input');
+    input.type = 'range';
+    input.min = '0'; input.max = '4095';
+    input.value = String(last.dac[i] ?? 0);
+    input.style.width = '100%';
+
+    const num = document.createElement('input');
+    num.type = 'number';
+    num.min = '0'; num.max = '4095';
+    num.value = String(last.dac[i] ?? 0);
+
+    const btn = document.createElement('button');
+    btn.textContent = 'Set';
+    btn.onclick = async () => {
+      const code = Math.max(0, Math.min(4095, parseInt(num.value||'0',10)));
+      await sendDacSet(i, code);
+    };
+
+    input.oninput = () => { num.value = input.value; };
+    num.oninput = () => { input.value = num.value; };
+
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.style.alignItems = 'center';
+    row.appendChild(num);
+    row.appendChild(btn);
+
+    wrap.appendChild(input);
+    wrap.appendChild(row);
+    grid.appendChild(wrap);
+  }
+  root.appendChild(grid);
+
+  const btnAll = document.createElement('button');
+  btnAll.textContent = 'Set all from sliders';
+  btnAll.onclick = async () => {
+    const codes = [];
+    const nums = root.querySelectorAll('input[type="number"]');
+    for (let i=0;i<8;i++) codes.push(Math.max(0, Math.min(4095, parseInt(nums[i].value||'0',10))));
+    await sendDacSetAll(codes);
+  };
+  root.appendChild(document.createElement('div')).style.height='8px';
+  root.appendChild(btnAll);
+}
+
+// ---------- Decode report packet ----------
+function dv(payload){ return new DataView(payload.buffer, payload.byteOffset, payload.byteLength); }
+
+function parseReport(payload) {
+  const d = dv(payload);
+  let off = 0;
+  function u32(){ const v=d.getUint32(off,true); off+=4; return v; }
+  function u16(){ const v=d.getUint16(off,true); off+=2; return v; }
+  function i16(){ const v=d.getInt16(off,true); off+=2; return v; }
+
+  last.periodIndex = u32();
+  last.periodMs = u32();
+  last.windowTicks = u16();
+  last.holdoffTicks = u16();
+
+  last.singles = [u32(), u32(), u32(), u32()];
+
+  last.subset = {};
+  const masks = [3,5,9,6,10,12,7,11,13,14,15];
+  for (const m of masks) last.subset[m] = u32();
+
+  const t = i16(); last.tempC = t/100.0;
+  const h = u16(); last.hum = h/100.0;
+  const p = u32(); last.press = p;
+
+  last.dac = [];
+  for (let i=0;i<8;i++) last.dac.push(u16());
+
+  last.dropped = u32();
+  last.errFlags = u32();
+  last.uptimeMs = u32();
+
+  // derived rates for plot
+  const sec = last.periodMs/1000.0;
+  const c2 = (last.subset[3]+last.subset[5]+last.subset[9]+last.subset[6]+last.subset[10]+last.subset[12]) / sec;
+  pushHist(Date.now(), {
+    ch0: last.singles[0]/sec,
+    ch1: last.singles[1]/sec,
+    ch2: last.singles[2]/sec,
+    ch3: last.singles[3]/sec,
+    c2
+  });
+
+  $('periodMs').value = String(last.periodMs);
+  $('windowTicks').value = String(last.windowTicks);
+  $('holdoffTicks').value = String(last.holdoffTicks);
+
+  renderBME();
+  renderCounts();
+  renderDAC();
+  drawPlot();
+  renderStatus();
+}
+
+// ---------- Serial I/O ----------
+let parser = new FrameParser((frame) => {
+  stats.frames++;
+  stats.lastRxMs = Date.now();
+  if (frame.type === PKT_REPORT) parseReport(frame.payload);
+  // ACK packets could be handled here if needed
+});
+
+async function connect() {
+  port = await navigator.serial.requestPort();
+  await port.open({ baudRate: 115200 });
+  writer = port.writable.getWriter();
+  reader = port.readable.getReader();
+  $('btnConnect').disabled = true;
+  $('btnDisconnect').disabled = false;
+  stats.lastRxMs = Date.now();
+  readLoop();
+  renderStatus();
+}
+
+async function disconnect() {
+  try { if (reader) { await reader.cancel(); reader.releaseLock(); } } catch(e){}
+  try { if (writer) { writer.releaseLock(); } } catch(e){}
+  try { if (port) { await port.close(); } } catch(e){}
+  port = null; reader = null; writer = null;
+  $('btnConnect').disabled = false;
+  $('btnDisconnect').disabled = true;
+  renderStatus();
+}
+
+async function readLoop() {
+  while (port && reader) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    if (value) {
+      stats.bytes += value.length;
+      parser.feed(value);
+      renderStatus();
+    }
+  }
+}
+
+async function writeFrame(frame) {
+  if (!writer) return;
+  await writer.write(frame);
+}
+
+async function sendCmd(cmdId, argBytes) {
+  const { frame } = buildCmd(cmdId, argBytes);
+  await writeFrame(frame);
+}
+
+// ---------- Command wrappers ----------
+async function applyConfig() {
+  const period = parseInt($('periodMs').value||'60000',10);
+  const win = parseInt($('windowTicks').value||'20',10);
+  const hold = parseInt($('holdoffTicks').value||'20',10);
+
+  await sendCmd(CMD_SET_REPORT_PERIOD_MS, u32le(period));
+  await sendCmd(CMD_SET_WINDOW_TICKS, u16le(win));
+  await sendCmd(CMD_SET_HOLDOFF_TICKS, u16le(hold));
+}
+
+async function resetCounters() {
+  await sendCmd(CMD_RESET_COUNTERS, []);
+}
+
+async function sendDacSet(ch, code) {
+  await sendCmd(CMD_DAC_SET_CH, [ch & 0xFF, ...u16le(code)]);
+}
+
+async function sendDacSetAll(codes) {
+  const args = [];
+  for (let i=0;i<8;i++) args.push(...u16le(codes[i]));
+  await sendCmd(CMD_DAC_SET_ALL, args);
+}
+
+async function readDac() {
+  await sendCmd(CMD_DAC_GET_ALL, []);
+}
+
+// ---------- Bind UI ----------
+$('btnConnect').onclick = () => connect().catch(err => alert(err));
+$('btnDisconnect').onclick = () => disconnect();
+$('btnApplyCfg').onclick = () => applyConfig();
+$('btnReset').onclick = () => resetCounters();
+$('btnReadDac').onclick = () => readDac();
+
+renderDAC();
+renderCounts();
+renderBME();
+renderStatus();
+drawPlot();
+</script>
+</body>
+</html>

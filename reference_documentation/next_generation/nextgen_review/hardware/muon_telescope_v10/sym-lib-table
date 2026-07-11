@@ -1,0 +1,4 @@
+(sym_lib_table (version 7)
+  (lib (name "muon")(type "KiCad")(uri "${KIPRJMOD}/muon_parts.kicad_sym")(options "")(descr "project symbols"))
+  (lib (name "PCM_JLCPCB")(type "KiCad")(uri "${KIPRJMOD}/JLCPCB-Kicad-Library/symbols/JLCPCB-Resistors.kicad_sym")(options "")(descr "CDFER lib - add remaining files via Preferences"))
+)

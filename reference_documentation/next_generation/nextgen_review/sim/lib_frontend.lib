@@ -1,0 +1,139 @@
+* =====================================================================
+* lib_frontend.lib - SiPM muon telescope analog front end library
+* Hamamatsu S13360-2050VE behavioral model
+* OPA858 / OPA356 behavioral macromodels (datasheet parameters)
+* TLV3601 fast comparator macromodel
+* ngspice-42 syntax
+* =====================================================================
+
+* ---------------------------------------------------------------------
+* SiPM avalanche current pulse, behavioral.
+* Params:
+*   NPE   = number of photoelectrons (fired pixels)
+*   QPE   = charge per p.e.  (Cpix*Vov ~ 88fF*3V = 264fC; datasheet gain
+*           1.7e6 -> 272fC. Use 270fC)
+*   TAUR  = rise time constant (~1 ns)
+*   TAUD  = decay time constant (Rq*Cpix ~ 150k*88f = 13.2 ns)
+*   T0    = pulse start time
+* Terminals: A (anode, signal out), K (cathode, HV side)
+* Includes terminal capacitance CT=140p and a dark-current source IDARK.
+* The double-exponential is normalized so integral = NPE*QPE exactly.
+* ---------------------------------------------------------------------
+.subckt SIPM_2050VE A K NPE=30 QPE=270f TAUR=1n TAUD=13.2n T0=100n IDC=0.2u
+* normalization: integral of (exp(-t/td)-exp(-t/tr)) = td - tr
+Bpulse K A I = (time > {T0}) ? {NPE*QPE/(TAUD-TAUR)} * ( exp(-(time-{T0})/{TAUD}) - exp(-(time-{T0})/{TAUR}) ) : 0
+* terminal capacitance
+Ct A K 140p
+* dark/leakage current (DC)
+Idark K A {IDC}
+.ends SIPM_2050VE
+
+* ---------------------------------------------------------------------
+* OPA858 behavioral macromodel (single supply 3.3V here)
+* Datasheet anchors:
+*   GBW (decompensated)  : 5.5 GHz
+*   Aol                  : ~ 73 dB  (4500 V/V)
+*   Slew rate            : 2000 V/us
+*   Input: FET (CMOS), Cin_cm ~ 0.6p, Cin_diff ~ 0.2p
+*   en                   : 2.5 nV/rtHz
+*   Output swing         : ~0.15V from rails (light load)
+*   Iq                   : ~20 mA  (not modeled electrically)
+* Two-pole model: dominant pole at GBW/Aol = 1.22 MHz, second pole 3.5GHz
+* (gives ~60 deg PM at NG=7, mimics decompensated part)
+* Pins: INP INN OUT VDD VSS
+* ---------------------------------------------------------------------
+.subckt OPA858 INP INN OUT VDD VSS
+* input caps
+Cinp INP VSS 0.62p
+Cinn INN VSS 0.62p
+Cind INP INN 0.2p
+* input voltage noise source in series with INP
+Vnoise INP INPX dc 0
+* differential input, transconductance into dominant pole
+Gm 0 P1 INPX INN 1m
+Rp1 P1 0 4.5MEG          ; Aol = gm*Rp1 = 4500
+Cp1 P1 0 29.1f           ; fp1 = 1.215 MHz -> GBW = 5.466 GHz
+* anti-windup clamps on internal gain node
+Dwu1 P1 PCLH DWU
+Dwu2 PCLL P1 DWU
+Vclh PCLH 0 5
+Vcll PCLL 0 -1.7
+.model DWU D(IS=1u RS=5 N=1)
+* slew limiting on first stage: clamp current
+* (Gm node current limited via behavioral source instead)
+* second pole
+Gp2 0 P2 P1 0 1m
+Rp2 P2 0 1k
+Cp2 P2 0 45.5f           ; fp2 = 3.5 GHz
+* output buffer with rail clamp (0.15V from rails) and slew limit
+Bclamp CL 0 V = ( v(P2) > (v(VDD)-0.15) ? (v(VDD)-0.15) : ( v(P2) < (v(VSS)+0.15) ? (v(VSS)+0.15) : v(P2) ) )
+* slew rate limit: RC with current-limited driver  SR = Imax/Cs
+Bsr 0 SL I = ( (v(CL)-v(SL)) > 0.02 ? 40u : ( (v(CL)-v(SL)) < -0.02 ? -40u : (v(CL)-v(SL))*2m ) )
+Csl SL 0 20f             ; 40uA/20fF = 2000 V/us
+Rsl SL 0 1G
+* output impedance
+Eout OB 0 SL 0 1
+Rout OB OUT 10
+.ends OPA858
+
+* ---------------------------------------------------------------------
+* OPA356 behavioral macromodel
+*   GBW 200 MHz (unity stable), Aol ~ 94 dB, SR 360 V/us
+*   en 5.8 nV/rtHz, CMOS RRIO, Iq ~ 8.3 mA
+* ---------------------------------------------------------------------
+.subckt OPA356 INP INN OUT VDD VSS
+Cinp INP VSS 1.5p
+Cinn INN VSS 1.5p
+Vnoise INP INPX dc 0
+Gm 0 P1 INPX INN 1m
+Rp1 P1 0 50MEG           ; Aol = 50000
+Cp1 P1 0 0.398p          ; fp1 = 4 kHz... recompute: GBW=Aol*fp1 -> fp1=4kHz
+* fp1 = 1/(2pi*50e6*Cp1) ; want fp1 = 200e6/50000 = 4 kHz -> Cp1 = 0.796p
+* fix:
+.param dummy=1
+Cp1b P1 0 0.398p         ; total 0.796p
+Dwu1 P1 PCLH DWU
+Dwu2 PCLL P1 DWU
+Vclh PCLH 0 5
+Vcll PCLL 0 -1.7
+.model DWU D(IS=1u RS=5 N=1)
+Gp2 0 P2 P1 0 1m
+Rp2 P2 0 1k
+Cp2 P2 0 0.53p           ; fp2 = 300 MHz
+Bclamp CL 0 V = ( v(P2) > (v(VDD)-0.05) ? (v(VDD)-0.05) : ( v(P2) < (v(VSS)+0.05) ? (v(VSS)+0.05) : v(P2) ) )
+Bsr 0 SL I = ( (v(CL)-v(SL)) > 0.02 ? 7.2u : ( (v(CL)-v(SL)) < -0.02 ? -7.2u : (v(CL)-v(SL))*0.36m ) )
+Csl SL 0 20f             ; 7.2uA/20fF = 360 V/us
+Rsl SL 0 1G
+Eout OB 0 SL 0 1
+Rout OB OUT 30
+.ends OPA356
+
+* ---------------------------------------------------------------------
+* TLV3601 comparator macromodel
+*   tpd ~ 2.5 ns, push-pull out, ~6 mV internal hysteresis
+*   rise/fall ~ 1 ns into light load
+* Pins: INP INN OUT VDD
+* Implementation: hysteretic schmitt (behavioral) + delay line + output drv
+* ---------------------------------------------------------------------
+.subckt TLV3601 INP INN OUT VDD
+* hysteretic decision node, state-dependent threshold
+Bcmp D0 0 V = ( v(INP) - v(INN) + (v(D0DEL) > 0.5 ? 3m : -3m) ) > 0 ? 1 : 0
+Rd0 D0 D0F 100
+Cd0 D0F 0 2p            ; small smoothing, 0.2ns
+* feedback for hysteresis state (delayed copy)
+Rfb D0F D0DEL 100
+Cfb D0DEL 0 2p
+* propagation delay ~2.2ns via LC-free RC chain (3x 0.73ns)
+Rt1 D0F T1 1k
+Ct1 T1 0 0.73p
+Rt2 T1 T2 1k
+Ct2 T2 0 0.73p
+Rt3 T2 T3 1k
+Ct3 T3 0 0.73p
+* output stage: rail-to-rail push-pull, 1ns edges
+Bout OD 0 V = v(T3) > 0.5 ? v(VDD) : 0
+Rod OD ODF 50
+Cod ODF 0 10p           ; ~1ns total with Rout
+Eout OB 0 ODF 0 1
+Rout OB OUT 15
+.ends TLV3601

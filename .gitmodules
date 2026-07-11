@@ -1,0 +1,84 @@
+[submodule "reference_documentation/repositories/cad"]
+	path = reference_documentation/repositories/cad
+	url = https://github.com/muonTelescope/cad.git
+[submodule "reference_documentation/repositories/coincidence"]
+	path = reference_documentation/repositories/coincidence
+	url = https://github.com/muonTelescope/coincidence.git
+[submodule "reference_documentation/repositories/dac60508"]
+	path = reference_documentation/repositories/dac60508
+	url = https://github.com/muonTelescope/dac60508.git
+[submodule "reference_documentation/repositories/db"]
+	path = reference_documentation/repositories/db
+	url = https://github.com/muonTelescope/db.git
+[submodule "reference_documentation/repositories/dev-tools"]
+	path = reference_documentation/repositories/dev-tools
+	url = https://github.com/muonTelescope/dev-tools.git
+[submodule "reference_documentation/repositories/docs"]
+	path = reference_documentation/repositories/docs
+	url = https://github.com/muonTelescope/docs.git
+[submodule "reference_documentation/repositories/expose-db"]
+	path = reference_documentation/repositories/expose-db
+	url = https://github.com/muonTelescope/expose-db.git
+[submodule "reference_documentation/repositories/expose-hardware"]
+	path = reference_documentation/repositories/expose-hardware
+	url = https://github.com/muonTelescope/expose-hardware.git
+[submodule "reference_documentation/repositories/ice40"]
+	path = reference_documentation/repositories/ice40
+	url = https://github.com/muonTelescope/ice40.git
+[submodule "reference_documentation/repositories/ice40Firmware"]
+	path = reference_documentation/repositories/ice40Firmware
+	url = https://github.com/muonTelescope/ice40Firmware.git
+[submodule "reference_documentation/repositories/layout"]
+	path = reference_documentation/repositories/layout
+	url = https://github.com/muonTelescope/layout.git
+[submodule "reference_documentation/repositories/max1932"]
+	path = reference_documentation/repositories/max1932
+	url = https://github.com/muonTelescope/max1932.git
+[submodule "reference_documentation/repositories/mpl3115a2"]
+	path = reference_documentation/repositories/mpl3115a2
+	url = https://github.com/muonTelescope/mpl3115a2.git
+[submodule "reference_documentation/repositories/mppc-interface"]
+	path = reference_documentation/repositories/mppc-interface
+	url = https://github.com/muonTelescope/mppc-interface.git
+[submodule "reference_documentation/repositories/mppcControl"]
+	path = reference_documentation/repositories/mppcControl
+	url = https://github.com/muonTelescope/mppcControl.git
+[submodule "reference_documentation/repositories/mppcHighVoltage"]
+	path = reference_documentation/repositories/mppcHighVoltage
+	url = https://github.com/muonTelescope/mppcHighVoltage.git
+[submodule "reference_documentation/repositories/mppcInterface"]
+	path = reference_documentation/repositories/mppcInterface
+	url = https://github.com/muonTelescope/mppcInterface.git
+[submodule "reference_documentation/repositories/mppcInterfaceFirmware"]
+	path = reference_documentation/repositories/mppcInterfaceFirmware
+	url = https://github.com/muonTelescope/mppcInterfaceFirmware.git
+[submodule "reference_documentation/repositories/mppcSensor"]
+	path = reference_documentation/repositories/mppcSensor
+	url = https://github.com/muonTelescope/mppcSensor.git
+[submodule "reference_documentation/repositories/muonTelescopeClient"]
+	path = reference_documentation/repositories/muonTelescopeClient
+	url = https://github.com/muonTelescope/muonTelescopeClient.git
+[submodule "reference_documentation/repositories/muonTelescopeServer"]
+	path = reference_documentation/repositories/muonTelescopeServer
+	url = https://github.com/muonTelescope/muonTelescopeServer.git
+[submodule "reference_documentation/repositories/neo6m"]
+	path = reference_documentation/repositories/neo6m
+	url = https://github.com/muonTelescope/neo6m.git
+[submodule "reference_documentation/repositories/neutronCell-GEMC"]
+	path = reference_documentation/repositories/neutronCell-GEMC
+	url = https://github.com/muonTelescope/neutronCell-GEMC.git
+[submodule "reference_documentation/repositories/neutronCell"]
+	path = reference_documentation/repositories/neutronCell
+	url = https://github.com/muonTelescope/neutronCell.git
+[submodule "reference_documentation/repositories/nginx"]
+	path = reference_documentation/repositories/nginx
+	url = https://github.com/muonTelescope/nginx.git
+[submodule "reference_documentation/repositories/scintillatorPanel"]
+	path = reference_documentation/repositories/scintillatorPanel
+	url = https://github.com/muonTelescope/scintillatorPanel.git
+[submodule "reference_documentation/repositories/shiftRegister"]
+	path = reference_documentation/repositories/shiftRegister
+	url = https://github.com/muonTelescope/shiftRegister.git
+[submodule "reference_documentation/repositories/sht3x"]
+	path = reference_documentation/repositories/sht3x
+	url = https://github.com/muonTelescope/sht3x.git

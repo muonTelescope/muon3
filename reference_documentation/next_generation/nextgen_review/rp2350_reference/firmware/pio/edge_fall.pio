@@ -1,0 +1,47 @@
+; edge_fall.pio
+; Capture ACTIVE-LOW leading edges (falling edges) on a single pin.
+; One SM per channel. Channel is implied by SM index.
+;
+; Timebase: X increments once per loop iteration (wraps naturally).
+; Timestamp pushed on each falling edge (1 -> 0).
+;
+; Notes:
+; - Uses JMP PIN with sm_config_set_jmp_pin() to read the pin state.
+; - Y holds last_state (0/1).
+; - PUSH NOBLOCK: if FIFO full, event is dropped (firmware tracks overruns heuristically).
+;
+.program edge_fall
+
+.wrap_target
+; Initialize last_state based on current pin
+init:
+    jmp pin init_high
+init_low:
+    set y, 0
+    jmp loop
+init_high:
+    set y, 1
+
+loop:
+    ; If pin is high, update last_state=1 and continue
+    jmp pin pin_high
+
+pin_low:
+    ; Current=0. Falling edge if last_state==1
+    mov isr, y
+    jmp !isr update_low    ; last_state==0 => no edge
+
+    ; Falling edge: push timestamp in X
+    mov isr, x
+    push noblock
+
+update_low:
+    set y, 0
+    jmp inc
+
+pin_high:
+    set y, 1
+
+inc:
+    jmp x++ loop
+.wrap

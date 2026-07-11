@@ -1,0 +1,21 @@
+* closed-loop transimpedance vs frequency, Cf sweep
+.include /home/claude/muon/sim/lib_frontend.lib
+Vdd VDD33 0 3.3
+Vvbot VBOTF 0 2.40
+Iin 0 INA ac 1
+Cdet INA 0 140p
+Cclamp INA 0 3p          ; clamp diodes + protection parasitics
+Xamp VBOTF INA OUT VDD33 0 OPA858
+Rf INA OUT 2k
+Cf INA OUT {CFV}
+.param CFV=2.2p
+.control
+set wr_vecnames
+foreach cf 1.0p 1.5p 2.2p 4.7p
+  alterparam CFV = $cf
+  reset
+  ac dec 50 10k 1g
+  wrdata /home/claude/muon/sim/ac_cf_$cf.csv vdb(out)
+end
+.endc
+.end
