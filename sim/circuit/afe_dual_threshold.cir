@@ -78,18 +78,13 @@ Cdec2 VDD 0 2.2u
 .control
   set wr_vecnames
   set wr_singlescale
-  * Single pulse example (NPE=1,3,10,30,100)
-  let npes = vector(5)
-  let npes[0]=1; let npes[1]=3; let npes[2]=10; let npes[3]=30; let npes[4]=100
-  let i=0
-  while i < 5
-    alterparam NPE = $&npes[i]
-    reset
-    tran 0.2n 800n
-    wrdata wave_dual_n{$&npes[i]}.csv v(OUT) v(CMPL) v(CMPH) v(INA) v(FPAL)
-    let i = i + 1
-  end
-  * Example threshold scan stub (user can extend)
-  echo "Run complete. Use analyze_muon3.py for ToT, timewalk, histograms."
+  shell mkdir -p results
+  reset
+  tran 0.2n 800n
+  wrdata results/wave_dual.csv v(OUT) v(CMPL) v(CMPH) v(INA) v(FPAL)
+  echo "NGSPICE SINGLE RUN COMPLETE"
 .endc
 .end
+
+
+

@@ -1,28 +1,38 @@
 #!/bin/bash
-# Run Muon3 ngspice sweeps for AFE characterization.
-# Requires ngspice installed.
+# Parametric runner for Muon3 AFE.
+# Substitutes .param NPE= in a temp netlist for each value, runs ngspice (single run per .cir).
 set -e
+NGSPICE="/opt/homebrew/bin/ngspice"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
 
 OUTDIR="results"
-mkdir -p "$OUTDIR" plots
+PLOTDIR="plots"
+mkdir -p "$OUTDIR" "$PLOTDIR"
 
-echo "=== Muon3 AFE dual-threshold sweeps ==="
+SRC="afe_dual_threshold.cir"
 
-# Basic NPE family (1,3,10,30,100 p.e.)
+echo "=== Muon3 ngspice AFE parametric sweeps ==="
+
 for n in 1 3 10 30 100; do
   echo "  NPE=$n"
-  ngspice -b -c "alterparam NPE=$n" -c "run" \
-          -c "wrdata $OUTDIR/wave_dual_n${n}.csv v(OUT) v(CMPL) v(CMPH) v(INA)" \
-          afe_dual_threshold.cir >/dev/null 2>&1 || true
+  TMP=$(mktemp /tmp/muon3_afe_XXXX.cir)
+  # Substitute the .param NPE= line
+  sed "s/^\.param NPE=.*/.param NPE=$n/" "$SRC" > "$TMP"
+  $NGSPICE -b "$TMP" > /dev/null 2>&1 || true
+  # Move/rename the written file
+  if [ -f results/wave_dual.csv ]; then
+    mv results/wave_dual.csv "results/wave_dual_n${n}.csv"
+  fi
+  rm -f "$TMP"
 done
 
-# Threshold scan example (vary VTH_LOW around 3 p.e. for staircase)
-echo "  Threshold scan stub..."
-for thr in 1.75 1.70 1.68 1.65 1.60; do
-  ngspice -b -c "alterparam VTH_LOW=$thr" -c "alterparam NPE=5" -c "run" \
-          -c "wrdata $OUTDIR/thr_scan_${thr}.csv v(CMPL)" \
-          afe_dual_threshold.cir >/dev/null 2>&1 || true
-done
+echo "Sweeps done."
+ls -l results/*.csv 2>/dev/null | cat || echo "(no csv yet - check ngspice)"
 
-echo "Sweeps done. Output in $OUTDIR/"
-echo "Run: python analyze_muon3.py"
+echo "Running analysis..."
+cd ..
+source ../.venv/bin/activate || true
+python circuit/analyze_muon3.py
+echo "=== Complete ==="
+ls -l circuit/plots/ 2>/dev/null || true

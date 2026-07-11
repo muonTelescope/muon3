@@ -1,3 +1,28 @@
 .DS_Store
 **/.DS_Store
 
+
+# Simulation generated artifacts
+.venv/
+**/__pycache__/
+*.pyc
+sim/circuit/results/
+sim/circuit/plots/
+sim/geant4/build/
+sim/geant4/*.csv
+sim/geant4/plots/
+sim/*.png
+sim/thermal_step.png
+sim/tot_model.png
+sim/power_budget_modes.png
+sim/reports/figures/*.png
+sim/reports/Muon3_Simulation_Report.pdf
+
+# Large data / build
+*.root
+geant4-data/
+*.tar.gz
+*.tgz
+
+# OS
+.DS_Store

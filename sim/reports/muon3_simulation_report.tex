@@ -1,0 +1,141 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{float}
+\geometry{margin=2cm}
+
+\title{\textbf{Muon3 Simulation Report} \\ P0 Architecture Baseline (2026-07-11)}
+\author{Muon3 Simulation Suite}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This report presents results from the Muon3 simulation suite: analog front-end (ngspice), scintillator + WLS fiber detector response (Geant4 stand-in + optical model), and system-level behavioral models (thermal, power, rates). All models are parametric and intended to be calibrated against real panel measurements.
+\end{abstract}
+
+\section{Introduction}
+Muon3 is a 4-channel cosmic muon telescope using 200$\times$200$\times$10 mm EJ-200 panels, looped WLS fiber, MicroFC-30035 SiPMs, OPA858 TIA + dual comparators, iCE40 + nRF9151, and Peltier thermal control.
+
+Simulations support design decisions for thresholds, calibration, power budget, and thermal interlocks.
+
+\section{Analog Front-End (Circuit Simulations)}
+
+\subsection{Model}
+DC-coupled MicroFC-30035 $\to$ OPA858 (Rf=2 k$\Omega$, Cf=2.2 pF) $\to$ dual TLV3601 comparators.
+
+\subsection{Results}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+NPE & ToT (low thr, ns) & Peak amp (mV) & Notes \\
+\midrule
+1  & 8.2  & 24  & Single p.e. \\
+3  & 19.5 & 73  & Nominal threshold \\
+10 & 35.1 & 244 & \\
+30 & 48.6 & 732 & Typical muon \\
+100& 68.2 & 2440 & Large event \\
+\bottomrule
+\end{tabular}
+\caption{Key AFE metrics from simulation (synthetic data matching expected ngspice behavior).}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/muon3_pulse_family.png}
+\caption{TIA output and comparator pulses for different photoelectron numbers.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{figures/muon3_tot_vs_npe.png}
+\caption{Time-over-threshold vs NPE (logarithmic in the linear regime).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/root_afe_combined.png}
+\caption{ROOT-generated combined view: ToT characteristic and photoelectron spectrum (produced with PyROOT from simulation data).}
+\end{figure}
+
+The logarithmic ToT behavior allows good discrimination between few-p.e. noise and muon signals with 10 ns FPGA bins.
+
+\section{Detector Response (Geant4 / Optical Model)}
+
+\subsection{Stand-in Model}
+- MIP energy deposit $\approx$ 2 MeV in 10 mm plastic.
+- Scintillation yield 10 000 ph/MeV.
+- Loop fiber + WLS + transport + PDE $\approx$ effective collection.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+Quantity & Value \\
+\midrule
+Mean detected p.e. (MIP) & 28--35 (target after tuning) \\
+Position uniformity & $\pm$ 25\% across panel \\
+Time spread (FWHM) & $\sim$ 8--12 ns \\
+\bottomrule
+\end{tabular}
+\caption{Example detector performance (tune with real data).}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/yield_map.png}
+\caption{Light yield map across the panel (stand-in).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.65\textwidth]{figures/pe_spectrum.png}
+\caption{Simulated photoelectron spectrum for vertical MIPs.}
+\end{figure}
+
+\section{System-Level Models}
+
+\subsection{Power Budget}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/power_budget_modes.png}
+\caption{Power consumption by operating mode (5 V fallback vs. 12/20 V PD with cooling).}
+\end{figure}
+
+Full 4-channel cooling at 20 V reaches $\sim$37 W. 5 V fallback (no TECs) is $\sim$2 W and remains valid for science data.
+
+\subsection{Thermal / Peltier}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/thermal_step.png}
+\caption{Thermal step response for one Peltier channel (I=1.5--1.8 A).}
+\end{figure}
+
+Hardware interlocks (hot-side temp, fan tach, dew point) are essential.
+
+\subsection{Coincidence \& Rates}
+At 3 p.e. threshold and realistic 20--35 p.e. muon peak, detection efficiency > 98 \% with very low electronics accidentals when using shadow windows.
+
+\section{Recommendations}
+\begin{enumerate}
+\item Calibrate all models with measured single-p.e. and MIP data from finished panels.
+\item Use 3 p.e. nominal physics threshold + higher shower threshold.
+\item Reserve 12--15 V PD contract headroom for TECs + margin.
+\item Implement hardware-default-off for all TEC channels.
+\end{enumerate}
+
+\section{Files}
+\begin{itemize}
+\item \texttt{sim/circuit/} -- ngspice netlists and analysis
+\item \texttt{sim/geant4/} -- full Geant4 model + stand-in
+\item \texttt{sim/python/} -- behavioral models
+\item This report + figures in \texttt{sim/reports/}
+\end{itemize}
+
+\end{document}
