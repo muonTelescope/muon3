@@ -5,13 +5,19 @@ Pull images from a Google Photos album for project documentation.
 Usage:
     python pull_google_photos.py --album "Muon3 Documentation" --dest ../figures/google
 
+    # Using external secret (recommended for multiple projects/accounts):
+    python pull_google_photos.py \
+        --client-secret ~/.config/google-photos/openkolibri_photos_client_secret.json \
+        --list-albums
+
 Requirements:
     pip install google-auth-oauthlib google-api-python-client requests
 
 Setup:
     1. Create a Google Cloud project and enable "Photos Library API".
-    2. Create OAuth client ID (Desktop app) and save as client_secret.json next to this script.
-    3. Run once — it will open a browser for authorization.
+    2. Create OAuth client ID (Desktop app).
+    3. Save the client_secret.json (can be anywhere, e.g. ~/.config/google-photos/).
+    4. Run once — it will open a browser for authorization. Token is saved next to secret or in scripts/.
 
 Never commit client_secret.json or token files.
 """
@@ -37,26 +43,31 @@ TOKEN_FILE = 'token.json'
 CLIENT_SECRET_FILE = 'client_secret.json'
 
 
-def get_photos_service():
+def get_photos_service(client_secret_file=None, token_file=None):
     """Authenticate and return a Google Photos service client."""
+    if client_secret_file is None:
+        client_secret_file = CLIENT_SECRET_FILE
+    if token_file is None:
+        token_file = TOKEN_FILE
+
     creds = None
 
-    if os.path.exists(TOKEN_FILE):
-        creds = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
+    if os.path.exists(token_file):
+        creds = Credentials.from_authorized_user_file(token_file, SCOPES)
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            if not os.path.exists(CLIENT_SECRET_FILE):
-                print(f"Error: {CLIENT_SECRET_FILE} not found.")
+            if not os.path.exists(client_secret_file):
+                print(f"Error: {client_secret_file} not found.")
                 print("Download your OAuth client secret from Google Cloud Console and save it here.")
                 sys.exit(1)
 
-            flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file(client_secret_file, SCOPES)
             creds = flow.run_local_server(port=0)
 
-        with open(TOKEN_FILE, 'w') as token:
+        with open(token_file, 'w') as token:
             token.write(creds.to_json())
 
     return build('photoslibrary', 'v1', credentials=creds, static_discovery=False)
@@ -204,15 +215,28 @@ def main():
                         help='Comma-separated keywords to match in filename (e.g. data,test,panel,oscilloscope,hit,simulation)')
     parser.add_argument('--list-albums', action='store_true', help='List all available albums and exit (to explore the photo library)')
     parser.add_argument('--list-only', action='store_true', help='List matching items without downloading (look through for data and tests)')
+    parser.add_argument('--client-secret', default=None,
+                        help='Path to client_secret.json (can be outside the repo, e.g. ~/.config/google-photos/...)')
+    parser.add_argument('--token-file', default=None,
+                        help='Path to store/read token.json (defaults to client_secret dir or scripts/)')
     args = parser.parse_args()
 
     script_dir = Path(__file__).parent
     os.chdir(script_dir)
 
+    client_secret = args.client_secret or CLIENT_SECRET_FILE
+    token_file = args.token_file or TOKEN_FILE
+
+    # If client_secret is an absolute path, use its directory for default token (keeps token next to secret)
+    if args.client_secret and os.path.isabs(args.client_secret):
+        if args.token_file is None:
+            token_dir = Path(args.client_secret).parent
+            token_file = str(token_dir / 'token.json')
+
     print("Connecting to Google Photos...")
 
     try:
-        service = get_photos_service()
+        service = get_photos_service(client_secret, token_file)
     except Exception as e:
         print(f"Authentication failed: {e}")
         sys.exit(1)

@@ -85,24 +85,37 @@ If you prefer not to use a third-party tool, you can use the official Google Pho
    - Configure the OAuth consent screen (choose "External" if needed and add your email as a test user).
    - Create credentials → **OAuth client ID** → Application type: **Desktop app**.
    - Download the `client_secret_....json` file.
-5. Place the downloaded file in this project as `scripts/client_secret.json` (add it to `.gitignore` — never commit secrets).
+5. Place the downloaded file **anywhere** (recommended outside the repo, e.g. `~/.config/google-photos/yourname_photos_client_secret.json` with 600 perms).
 
 ### Running the helper script
 
 See `pull_google_photos.py` in this directory.
 
-Example:
+Basic example (secret next to script):
 ```bash
 cd scripts
 python pull_google_photos.py --album "Muon3 Documentation" --dest ../figures/google
 ```
 
-The script will open a browser on first run for authorization and then download images.
+Using your external client secret:
+```bash
+cd scripts
+python pull_google_photos.py \
+  --client-secret ~/.config/google-photos/openkolibri_photos_client_secret.json \
+  --album "Muon3 Documentation" \
+  --dest ../figures/google
+```
+
+The script will open a browser on first run for authorization and then download images. The token is saved next to the client secret (or in scripts/ if using the local default).
 
 **Note:** The Google Photos Library API has some limitations:
 - You must use a real user account (OAuth), not a service account.
 - Download links are time-limited.
 - For fully automated CI, `gphotos-sync` with a refresh token is easier.
+
+Useful flags for exploration:
+- `--list-albums`
+- `--list-only --keywords "data,test,panel" --since 2025-01-01` (look without downloading)
 
 ## Tips for this project
 
