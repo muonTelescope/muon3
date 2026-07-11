@@ -245,3 +245,16 @@ Store results in a CSV with columns like: `panel_id, x, y, angle, temp_C, ov_V, 
 - Never treat simulation results as final without cross-check against real hardware.
 
 This simulation suite, together with the KiCad P0 architecture and the documented freeze decisions, forms the foundation for the first manufacturable Muon3 revision.
+
+## Electromagnetic Simulations (openEMS)
+
+Additional FDTD EM modeling in `sim/openems/` for:
+
+- nRF9151 RF antenna (S11, pattern for LTE/GNSS bands)
+- 50 cm hybrid cable SI (S-params, pulse distortion)
+- High-speed PCB trace SI
+- 3V3 PDN impedance
+
+Scripts in `sim/openems/scripts/`, results/plots in `results/` and `plots/` (also copied to `figures/openems/` for the paper).
+
+See `sim/openems/README.md` and the paper section "Electromagnetic Simulations (openEMS)" for details. Complements Geant4 and ngspice for full validation of RF, SI/PI, and layout.

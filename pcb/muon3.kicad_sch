@@ -1,51 +1,268 @@
-(kicad_sch (version 20250114) (generator "eeschema") (generator_version "9.0")
-  (uuid "10000000-0000-4000-8000-000000000001")
-  (paper "A3")
-  (title_block (title "Muon3 next-generation telescope") (date "2026-07-11") (rev "P0")
-    (company "muonTelescope") (comment 1 "ARCHITECTURE BASELINE - NOT FOR FABRICATION"))
-  (lib_symbols)
-  (sheet (at 25 35) (size 75 24) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
-    (stroke (width 0.1524) (type solid)) (fill (color 0 0 0 0.0000))
-    (uuid "10000000-0000-4000-8000-000000000010")
-    (property "Sheetname" "USB-C PD, rails and SiPM HV" (at 25 33.5 0) (effects (font (size 1.27 1.27)) (justify left bottom)))
-    (property "Sheetfile" "power_usb_pd.kicad_sch" (at 25 60.5 0) (effects (font (size 1.27 1.27)) (justify left top)))
-    (instances (project "muon3" (path "/10000000-0000-4000-8000-000000000001" (page "2"))))
-  )
-  (sheet (at 25 78) (size 75 24) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
-    (stroke (width 0.1524) (type solid)) (fill (color 0 0 0 0.0000))
-    (uuid "10000000-0000-4000-8000-000000000020")
-    (property "Sheetname" "4x SiPM TIA and dual thresholds" (at 25 76.5 0) (effects (font (size 1.27 1.27)) (justify left bottom)))
-    (property "Sheetfile" "afe.kicad_sch" (at 25 103.5 0) (effects (font (size 1.27 1.27)) (justify left top)))
-    (instances (project "muon3" (path "/10000000-0000-4000-8000-000000000001" (page "3"))))
-  )
-  (sheet (at 25 121) (size 75 24) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
-    (stroke (width 0.1524) (type solid)) (fill (color 0 0 0 0.0000))
-    (uuid "10000000-0000-4000-8000-000000000030")
-    (property "Sheetname" "nRF9151, FPGA, SIM and timing" (at 25 119.5 0) (effects (font (size 1.27 1.27)) (justify left bottom)))
-    (property "Sheetfile" "digital_radio.kicad_sch" (at 25 146.5 0) (effects (font (size 1.27 1.27)) (justify left top)))
-    (instances (project "muon3" (path "/10000000-0000-4000-8000-000000000001" (page "4"))))
-  )
-  (sheet (at 25 164) (size 75 24) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
-    (stroke (width 0.1524) (type solid)) (fill (color 0 0 0 0.0000))
-    (uuid "10000000-0000-4000-8000-000000000040")
-    (property "Sheetname" "4x Peltier and temperature control" (at 25 162.5 0) (effects (font (size 1.27 1.27)) (justify left bottom)))
-    (property "Sheetfile" "thermal.kicad_sch" (at 25 189.5 0) (effects (font (size 1.27 1.27)) (justify left top)))
-    (instances (project "muon3" (path "/10000000-0000-4000-8000-000000000001" (page "5"))))
-  )
-  (sheet (at 25 207) (size 75 24) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
-    (stroke (width 0.1524) (type solid)) (fill (color 0 0 0 0.0000))
-    (uuid "10000000-0000-4000-8000-000000000050")
-    (property "Sheetname" "Panel connectors, sensors and debug" (at 25 205.5 0) (effects (font (size 1.27 1.27)) (justify left bottom)))
-    (property "Sheetfile" "connectors_sensors.kicad_sch" (at 25 232.5 0) (effects (font (size 1.27 1.27)) (justify left top)))
-    (instances (project "muon3" (path "/10000000-0000-4000-8000-000000000001" (page "6"))))
-  )
-  (text "P0 establishes architecture and JLCPCB sourcing constraints." (at 125 42 0) (effects (font (size 1.8 1.8)) (justify left)) (uuid "10000000-0000-4000-8000-000000000101"))
-  (text "Do not fabricate until each child sheet contains reviewed electrical circuitry." (at 125 50 0) (effects (font (size 1.8 1.8)) (justify left)) (uuid "10000000-0000-4000-8000-000000000102"))
-  (text "Target: JLCPCB 4-layer Standard PCBA, top-side SMT, X-ray for LGA/QFN/WSON." (at 125 58 0) (effects (font (size 1.8 1.8)) (justify left)) (uuid "10000000-0000-4000-8000-000000000103"))
-  (text "Modes: inter-station shower coincidence, atmospheric rate monitoring, directional tracking." (at 125 72 0) (effects (font (size 1.6 1.6)) (justify left)) (uuid "10000000-0000-4000-8000-000000000104"))
-  (text "Detector: 4x MicroFC-30035 on 20x20x1 cm scintillator/fiber panels." (at 125 80 0) (effects (font (size 1.6 1.6)) (justify left)) (uuid "10000000-0000-4000-8000-000000000105"))
-  (text "Power: USB-C 5 V safe boot; 12 V PD enables controlled Peltier operation." (at 125 88 0) (effects (font (size 1.6 1.6)) (justify left)) (uuid "10000000-0000-4000-8000-000000000106"))
-  (text "See README.md, PART_SELECTION.md, DESIGN_RULES.md and bom.csv before editing." (at 125 102 0) (effects (font (size 1.6 1.6)) (justify left)) (uuid "10000000-0000-4000-8000-000000000107"))
-  (sheet_instances (path "/" (page "1")))
-  (embedded_fonts no)
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "10000000-0000-4000-8000-000000000001")
+	(paper "A3")
+	(title_block
+		(title "Muon3 next-generation telescope")
+		(date "2026-07-11")
+		(rev "P1")
+		(company "muonTelescope")
+		(comment 1 "BASIC SCHEMATIC - WIP, NOT FOR FAB")
+	)
+	(lib_symbols)
+	(text "P1 real schematic (symbols + wires). See PART_SELECTION etc."
+		(exclude_from_sim no)
+		(at 125 50 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "10000000-0000-4000-8000-000000000101")
+	)
+	(text "4x MicroFC + WLS. nRF+RP2040. TPS25751+batt. HW interlocks."
+		(exclude_from_sim no)
+		(at 125 60 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "10000000-0000-4000-8000-000000000102")
+	)
+	(sheet
+		(at 25 35)
+		(size 75 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "10000000-0000-4000-8000-000000000010")
+		(property "Sheetname" "USB-C PD, rails and SiPM HV"
+			(at 25 33.5 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power_usb_pd.kicad_sch"
+			(at 25 60.5 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "muon3"
+				(path "/10000000-0000-4000-8000-000000000001"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 25 78)
+		(size 75 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "10000000-0000-4000-8000-000000000020")
+		(property "Sheetname" "4x SiPM TIA and dual thresholds"
+			(at 25 76.5 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "afe.kicad_sch"
+			(at 25 103.5 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "muon3"
+				(path "/10000000-0000-4000-8000-000000000001"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 25 121)
+		(size 75 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "10000000-0000-4000-8000-000000000030")
+		(property "Sheetname" "nRF9151, FPGA, SIM and timing"
+			(at 25 119.5 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "digital_radio.kicad_sch"
+			(at 25 146.5 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "muon3"
+				(path "/10000000-0000-4000-8000-000000000001"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 25 164)
+		(size 75 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "10000000-0000-4000-8000-000000000040")
+		(property "Sheetname" "4x Peltier and temperature control"
+			(at 25 162.5 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "thermal.kicad_sch"
+			(at 25 189.5 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "muon3"
+				(path "/10000000-0000-4000-8000-000000000001"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 25 207)
+		(size 75 24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "10000000-0000-4000-8000-000000000050")
+		(property "Sheetname" "Panel connectors, sensors and debug"
+			(at 25 205.5 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "connectors_sensors.kicad_sch"
+			(at 25 232.5 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "muon3"
+				(path "/10000000-0000-4000-8000-000000000001"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
 )

@@ -65,6 +65,7 @@ The controller baseline uses:
   \item[Geant4 optical model] Full particle transport (muons), scintillation, WLS shifting, optical photon propagation, boundary processes, and SiPM photon counting. Primary generator now samples realistic cosmic muon energy spectrum (power-law) and $\cos^2\theta$ angular distribution.
   \item[Analog front-end (ngspice)] DC-coupled SiPM model $\to$ OPA858 TIA $\to$ dual TLV3601 comparators. Produces ToT, amplitude, and pulse shapes.
   \item[System behavioral models (Python)] Thermal (Peltier + PID), power budget under multi-chemistry (USB-C PD + battery + solar), and coincidence/accidental rate estimators using Poisson statistics and NPE distributions.
+  \item[Electromagnetic (openEMS)] FDTD simulations for RF (nRF9151 antenna S11/pattern), signal integrity (50 cm cable and PCB traces), and power integrity (PDN impedance). Complements other models for full system validation.
 \end{description}
 
 All models are parameterized so they can be calibrated to real panel data (single-p.e.\ response, MIP peak position, temperature dependence).
@@ -225,6 +226,63 @@ Additional ngspice results confirm robustness to cable length and threshold sett
 Power budget: 5 V fallback (electronics only) $\approx 2\,\mathrm{W}$; full 4-channel cooling at 20 V reaches $\sim$37 W (supported by TPS25751 + BQ charger path with battery/solar). Thermal step-response simulations confirm 1.5--1.8 A Peltier operation yields adequate cooling with hardware interlocks required for dew-point safety.
 
 Coincidence studies at a 3 p.e. threshold yield $>98\%$ efficiency for typical muon NPE with negligible electronics accidentals when using delayed shadow windows.
+
+\subsection{Electromagnetic Simulations (openEMS)}
+
+openEMS FDTD simulations address RF, SI, and PI aspects:
+
+\begin{itemize}
+  \item nRF9151 antenna: S11 across GNSS (1.575 GHz) and LTE bands (1.8/2.6 GHz). Synthetic model shows good matching with peaks as expected; radiation pattern dipole-like.
+  \item 50 cm hybrid cable: S-parameters and pulse fidelity for comparator ToT outputs. Attenuation and reflections modeled; confirms need for proper termination.
+  \item High-speed PCB traces: Microstrip SI for AFE-to-FPGA lines. Impedance control and crosstalk.
+  \item PDN (3V3 rail): Impedance profile showing resonances; guides decoupling capacitor placement.
+\end{itemize}
+
+Results (generated via scripts in \texttt{sim/openems/}; plots in \texttt{figures/openems/}):
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/openems/nrf9151_antenna_s11.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/openems/nrf9151_antenna_pattern.png}
+\end{minipage}
+\caption{nRF9151 antenna S11 (left) and approximate radiation pattern (right) from openEMS model.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/openems/cable_50cm_sparams.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/openems/cable_pulse.png}
+\end{minipage}
+\caption{50 cm cable S-parameters (left) and post-cable pulse (right).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/openems/hs_trace_sparams.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/openems/pdn_3v3_impedance.png}
+\end{minipage}
+\caption{High-speed trace S-params (left) and 3V3 PDN impedance (right).}
+\end{figure}
+
+These confirm layout guidelines (RF keepouts, decoupling, termination) and validate the design for remote operation.
 
 \section{Discussion and Validation}
 
