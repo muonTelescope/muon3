@@ -503,8 +503,7 @@ pdflatex --version
 
 ```bash
 cd /path/to/physics
-./build_paper.sh                # basic build
-./build_paper.sh --pull-images  # fetch latest images from Google Photos album first
+./build_paper.sh
 ```
 
 Or manually:
@@ -518,28 +517,18 @@ pdflatex -interaction=nonstopmode Muon3_Simulation_Studies.tex
 
 A pre-generated PDF (`Muon3_Simulation_Studies.pdf`) is included, produced via fpdf2 with embedded plots from the simulations (for environments without native pdflatex).
 
-## Documentation Images, Simulations Data & Additional Information (Google Photos + Drive)
+## Documentation Images, Simulations Data & Additional Information (Google Drive)
 
-Many photos, test shots, hardware renders, diagrams, simulation outputs (Geant4 hits, ngspice waves, plots), and additional files live in Google Photos and Google Drive (support for multiple accounts) rather than being committed directly to the repo.
+Many photos, test shots, hardware renders, diagrams, simulation outputs (Geant4 hits, ngspice waves, plots), and additional files live in Google Drive (support for multiple accounts) rather than being committed directly to the repo.
 
 **Available connectors** (checked locally):
-- Google Photos Library API + gphotos-sync (for images, test shots, data visuals).
 - Google Drive API v3 + rclone (recommended for sim data, CAD, PDFs, additional info).
 - No active Google Drive for Desktop sync found on this machine.
 
 See `scripts/README.md` for full details, multi-account setup, and usage.
 
-### Quick pulls
+### Quick pulls (Drive - simulations + additional info)
 
-**Photos (images/tests/data):**
-```bash
-pip install gphotos-sync
-gphotos-sync --album "Muon3 Documentation" ./figures/google
-# Or with filters for data/tests:
-cd scripts && python pull_google_photos.py --keywords "data,test,simulation" --since 2025-01-01 --dest ../figures/tests
-```
-
-**Drive (simulations + additional info):**
 ```bash
 # rclone (best for multiple accounts + sim folders)
 rclone copy gdrive-sims:Muon3/simulations ./sim/additional/drive --progress
@@ -549,5 +538,5 @@ cd scripts && python pull_google_drive.py --folder "Muon3/Simulations" --dest ..
 
 Then copy needed files into `figures/`, `sim/`, Muon3Vision resources, etc.
 
-**Important**: Never commit `client_secret*.json`, `*_token*.json`, or bulk downloads. Use `.gitignore` (already configured) or Git LFS for large assets. Run `./build_paper.sh --pull-images` to auto-fetch before building docs.
+**Important**: Never commit `client_secret*.json`, `*_token*.json`, or bulk downloads. Use `.gitignore` (already configured) or Git LFS for large assets.
 

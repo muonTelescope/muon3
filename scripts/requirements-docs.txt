@@ -1,12 +1,6 @@
-# For the direct Google Photos pull script (pull_google_photos.py)
-google-auth-oauthlib
-google-api-python-client
-requests
-
 # For Google Drive pull (pull_google_drive.py) - for simulations and additional information
 google-auth-oauthlib
 google-api-python-client
 
 # Alternative (recommended for most users, supports multiple accounts easily):
-# pip install gphotos-sync
-# brew install rclone   # excellent for multi-account Google Drive + Photos syncs, scripts, etc.
+# brew install rclone   # excellent for multi-account Google Drive syncs, scripts, etc.
