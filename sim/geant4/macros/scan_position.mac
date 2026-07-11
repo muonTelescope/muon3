@@ -1,0 +1,8 @@
+# Example: crude position scan (run multiple times with different gun position via UI)
+# Better to extend the PrimaryGenerator or use /gun/position in a loop from Python driver.
+/run/initialize
+/gun/position 0 0 80 mm
+/gun/direction 0 0 -1
+/run/beamOn 200
+/gun/position 60 40 80 mm
+/run/beamOn 200

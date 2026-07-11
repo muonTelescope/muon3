@@ -1,0 +1,6 @@
+# Batch run macro for Muon3 panel simulation
+/run/initialize
+/gun/particle mu-
+/gun/energy 2 GeV
+/run/beamOn 500
+/control/shell echo "Batch run finished. Check muon_panel_hits.csv"

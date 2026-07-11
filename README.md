@@ -228,6 +228,7 @@ The main entry points are:
 - [Historical design conversation](reference_documentation/prior_design_exports/CHAT_HISTORY.md)
 - [Current reference hardware notes](reference_documentation/next_generation/nextgen_review/hardware/README.md)
 - [Analog simulation report](reference_documentation/next_generation/nextgen_review/sim/design_report.md)
+- [New Muon3 simulations (circuit / Geant4 / Python)](sim/README.md)
 
 ## Clone and initialize
 
@@ -266,8 +267,43 @@ Important paths:
 - `hardware/muon_telescope_v10/` - primary KiCad project;
 - `hardware/muon_telescope_v7/` - legacy validation twin;
 - `hardware/generator/` - schematic/symbol/PCB generators;
-- `sim/` - behavioral ngspice models, analysis scripts, plots, and design report; and
+- `sim/` - prior behavioral ngspice models, analysis scripts, plots, and design report; and
 - `rp2350_reference/` - superseded protocol and capture prototype.
+
+**Simulations** (primary modeling suite for the 2026 P0 architecture):
+
+All new simulation work lives in the top-level `sim/` directory (sibling to `pcb/`). This is the recommended location for electrical, detector-physics, and system modeling going forward.
+
+See `sim/README.md` for the complete reference. Highlights:
+
+- **circuit/** — ngspice models:
+  - `muon3_frontend.lib` (MicroFC-30035, OPA858 TIA, dual TLV3601 comparators, charge injection).
+  - `afe_dual_threshold.cir` (full channel with low/high thresholds, protection, filtered DAC refs).
+  - `hv_tps61170.cir` (boost + filtering + trim + HV_MON).
+  - `cable_50cm.cir` (lossy 50 cm interconnect).
+  - Scripts + analyzer for NPE sweeps, ToT, time-walk.
+
+- **geant4/** — complete Geant4 application for muon transport + full optical photon tracking:
+  - 200×200×10 mm EJ-200 panel + looped WLS fiber + MicroFC-30035.
+  - Scintillation, WLS, surfaces, PDE.
+  - Outputs: energy deposit, photon counts (produced/shifted/detected), timing, position dependence.
+  - Build with CMake; includes run, vis, and position-scan macros.
+
+- **python/** — behavioral & Monte-Carlo models:
+  - `thermal_peltier.py` (Peltier + heatsink + fan + dew-point interlock + PID).
+  - `power_budget.py` (5 V fallback vs. 12/20 V PD with 1–4 TEC channels).
+  - `coincidence_rates.py` (efficiency, accidentals).
+  - `sipm_to_tot.py` (parametrized ToT model).
+
+**Usage workflow** (recommended):
+1. Geant4 → realistic NPE distributions and photon time profiles.
+2. Feed into ngspice AFE models for pulse shape / ToT / threshold studies.
+3. Python models for thermal safety, power contracts, and rate predictions.
+4. Always cross-check against measured panel data before locking parameters.
+
+These models directly support the documented requirements (dual-threshold ToT, per-channel calibration injection, hardware thermal interlocks, 5 V science fallback, etc.).
+
+See also the prior reference simulations under `reference_documentation/next_generation/nextgen_review/sim/`.
 
 Before editing generated EDA files, read the package `AGENTS.md`, decision log, hardware README,
 and simulation report. Until the generators are retired, schematic changes should be made in the

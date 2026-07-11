@@ -1,0 +1,41 @@
+* =====================================================================
+* cable_50cm.cir - Lossy transmission line model for 50 cm panel cable
+* Affects fast SiPM pulses (rise ~1 ns, width 10-50 ns).
+* Use coax parameters or twisted pair + shield model.
+* Connect between panel connector and board AFE input.
+* =====================================================================
+
+* Simple lossy line (RG174-ish or better shielded for signal)
+* Z0 ~ 50-75 ohm, velocity ~0.66c, loss ~0.2-0.5 dB/m @ 50 MHz
+.param LEN=0.5            ; meters
+.param Z0=50
+.param TD={LEN/0.66/3e8}  ; one-way delay ~2.5 ns
+.param RS=0.5             ; series resistance contribution
+.param CPER=80p           ; per meter equiv
+
+* From panel side (after SiPM local C) to board summing node protection
+* Two-port representation using lumped + delay for first order
+Rsrc PANEL_SIG SIG1 {RS}
+Tline SIG1 0 SIG2 0 Z0={Z0} TD={TD}
+Csh SIG2 0 {CPER*LEN*0.5}
+
+* At board end: connect SIG2 --> Rser (10 ohm) --> INA of TIA
+* Bias and NTC pairs are DC/low-freq; model them separately if needed for IR drop.
+
+* Test bench: drive from SiPM model through cable
+.include muon3_frontend.lib
+Vdd VDD 0 3.3
+Xsipm PANEL_SIG CATH MICROFC_30035 NPE=30 T0=50n
+Rhv CATH PANEL_BIAS 100k
+Chv PANEL_BIAS 0 100n
+
+* Board side
+Rser SIG2 INA 10
+* (TIA would follow here)
+
+.control
+  tran 0.1n 300n
+  plot v(PANEL_SIG) v(SIG2) v(INA)
+  echo "Observe rise time degradation and ringing. 50 cm is marginal for <5 ns edges."
+.endc
+.end

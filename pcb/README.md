@@ -66,3 +66,35 @@ full record. In summary:
 - Put charge-injection and optical-test hooks in the schematic even if fitted as DNP.
 - Keep SiPM bias off exposed coax shells; use keyed touch-safe connectors for bias and TEC power.
 - Reserve RF keepout and antenna placement before dense digital or power placement begins.
+
+## Simulations
+
+Electrical, detector-physics, and system simulations for Muon3 live in `../sim/` (sibling directory to `pcb/`). This is the active modeling home for the P0 baseline.
+
+Full details and usage instructions are in `../sim/README.md`. Summary:
+
+**circuit/**
+- `muon3_frontend.lib`: MicroFC-30035 SiPM (double-exp current), OPA858 TIA, dual TLV3601 comparators, charge-injection subckt.
+- `afe_dual_threshold.cir`: complete channel netlist (DC-coupled, dual thresholds, protection, DAC refs, injection port).
+- `hv_tps61170.cir`: TPS61170-class boost, filter stages, DAC trim, HV_MON divider.
+- `cable_50cm.cir`: lossy-line model for the 50 cm hybrid cable.
+- `run_sweeps.sh` + `analyze_muon3.py`: NPE families, ToT vs NPE (log fit), time-walk, pulse plots.
+
+**geant4/**
+- Full Geant4 11+ project: muon propagation + optical photons through 200×200×10 mm EJ-200 panel + looped WLS fiber + MicroFC-30035.
+- Scintillation yield, WLS shift, surface reflectivity, PDE.
+- Outputs: Edep, photon counts (produced / shifted / detected at SiPM), timing distributions, position maps.
+- Build: `mkdir build; cd build; cmake ..; make`. Run with `../macros/run.mac` or `vis.mac`.
+
+**python/**
+- `thermal_peltier.py`: lumped model of CP30238 + cold block + hot-side + fan + dew-point interlock.
+- `power_budget.py`: detailed consumption for 5 V fallback vs. 12/20 V PD (TECs + fans).
+- `coincidence_rates.py` + `sipm_to_tot.py`: efficiency, accidentals, parametrized ToT.
+
+**Recommended flow**
+1. Use Geant4 to generate realistic light-yield distributions and photon arrival times from the actual panel geometry.
+2. Drive ngspice models with those NPE/time constants for AFE performance (gain, bandwidth, ToT, overload recovery).
+3. Use Python models for thermal safety margins, USB-PD power budgeting, and top-level rate/coincidence studies.
+4. Cross-validate everything against bench measurements before freezing thresholds, DAC settings, or interlock values in the schematic/BOM.
+
+See also `../sim/data/panel_yield_notes.md` for the critical measurements that must be performed on real panels.

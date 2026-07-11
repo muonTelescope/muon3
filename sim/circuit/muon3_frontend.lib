@@ -1,0 +1,91 @@
+* =====================================================================
+* muon3_frontend.lib - Muon3 analog front-end ngspice models (2026-07-11 baseline)
+* Updated for onsemi MicroFC-30035 SiPM (~30 V bias class)
+* DC-coupled OPA858 TIA + dual fast comparators (TLV3601-class)
+* Charge injection hook and protection network
+* =====================================================================
+
+* ---------------------------------------------------------------------
+* MicroFC-30035 behavioral SiPM (anode-readout current pulse)
+* Typical params (tune from datasheet + measured single-p.e. data):
+*   NPE   = fired microcells (photoelectrons + crosstalk + afterpulses)
+*   QPE   = charge per p.e.  (gain ~3e6 * e ≈ 480 fC at 3 V overvoltage)
+*   TAUR  = rise (avalanche + parasitics) ~0.8-1.5 ns
+*   TAUD  = decay (Rq * Cpixel effective) ~10-20 ns typical
+*   CT    = terminal capacitance (whole device) ~ 300-500 pF range for 3x3mm
+*   IDARK = primary dark count rate current equivalent (0.1-1 uA @ room temp)
+* Terminals: A (anode to TIA summing node), K (cathode to filtered HV)
+* ---------------------------------------------------------------------
+.subckt MICROFC_30035 A K NPE=20 QPE=480f TAUR=1.0n TAUD=15n T0=100n CT=400p IDC=0.5u
+* Double exponential current into anode (negative-going voltage at TIA)
+Bpulse K A I = (time > {T0}) ? {NPE*QPE/(TAUD-TAUR)} * ( exp(-(time-{T0})/{TAUD}) - exp(-(time-{T0})/{TAUR}) ) : 0
+Ct A K {CT}
+Idark K A {IDC}
+.ends MICROFC_30035
+
+* ---------------------------------------------------------------------
+* OPA858 behavioral macromodel (single 3.3 V or clean 5 V analog rail)
+* Keep parameters close to the validated prior model but allow VDD param.
+* GBW 5.5 GHz decompensated, high SR.
+* Pins: INP INN OUT VDD VSS
+* ---------------------------------------------------------------------
+.subckt OPA858 INP INN OUT VDD VSS
+Cinp INP VSS 0.62p
+Cinn INN VSS 0.62p
+Cind INP INN 0.2p
+Vnoise INP INPX dc 0
+Gm 0 P1 INPX INN 1m
+Rp1 P1 0 4.5MEG
+Cp1 P1 0 29.1f
+Dwu1 P1 PCLH DWU
+Dwu2 PCLL P1 DWU
+Vclh PCLH 0 5
+Vcll PCLL 0 -1.7
+.model DWU D(IS=1u RS=5 N=1)
+Gp2 0 P2 P1 0 1m
+Rp2 P2 0 1k
+Cp2 P2 0 45.5f
+Bclamp CL 0 V = ( v(P2) > (v(VDD)-0.15) ? (v(VDD)-0.15) : ( v(P2) < (v(VSS)+0.15) ? (v(VSS)+0.15) : v(P2) ) )
+Bsr 0 SL I = ( (v(CL)-v(SL)) > 0.02 ? 40u : ( (v(CL)-v(SL)) < -0.02 ? -40u : (v(CL)-v(SL))*2m ) )
+Csl SL 0 20f
+Rsl SL 0 1G
+Eout OB 0 SL 0 1
+Rout OB OUT 10
+.ends OPA858
+
+* ---------------------------------------------------------------------
+* Fast push-pull comparator (TLV3601 / similar 2.5-4 ns class)
+* Hysteresis ~6-10 mV modeled. Quiescent output high.
+* Pins: INP INN OUT VDD VSS
+* ---------------------------------------------------------------------
+.subckt TLV3601 INP INN OUT VDD VSS
+* Simple transconductance + output stage with hysteresis
+.param HYST=8m
+Gcmp 0 PCMP INP INN 1m
+Rp PCMP 0 10k
+Ch PCMP 0 5p
+* Hysteresis source (small differential offset)
+Eoff OFF 0 VALUE={HYST * (v(OUT) > 1.65 ? 1 : -1)}
+* Output buffer with rail clamps and delay approximation
+Bout OUTI 0 V = (v(PCMP) + v(OFF) > 0 ? (v(VDD)-0.2) : 0.2)
+* Propagation delay RC
+Rpd OUTI OUTD 100
+Cpd OUTD 0 30p
+Eout OUT 0 OUTD 0 1
+Rout OUT VSS 50
+.ends TLV3601
+
+* ---------------------------------------------------------------------
+* Simple BAV99 dual clamp model (low C version)
+* ---------------------------------------------------------------------
+.model BAV99_CLAMP D (IS=1n CJO=1.2p RS=1.5 BV=30)
+
+* ---------------------------------------------------------------------
+* Basic charge injection network (per-channel, from DAC or fast pulse)
+* Use for calibration: a small capacitor + switch or voltage step.
+* Terminals: INJ (drive node), TIA_IN (summing node)
+* Example usage: step source on INJ through 0.5-5 pF Cinj.
+* ---------------------------------------------------------------------
+.subckt CHARGE_INJ INJ TIA_IN CINJ=1.0p
+Cinj INJ TIA_IN {CINJ}
+.ends CHARGE_INJ

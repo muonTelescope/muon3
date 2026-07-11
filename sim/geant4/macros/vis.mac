@@ -1,0 +1,17 @@
+# Visualization for development
+/run/initialize
+/vis/open OGL 600x600-0+0
+/vis/viewer/set/viewpointVector 1 1 1
+/vis/viewer/set/autoRefresh true
+/vis/verbose warnings
+/vis/drawVolume
+/vis/scene/add/trajectories smooth
+/vis/scene/add/hits
+/vis/modeling/trajectories/create/drawByCharge
+/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
+/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2
+# Optical photons are slow to draw in large numbers — use with care
+/vis/filtering/trajectories/create/particleFilter
+/vis/filtering/trajectories/particleFilter-0/add opticalphoton
+/vis/filtering/trajectories/particleFilter-0/invert true   # hide most photons unless wanted
+/run/beamOn 5
