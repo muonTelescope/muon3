@@ -96,12 +96,19 @@ Edit `src/PanelDetectorConstruction.cc` or pass via macros/UI commands:
 - Kuraray WLS fiber (Y-11 / K-11) technical notes
 - onsemi MicroFC-30035 product spec (PDE vs wavelength)
 - Historical muonTelescope panel assembly notes (see `reference_documentation/repositories/scintillatorPanel`)
+- phyxch/fiberPanel — GEANT4 simulation of scintillation light collection from a scintillator panel with embedded fiber (https://github.com/phyxch/fiberPanel). Cloned locally under `reference_documentation/repositories/fiberPanel/`. Provides material mass-fraction definitions (EJ-200), optical cement (EJ-500), WLS Y-11 modeling, Al wrapping + sensor hole, position-dependent collection studies, and SiPM photon counting SD. The current looped-fiber model builds on and extends this prior work from the same collaboration (Xiaochun He / GSU group).
+- phyxch/magnetocosmics — Cosmic ray propagation in geomagnetic field (https://github.com/phyxch/magnetocosmics). Reference for more realistic primary muon/ shower generation in future updates.
+
+See the comprehensive paper `Muon3_Simulation_Studies.tex` (base directory) for full results, citations, and details of 2026 model improvements (realistic cosmic spectrum + angular distribution, refined geometry and optics). The paper is formatted following sPHENIX publication conventions.
 
 **Limitations of this starter model**
 - Simplified groove as union of tori/cylinders (real milled groove is more complex).
 - No surface roughness scattering modeled in detail (can add UNIFIED model).
 - Single fiber end readout (the real design uses one end).
 - No afterpulsing / crosstalk in SiPM (apply statistically in post-processing).
-- Cosmic muon spectrum not included (use GPS with appropriate angular + energy distribution for realism).
+- Cosmic muon spectrum not included (use GPS with appropriate angular + energy distribution for realism; see phyxch/magnetocosmics for geomagnetic tracking reference).
+
+**Related external work (same group)**
+The current looped model is informed by and cross-checked against `reference_documentation/repositories/fiberPanel` (straight-fiber Geant4 study with configurable fiber position, precise EJ-200 mass fractions, full optical surfaces, WLS + SiPM photon counting). Material definitions were harmonized with that reference.
 
 Improve the geometry with CAD import (GDML/STEP) once the mechanical model is frozen.

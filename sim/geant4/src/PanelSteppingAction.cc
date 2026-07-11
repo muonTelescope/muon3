@@ -5,6 +5,7 @@
 #include "G4Track.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4OpticalPhoton.hh"
+#include "G4VProcess.hh"
 
 PanelSteppingAction::PanelSteppingAction(PanelEventAction* ea) : fEventAction(ea) {}
 

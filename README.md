@@ -14,8 +14,15 @@ are:
 3. directional tracking with multiple scintillator layers.
 
 This repository also preserves the complete earlier hardware and software lineage. Twenty-eight
-upstream `muonTelescope` repositories are retained as Git submodules so their original commits,
-branches, tags, and remotes remain available.
+upstream `muonTelescope` repositories are retained (see `reference_documentation/repositories/`)
+so their original commits, branches, tags, and remotes remain available.
+
+Additional relevant external simulations from the same collaboration (Xiaochun He / GSU) are
+cloned under `reference_documentation/repositories/`:
+- `fiberPanel/` — Geant4 model of scintillator panel + embedded WLS fiber + SiPM (straight-fiber
+  variant, detailed optical physics, material defs, position scans). Used to refine the current
+  looped-fiber muon3 model.
+- `magnetocosmics/` — cosmic-ray tracking in the geomagnetic field (reference for primaries).
 
 > **Engineering status:** research and architecture phase. The included 2026 Rev A KiCad design
 > is reference material, not a fabrication release. It has known electrical blockers and no routed
@@ -95,6 +102,31 @@ Major decisions currently include:
 - one cold-side NTC and preferably one hot-side NTC per SiPM/TEC channel;
 - four independently regulated, dew-point-aware Peltier channels; and
 - pressure-corrected and uncorrected scientific data products with full configuration provenance.
+
+## Simulations, Improvements, and Publications
+
+A comprehensive simulation suite supports detector design, threshold optimization, and calibration planning:
+
+- **Geant4 optical model** (`sim/geant4/`): scintillation, WLS transport, surface effects, SiPM photon counting. Recent improvements (2026-07):
+  - Realistic cosmic muon energy spectrum (power-law sampling) and $\cos^2\theta$ angular distribution.
+  - More representative looped-fiber geometry (straights + corner tori + exit legs + simplified optical cement).
+  - Updated material and optical properties cross-checked against Eljen/Luxium EJ-200 documentation, Kuraray WLS fiber data, onsemi SiPM PDE curves, and prior collaboration work (phyxch/fiberPanel).
+- **Analog front-end** (`sim/circuit/`): ngspice models of SiPM + OPA858 TIA + dual comparators.
+- **Behavioral models** (`sim/python/`): thermal/Peltier, power budget under USB-C PD, coincidence/accidental rates.
+
+Stand-in and partial real Geant4 data (hits.csv) indicate a mean detected yield of ~25--40 p.e.\ per MIP after all losses, with usable uniformity and timing.
+
+### Paper
+An overall summary and findings paper has been written in the base directory:
+- `Muon3_Simulation_Studies.tex` (and compiled PDF when TeX is available)
+- Formatted as a professional article (sPHENIX/Brookhaven-style conventions: clear sections, booktabs tables, properly captioned figures, numbered references).
+- Cites Eljen/Kuraray/onsemi datasheets, public muon telescope and muography papers (arXiv), phyxch reference models, and historical project documentation.
+- See the paper for detailed results, discussion of limitations, and future calibration plans.
+
+The paper replaces/augments the earlier short simulation report in `sim/reports/`.
+
+### How to build and run simulations
+See `sim/geant4/README.md`, `sim/README.md`, and the paper for instructions. Full Geant4 (with visualization and all required libraries) is needed for the complete optical model; stand-in + Python models provide rapid iteration.
 
 ## Current PCB work
 
@@ -205,6 +237,8 @@ for the evidence, subsystem findings, questions, and recommended work order.
 ├── README.md
 ├── .gitmodules
 ├── pcb/                        # active clean-sheet Muon3 PCB workspace
+├── gateware/                   # iCE40UP5K gateware (modern Yosys + nextpnr-ice40)
+├── firmware/                   # nRF9151 firmware (modern Zephyr + NCS)
 └── reference_documentation/
     ├── README.md
     ├── repositories/            # 28 historical Git submodules
@@ -229,6 +263,8 @@ The main entry points are:
 - [Current reference hardware notes](reference_documentation/next_generation/nextgen_review/hardware/README.md)
 - [Analog simulation report](reference_documentation/next_generation/nextgen_review/sim/design_report.md)
 - [New Muon3 simulations (circuit / Geant4 / Python)](sim/README.md)
+- [Gateware project](gateware/README.md) (Yosys + nextpnr-ice40)
+- [Firmware project](firmware/README.md) (Zephyr + nRF Connect SDK)
 
 ## Clone and initialize
 
@@ -269,6 +305,8 @@ Important paths:
 - `hardware/generator/` - schematic/symbol/PCB generators;
 - `sim/` - prior behavioral ngspice models, analysis scripts, plots, and design report; and
 - `rp2350_reference/` - superseded protocol and capture prototype.
+- `gateware/` - modern iCE40 gateware project (Yosys + nextpnr)
+- `firmware/` - modern nRF9151 firmware project (Zephyr/NCS)
 
 **Simulations** (primary modeling suite for the 2026 P0 architecture):
 
@@ -300,6 +338,23 @@ See `sim/README.md` for the complete reference. Highlights:
 2. Feed into ngspice AFE models for pulse shape / ToT / threshold studies.
 3. Python models for thermal safety, power contracts, and rate predictions.
 4. Always cross-check against measured panel data before locking parameters.
+
+**Firmware and Gateware** (modern toolchains):
+
+- `gateware/` — iCE40UP5K timing engine (pulse capture, exact-subset coincidence, ToT, PPS timestamps, SPI to nRF).
+  - Modern flow: Yosys + nextpnr-ice40 + icestorm.
+  - Build: `make` (after `source firmware/setup_env.sh`).
+
+- `firmware/` — nRF9151 application (control, LTE-M/NB-IoT + GNSS, thermal loops, telemetry, SPI master to gateware).
+  - Modern: Zephyr + nRF Connect SDK (NCS).
+  - Toolchain: arm-none-eabi-gcc, west, nrfutil.
+  - Setup: see `firmware/README.md` and `west.yml` (init NCS separately, large download).
+
+Toolchains installed via Homebrew + pip (modern versions):
+- Gateware: yosys, nextpnr-ice40, icestorm
+- Firmware: arm-none-eabi-gcc 16.x, west, nrfutil, cmake, ninja, etc.
+
+Use `firmware/setup_env.sh` to set PATH. Full NCS `west init` is heavy — take it slow.
 
 These models directly support the documented requirements (dual-threshold ToT, per-channel calibration injection, hardware thermal interlocks, 5 V science fallback, etc.).
 

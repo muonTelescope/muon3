@@ -1,4 +1,4 @@
-(kicad_pcb (version 20240108) (generator pcbnew)
+(kicad_pcb (version 20250114) (generator "pcbnew") (generator_version "9.0")
   (general (thickness 1.6))
   (paper "A4")
   (layers

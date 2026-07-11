@@ -1,23 +1,30 @@
 * =====================================================================
-* muon3_frontend.lib - Muon3 analog front-end ngspice models (2026-07-11 baseline)
-* Updated for onsemi MicroFC-30035 SiPM (~30 V bias class)
+* muon3_frontend.lib - Muon3 analog front-end ngspice models
+* Rev 2 (2026-07-11): parameters corrected against the SensL/onsemi
+* C-Series datasheet (MICROC-SERIES-D). Key changes from rev 1:
+*   - CT 400p -> 850p (datasheet anode-cathode capacitance, 30035 @2.5V OV)
+*   - TAUD 15n -> 82n (datasheet microcell recharge time constant, 35 um)
+*   - QPE 480 fC is at 2.5 V OV (gain 3e6), not 3.0 V OV
+*   - IDC default from 30035 dark current (154-443 nA typ-max @2.5V OV)
+*   - TLV3601 hysteresis reference derived from VDD, not hardcoded 1.65 V
+*   - CHARGE_INJ given an internal bleed so the INJ node is never floating
 * DC-coupled OPA858 TIA + dual fast comparators (TLV3601-class)
-* Charge injection hook and protection network
 * =====================================================================
 
 * ---------------------------------------------------------------------
 * MicroFC-30035 behavioral SiPM (anode-readout current pulse)
-* Typical params (tune from datasheet + measured single-p.e. data):
-*   NPE   = fired microcells (photoelectrons + crosstalk + afterpulses)
-*   QPE   = charge per p.e.  (gain ~3e6 * e ≈ 480 fC at 3 V overvoltage)
-*   TAUR  = rise (avalanche + parasitics) ~0.8-1.5 ns
-*   TAUD  = decay (Rq * Cpixel effective) ~10-20 ns typical
-*   CT    = terminal capacitance (whole device) ~ 300-500 pF range for 3x3mm
-*   IDARK = primary dark count rate current equivalent (0.1-1 uA @ room temp)
+* Datasheet anchors (C-Series, 2.5 V OV, 21 degC):
+*   Vbr 24.2-24.7 V, gain 3e6 (QPE = 480 fC), Canode-cathode = 850 pF,
+*   microcell recharge tau = 82 ns, DCR 300-860 kHz, crosstalk 7 %,
+*   afterpulsing 0.2 %, PDE(420 nm) 31 %, gain slope -0.8 %/degC,
+*   dVbr/dT = 21.5 mV/degC. Max continuous anode current 15 mA (SMT).
+* NPE here means FIRED MICROCELLS (include crosstalk/afterpulse factors
+* externally: NPE_eff ~ NPE_true * 1.07 at 2.5 V OV).
+* Pulse: double exponential, rise ~1 ns, decay dominated by microcell
+* recharge (82 ns). Total injected charge = NPE*QPE exactly.
 * Terminals: A (anode to TIA summing node), K (cathode to filtered HV)
 * ---------------------------------------------------------------------
-.subckt MICROFC_30035 A K NPE=20 QPE=480f TAUR=1.0n TAUD=15n T0=100n CT=400p IDC=0.5u
-* Double exponential current into anode (negative-going voltage at TIA)
+.subckt MICROFC_30035 A K NPE=20 QPE=480f TAUR=1.0n TAUD=82n T0=100n CT=850p IDC=0.3u
 Bpulse K A I = (time > {T0}) ? {NPE*QPE/(TAUD-TAUR)} * ( exp(-(time-{T0})/{TAUD}) - exp(-(time-{T0})/{TAUR}) ) : 0
 Ct A K {CT}
 Idark K A {IDC}
@@ -25,8 +32,9 @@ Idark K A {IDC}
 
 * ---------------------------------------------------------------------
 * OPA858 behavioral macromodel (single 3.3 V or clean 5 V analog rail)
-* Keep parameters close to the validated prior model but allow VDD param.
-* GBW 5.5 GHz decompensated, high SR.
+* GBW 5.5 GHz decompensated (min stable noise gain 7), high SR.
+* NOTE: does NOT model the input common-mode limit (VDD-1.4 V);
+* check VBOT against the rail by hand (1.8 V needs VDD >= 3.2 V).
 * Pins: INP INN OUT VDD VSS
 * ---------------------------------------------------------------------
 .subckt OPA858 INP INN OUT VDD VSS
@@ -54,21 +62,18 @@ Rout OB OUT 10
 .ends OPA858
 
 * ---------------------------------------------------------------------
-* Fast push-pull comparator (TLV3601 / similar 2.5-4 ns class)
-* Hysteresis ~6-10 mV modeled. Quiescent output high.
+* Fast push-pull comparator (TLV3601-class: ~2.5 ns prop, 6 mV hyst)
+* Hysteresis referenced to VDD/2 so the model tracks the supply.
 * Pins: INP INN OUT VDD VSS
 * ---------------------------------------------------------------------
 .subckt TLV3601 INP INN OUT VDD VSS
-* Simple transconductance + output stage with hysteresis
-.param HYST=8m
+.param HYST=6m
 Gcmp 0 PCMP INP INN 1m
 Rp PCMP 0 10k
 Ch PCMP 0 5p
-* Hysteresis source (small differential offset)
-Eoff OFF 0 VALUE={HYST * (v(OUT) > 1.65 ? 1 : -1)}
-* Output buffer with rail clamps and delay approximation
+Eoff OFF 0 VALUE={HYST * (v(OUT) > v(VDD)/2 ? 1 : -1)}
 Bout OUTI 0 V = (v(PCMP) + v(OFF) > 0 ? (v(VDD)-0.2) : 0.2)
-* Propagation delay RC
+* Propagation delay approximation (~2.5-3 ns)
 Rpd OUTI OUTD 100
 Cpd OUTD 0 30p
 Eout OUT 0 OUTD 0 1
@@ -81,11 +86,12 @@ Rout OUT VSS 50
 .model BAV99_CLAMP D (IS=1n CJO=1.2p RS=1.5 BV=30)
 
 * ---------------------------------------------------------------------
-* Basic charge injection network (per-channel, from DAC or fast pulse)
-* Use for calibration: a small capacitor + switch or voltage step.
+* Charge injection network (per-channel calibration hook).
+* Q = CINJ * Vstep into the summing node. 1.5 pF x 1 V = 1.5 pC ~ 3 p.e.
+* Internal bleed keeps INJ from floating when no source is attached.
 * Terminals: INJ (drive node), TIA_IN (summing node)
-* Example usage: step source on INJ through 0.5-5 pF Cinj.
 * ---------------------------------------------------------------------
 .subckt CHARGE_INJ INJ TIA_IN CINJ=1.0p
 Cinj INJ TIA_IN {CINJ}
+Rbleed INJ 0 10MEG
 .ends CHARGE_INJ

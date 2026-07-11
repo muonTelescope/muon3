@@ -1,3 +1,118 @@
-(kicad_symbol_lib (version 20231120) (generator kicad_symbol_editor)
+(kicad_symbol_lib (version 20250114) (generator "eeschema")
   (generator_version "9.0")
+
+(symbol "GND" (power) (pin_names (offset 0) hide)
+  (in_bom yes) (on_board yes)
+  (property "Reference" "#PWR" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+  (property "Value" "GND" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+  (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+  (property "Datasheet" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+  (symbol "GND_0_1" (polyline (pts (xy -1.27 -1.27) (xy 1.27 -1.27)) (stroke (width 0.254) (type default)) (fill (type none)))
+    (polyline (pts (xy -0.762 -1.905) (xy 0.762 -1.905)) (stroke (width 0.254) (type default)) (fill (type none)))
+    (polyline (pts (xy -0.254 -2.54) (xy 0.254 -2.54)) (stroke (width 0.254) (type default)) (fill (type none))))
+  (symbol "GND_1_1" (pin power_in line (at 0 0 270) (length 2.54)
+    (name "GND" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))) ))
+)
+
+(symbol "+3V3" (power) (pin_names (offset 0) hide)
+  (in_bom yes) (on_board yes)
+  (property "Reference" "#PWR" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+  (property "Value" "+3V3" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+  (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+  (property "Datasheet" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+  (symbol "+3V3_0_1" (polyline (pts (xy -1.27 1.27) (xy 1.27 1.27)) (stroke (width 0.254) (type default)) (fill (type none)))
+    (polyline (pts (xy -0.762 0.635) (xy 0.762 0.635)) (stroke (width 0.254) (type default)) (fill (type none)))
+    (polyline (pts (xy -0.254 0) (xy 0.254 0)) (stroke (width 0.254) (type default)) (fill (type none))))
+  (symbol "+3V3_1_1" (pin power_in line (at 0 0 270) (length 2.54)
+    (name "+3V3" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))) ))
+)
+
+(symbol "nRF9151-LACA-R7" (extends "nRF9151")
+  (property "Reference" "U" (at 0 0 0) (effects (font (size 1.27 1.27))))
+  (property "Value" "nRF9151-LACA-R7" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+  (property "Footprint" "muon3:nRF9151_LGA113" (at 0 -5.08 0) (effects (font (size 1.27 1.27)) hide))
+  (property "Datasheet" "https://www.nordicsemi.com/Products/nRF9151" (at 0 -7.62 0) (effects (font (size 1.27 1.27)) hide))
+  (property "LCSC" "C22397843" (at 0 -10.16 0) (effects (font (size 1.27 1.27)) hide))
+  (symbol "nRF9151-LACA-R7_0_1" (rectangle (start -20.32 15.24) (end 20.32 -15.24) (stroke (width 0.254) (type default)) (fill (type none))))
+)
+
+(symbol "ICE40UP5K-SG48I"
+  (property "Reference" "U" (at 0 0 0) (effects (font (size 1.27 1.27))))
+  (property "Value" "ICE40UP5K-SG48I" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+  (property "Footprint" "muon3:ICE40UP5K_SG48I_QFN48_EP" (at 0 -5.08 0) (effects (font (size 1.27 1.27)) hide))
+  (property "Datasheet" "https://www.latticesemi.com/Products/FPGAiCE40" (at 0 -7.62 0) (effects (font (size 1.27 1.27)) hide))
+  (property "LCSC" "C2678152" (at 0 -10.16 0) (effects (font (size 1.27 1.27)) hide))
+  (symbol "ICE40UP5K-SG48I_0_1" (rectangle (start -12.7 12.7) (end 12.7 -12.7) (stroke (width 0.254) (type default)) (fill (type none))))
+  ; Pins would be added for full, here placeholder for 48 pins + thermal
+)
+
+(symbol "OPA858IDSGR"
+  (property "Reference" "U" (at 0 0 0) (effects (font (size 1.27 1.27))))
+  (property "Value" "OPA858IDSGR" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+  (property "Footprint" "muon3:OPA858_WSON8_EP_2x2" (at 0 -5.08 0) (effects (font (size 1.27 1.27)) hide))
+  (property "Datasheet" "https://www.ti.com/lit/ds/symlink/opa858.pdf" (at 0 -7.62 0) (effects (font (size 1.27 1.27)) hide))
+  (property "LCSC" "C970232" (at 0 -10.16 0) (effects (font (size 1.27 1.27)) hide))
+  (symbol "OPA858IDSGR_0_1" (rectangle (start -5.08 5.08) (end 5.08 -5.08) (stroke (width 0.254) (type default)) (fill (type none))))
+  (symbol "OPA858IDSGR_1_1" (pin input line (at -7.62 2.54 0) (length 2.54) (name "-" ) (number "1")))
+  (symbol "OPA858IDSGR_2_1" (pin input line (at -7.62 -2.54 0) (length 2.54) (name "+" ) (number "2")))
+  (symbol "OPA858IDSGR_3_1" (pin power_in line (at 0 -7.62 90) (length 2.54) (name "V-" ) (number "3")))
+  (symbol "OPA858IDSGR_4_1" (pin output line (at 7.62 0 180) (length 2.54) (name "OUT" ) (number "4")))
+  ; Additional pins for WSON8 + EP
+)
+
+(symbol "TPS61170DRVR"
+  (property "Reference" "U" (at 0 0 0) (effects (font (size 1.27 1.27))))
+  (property "Value" "TPS61170DRVR" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+  (property "Footprint" "muon3:TPS61170_WSON6_EP_2x2" (at 0 -5.08 0) (effects (font (size 1.27 1.27)) hide))
+  (property "Datasheet" "https://www.ti.com/lit/ds/symlink/tps61170.pdf" (at 0 -7.62 0) (effects (font (size 1.27 1.27)) hide))
+  (property "LCSC" "C15163" (at 0 -10.16 0) (effects (font (size 1.27 1.27)) hide))
+  (symbol "TPS61170DRVR_0_1" (rectangle (start -5.08 5.08) (end 5.08 -5.08) (stroke (width 0.254) (type default)) (fill (type none))))
+)
+
+(symbol "DRV8873HPWPR"
+  (property "Reference" "U" (at 0 0 0) (effects (font (size 1.27 1.27))))
+  (property "Value" "DRV8873HPWPR" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+  (property "Footprint" "muon3:DRV8873_HTSSOP24_EP" (at 0 -5.08 0) (effects (font (size 1.27 1.27)) hide))
+  (property "Datasheet" "https://www.ti.com/lit/ds/symlink/drv8873.pdf" (at 0 -7.62 0) (effects (font (size 1.27 1.27)) hide))
+  (property "LCSC" "C2150604" (at 0 -10.16 0) (effects (font (size 1.27 1.27)) hide))
+  (symbol "DRV8873HPWPR_0_1" (rectangle (start -7.62 10.16) (end 7.62 -10.16) (stroke (width 0.254) (type default)) (fill (type none))))
+)
+
+(symbol "BME280"
+  (property "Reference" "U" (at 0 0 0) (effects (font (size 1.27 1.27))))
+  (property "Value" "BME280" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+  (property "Footprint" "JLCPCB:Bosch_LGA-8_2.5x2.5mm_P0.65mm_ClockwisePinNumbering" (at 0 -5.08 0) (effects (font (size 1.27 1.27)) hide))
+  (property "Datasheet" "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf" (at 0 -7.62 0) (effects (font (size 1.27 1.27)) hide))
+  (property "LCSC" "C92489" (at 0 -10.16 0) (effects (font (size 1.27 1.27)) hide))
+  (symbol "BME280_0_1" (rectangle (start -5.08 5.08) (end 5.08 -5.08) (stroke (width 0.254) (type default)) (fill (type none))))
+)
+
+(symbol "W25Q128JVSIQ"
+  (property "Reference" "U" (at 0 0 0) (effects (font (size 1.27 1.27))))
+  (property "Value" "W25Q128JVSIQ" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+  (property "Footprint" "JLCPCB:SOIC-8_L5.3-W5.3-P1.27-LS8.0-BL" (at 0 -5.08 0) (effects (font (size 1.27 1.27)) hide))
+  (property "Datasheet" "https://www.winbond.com/resource-files/w25q128jv%20revf%2003272018%20plus.pdf" (at 0 -7.62 0) (effects (font (size 1.27 1.27)) hide))
+  (property "LCSC" "C97521" (at 0 -10.16 0) (effects (font (size 1.27 1.27)) hide))
+  (symbol "W25Q128JVSIQ_0_1" (rectangle (start -5.08 5.08) (end 5.08 -5.08) (stroke (width 0.254) (type default)) (fill (type none))))
+)
+
+(symbol "CH224K"
+  (property "Reference" "U" (at 0 0 0) (effects (font (size 1.27 1.27))))
+  (property "Value" "CH224K" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+  (property "Footprint" "muon3:CH224K_ESSOP10_EP" (at 0 -5.08 0) (effects (font (size 1.27 1.27)) hide))
+  (property "Datasheet" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+  (property "LCSC" "C970725" (at 0 -7.62 0) (effects (font (size 1.27 1.27)) hide))
+  (symbol "CH224K_0_1" (rectangle (start -5.08 5.08) (end 5.08 -5.08) (stroke (width 0.254) (type default)) (fill (type none))))
+)
+
+(symbol "TPS62933"
+  (property "Reference" "U" (at 0 0 0) (effects (font (size 1.27 1.27))))
+  (property "Value" "TPS62933" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+  (property "Footprint" "" (at 0 -5.08 0) (effects (font (size 1.27 1.27)) hide))
+  (property "Datasheet" "https://www.ti.com/lit/ds/symlink/tps62933.pdf" (at 0 -7.62 0) (effects (font (size 1.27 1.27)) hide))
+  (symbol "TPS62933_0_1" (rectangle (start -5.08 5.08) (end 5.08 -5.08) (stroke (width 0.254) (type default)) (fill (type none))))
+)
+
+(symbol "nRF9151"
+  (extends "nRF9151-LACA-R7")
 )

@@ -26,3 +26,11 @@ geant4-data/
 
 # OS
 .DS_Store
+
+# Firmware/gateware build artifacts
+firmware/build/
+gateware/build/
+*.bin
+*.asc
+*.json
+*.elf

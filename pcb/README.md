@@ -24,7 +24,9 @@ Open `muon3.kicad_pro` in KiCad 9 or later. The root schematic contains five she
 - `parts/` — per-component research folders with downloaded data sheets and selection notes.
 - `DESIGN_RULES.md` — electrical, layout and release constraints.
 - `components/` — project-local symbol/footprint source area, matching `mppcInterface` organization.
-- `fp-lib-table`, `sym-lib-table` — project-local library tables.
+- `fp-lib-table`, `sym-lib-table` — project-local + JLCPCB library tables.
+- `components/JLCPCB-Kicad-Library/` — full JLCPCB footprints and symbols (copied from reference for assembly compatibility).
+- `components/muon3.kicad_sym` and `muon3.pretty/` — project verified / custom symbols and footprints for nRF9151, ICE40, WSON parts, USB-C, U.FL, etc. (see components/README.md).
 
 ## Non-negotiable release gates
 

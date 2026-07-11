@@ -1,0 +1,22 @@
+/* Custom overlay for muon3 board pins */
+/* SPI to gateware */
+&spi2 {
+    status = "okay";
+    cs-gpios = <&gpio0 16 GPIO_ACTIVE_LOW>; /* adjust */
+    pinctrl-0 = <&spi2_default>;
+    pinctrl-1 = <&spi2_sleep>;
+    pinctrl-names = "default", "sleep";
+};
+
+/* I2C for BME280 */
+&i2c2 {
+    status = "okay";
+    pinctrl-0 = <&i2c2_default>;
+    pinctrl-1 = <&i2c2_sleep>;
+    pinctrl-names = "default", "sleep";
+
+    bme280@76 {
+        compatible = "bosch,bme280";
+        reg = <0x76>;
+    };
+};

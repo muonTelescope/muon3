@@ -19,3 +19,14 @@ The active starting points are:
 3. `prior_design_exports/DECISIONS.md`
 4. `next_generation/nextgen_review/hardware/README.md`
 
+## External / collaborator reference simulations (phyxch)
+
+Relevant public repositories from Xiaochun He (GSU) have been cloned under `repositories/` for offline reference and parameter cross-checks:
+
+- `repositories/fiberPanel/` — GEANT4 simulation of scintillation light collection from a scintillator panel with embedded WLS fiber + SiPM. Direct prior/parallel art (straight-fiber position scans, detailed optical properties for EJ-200 / Y-11, Al wrapping, optical cement). Used for material definitions, surface modeling, photon counting approach, and yield scaling studies.
+- `repositories/magnetocosmics/` — Cosmic-ray shower particle tracking through the geomagnetic field. Useful for future realistic primary generation (angular/energy spectra) beyond simple muon guns.
+
+See the dedicated index `repositories/phyxch-references.md` for usage notes in the current analysis.
+
+See also the local historical `repositories/scintillatorPanel/` (looped fiber CAD + assembly notes) and `publications/`.
+

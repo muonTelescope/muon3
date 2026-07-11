@@ -2,6 +2,7 @@
 
 #include "G4Event.hh"
 #include "G4EventManager.hh"
+#include "G4SystemOfUnits.hh"
 #include <fstream>
 #include <iostream>
 
@@ -34,14 +35,14 @@ void PanelEventAction::EndOfEventAction(const G4Event* event) {
   }
 
   gHitsFile << fEventID << "," << x << "," << y << "," << z << ","
-            << fEdepScint / MeV << ","
+            << fEdepScint / CLHEP::MeV << ","
             << fPhotonsProduced << ","
             << fPhotonsShifted << ","
             << fPhotonsDetected << "\n";
 
   if (fEventID % 100 == 0) {
     std::cout << "Event " << fEventID
-              << "  Edep=" << fEdepScint/MeV << " MeV"
+              << "  Edep=" << fEdepScint/CLHEP::MeV << " MeV"
               << "  prod=" << fPhotonsProduced
               << "  shifted=" << fPhotonsShifted
               << "  detected=" << fPhotonsDetected << std::endl;

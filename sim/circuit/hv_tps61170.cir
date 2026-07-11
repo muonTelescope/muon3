@@ -1,22 +1,36 @@
 * =====================================================================
 * hv_tps61170.cir - Behavioral model of TPS61170 SiPM bias boost + filter
-* Target: ~30 V for MicroFC-30035 (adjust for exact overvoltage + temp coeff)
-* Includes DAC trim, OVP concept, per-channel RC filtering, readback divider.
+* Target: ~28.7 V cathode bias for MicroFC-30035 (Vbr 24.2-24.7 typ,
+* OV 2.5-5.0 V recommended range, VBOT 1.8 V anode reference).
+* Rev 2 (2026-07-11):
+*   - the boost is now actually CLOSED-LOOP: a high-gain source regulates
+*     FB to the TPS61170 1.229 V reference, so the DAC trim really moves
+*     the output (rev 1 used a fixed x3 gain and the trim did nothing)
+*   - OVP diode fixed (inline "D(BV=35)" is not valid ngspice; now a
+*     proper .model card)
+*   - trim network resized so VTRIM 0-3.3 V spans ~27.5-31.6 V, covering
+*     Vbr spread + 2.5-5 V overvoltage window
+*   - batch-safe control block (wrdata only, no interactive plot)
 * For noise / transient studies only; not a full switched-mode sim.
 * =====================================================================
 
-.param VOUT_TARGET=29.8
-.param VTRIM=1.0          ; 0-3.3 V DAC trim (higher trim usually lowers output on typical FB)
+.param VTRIM=1.65         ; 0-3.3 V DAC trim (higher trim lowers output)
 .param RFB1=270k
-.param RFB2=10k
-.param RTRIM=100k
+.param RFB2=11.5k
+.param RTRIM=220k
 
-* Input rail (from protected 12 V or 5 V PD bus)
+* Input rail (from protected 12 V PD bus; TPS61170 Vin max is 18 V,
+* so a 20 V PD contract must NOT feed this stage directly)
 Vin VIN 0 12
 
-* Simplified boost: voltage-controlled voltage source + output resistance
-* (real part switches at ~1.2 MHz; use for averaged + ripple injection)
-Eboost RAW 0 VIN 0 3.0     ; crude step-up; replace with proper model if needed
+* Closed-loop averaged boost: regulate FB to the 1.229 V reference.
+* Output limited to [VIN, 38 V] (boost cannot go below input; 38 V abs max).
+Bboost RAWI 0 V = ( v(CTRL) > 38 ? 38 : ( v(CTRL) < v(VIN) ? v(VIN) : v(CTRL) ) )
+* Integrator-ish error amp: CTRL slews until FB = 1.229
+Berr 0 CTRL I = ( 1.229 - v(FB) ) * 1m
+Cctrl CTRL 0 10n
+Rctrl CTRL 0 1G
+Rraw RAWI RAW 1
 Rout RAW OUTB 5
 Cbulk OUTB 0 2.2u
 
@@ -26,7 +40,9 @@ C11  F1 0 1u
 R10  F1 F2 1k
 C12  F2 0 2.2u
 
-* Trim network (typical inverting trim on FB)
+* Feedback + DAC trim (sensed at the filtered node so DC is accurate)
+* VOUT = 1.229*(1 + RFB1/RFB2) + (1.229 - VTRIM)*(RFB1/RTRIM)
+*      = 30.1 + (1.229 - VTRIM)*1.227   -> 27.5-31.6 V over the DAC range
 Rfb1 F2 FB {RFB1}
 Rfb2 FB 0 {RFB2}
 Rtr  TRIM FB {RTRIM}
@@ -36,19 +52,25 @@ Vtrim TRIM 0 {VTRIM}
 Rquiet F2 HV_QUIET 100
 Cquiet HV_QUIET 0 100n
 
-* HV monitor divider (to ADC, ~ /17 for 30 V -> ~1.76 V)
+* HV monitor divider (to ADC, /17.1: 30 V -> 1.75 V; buffer before ADC)
 Rhmon1 HV_QUIET HVMON 1MEG
 Rhmon2 HVMON 0 62k
 
-* Simple OVP clamp idea (Zener or active in real design)
-DOVP HV_QUIET 0 D( BV=35 )
+* OVP clamp (Zener-like; real design uses a proper clamp/comparator)
+DOVP HV_QUIET OVPA DOVP_M
+VOVP OVPA 0 0
+.model DOVP_M D(IS=1n RS=10 BV=35 IBV=1m)
 
 .control
-  dc Vtrim 0 3.3 0.1
-  plot v(HV_QUIET)
-  tran 1u 100u
-  plot v(HV_QUIET) v(HVMON)
-  wrdata hv_sweep.csv v(HV_QUIET) v(HVMON) v(F2)
-  echo "HV model: adjust RFB1/RFB2 + VTRIM to hit target. Check ripple feedthrough into AFE."
+  set wr_vecnames
+  set wr_singlescale
+  shell mkdir -p results
+  * Trim transfer function
+  dc Vtrim 0 3.3 0.05
+  wrdata results/hv_trim_sweep.csv v(HV_QUIET) v(HVMON) v(F2)
+  * Start-up / settling transient at mid trim
+  tran 10u 20m
+  wrdata results/hv_tran.csv v(HV_QUIET) v(HVMON) v(OUTB)
+  echo "HV MODEL RUN COMPLETE"
 .endc
 .end

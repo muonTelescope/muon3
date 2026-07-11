@@ -1,26 +1,34 @@
 * =====================================================================
 * afe_dual_threshold.cir - Muon3 single channel with dual comparators
 * DC-coupled MicroFC-30035 -> OPA858 TIA -> low + high TLV3601
-* Includes charge injection port and basic protection.
-* Baseline for 2026 muon3 P0 design (update params from real panel data).
+* Rev 2 (2026-07-11):
+*   - removed shorted Vgnd source (fatal error in ngspice 46: no run at
+*     all ever completed with the rev 1 deck; prior "results" were the
+*     analyzer's synthetic fallback)
+*   - SiPM params from datasheet: CT=850p, TAUD=82n (see frontend lib)
+*   - TIA on clean 5 V analog rail (per requirements), comparators and
+*     FPGA interface on 3.3 V
+*   - HV corrected: Vbr(24.4 typ) + OV(2.5) + VBOT(1.8) = 28.7 V
+*   - thresholds scaled to the corrected pulse gain (~11 mV/p.e.)
+*   - INJ node no longer floats (bleed inside CHARGE_INJ)
 * =====================================================================
 .include muon3_frontend.lib
 
-* ---------------- Parameters (override on command line or alterparam) ----
-.param NPE=15              ; photoelectrons (start low for single-p.e. scans)
-.param VOV=3.0             ; overvoltage (adjusts effective QPE in practice)
-.param VBOT=1.80           ; new baseline for clean 5V or adjusted 3.3V rail (example)
-.param VTH_LOW=1.68        ; low (physics) threshold ~3 p.e. below baseline
-.param VTH_HIGH=1.50       ; high (shower discrimination) threshold
+* ---------------- Parameters (override on command line) ------------------
+.param NPE=15              ; fired microcells
+.param VBOT=1.80           ; TIA non-inverting reference (DAC)
+.param VTH_LOW=1.767       ; low (physics) threshold ~3 p.e. below baseline
+.param VTH_HIGH=1.580      ; high (shower) threshold ~20 p.e.
 .param RF=2000
-.param CF=2.2p
+.param CF=3.3p             ; ~optimal for CT=850p, Rf=2k, GBW 5.5GHz
 .param T0=200n             ; pulse arrival
-.param VANA=3.3            ; or 5.0 for clean analog rail
+.param VANA=5.0            ; clean analog rail for OPA858
+.param VDIG=3.3            ; comparator / FPGA rail
 
 * Supplies
-Vdd   VDD 0 {VANA}
-Vgnd  0   0 0
-Vhv   HVQ 0 29.5           ; ~ Vbr + Vov + VBOT offset for MicroFC (~27+3+~0)
+Vana  VANA_R 0 {VANA}
+Vdig  VDD33  0 {VDIG}
+Vhv   HVQ 0 28.7           ; Vbr 24.4 + OV 2.5 + VBOT 1.8
 
 * DAC references (filtered)
 Vvbot VBOTN 0 {VBOT}
@@ -35,28 +43,26 @@ Vthh  VTHH_N 0 {VTH_HIGH}
 Rthh  VTHH_N VTHH_F 1k
 Cthh  VTHH_F 0 100n
 
-* HV filter + local reservoir (per channel or shared quiet rail)
-Rhv   HVQ CATH 100k
+* HV filter + local reservoir (per channel)
+Rhv   HVQ CATH 10k
 Chv   CATH 0 100n
 
-* Panel connector / cable interface point (see cable_50cm.cir for full model)
-* For now direct: anode from SiPM model
-* SiPM (anode to summing node)
-Xsipm IN CATH MICROFC_30035 NPE={NPE} T0={T0} QPE=480f CT=400p
+* SiPM (anode to summing node). 50 cm cable studied in cable_50cm.cir.
+Xsipm IN CATH MICROFC_30035 NPE={NPE} T0={T0} QPE=480f CT=850p TAUD=82n
 
 * Protection / summing node
 Rser  IN INA 10
-Dclp1 INA VDD BAV99_CLAMP
+Dclp1 INA VANA_R BAV99_CLAMP
 Dclp2 0   INA BAV99_CLAMP
 
 * TIA
-Xamp  VBOTF INA OUT VDD 0 OPA858
+Xamp  VBOTF INA OUT VANA_R 0 OPA858
 Rf    INA OUT {RF}
 Cf    INA OUT {CF}
 
-* Dual comparators (active-low outputs)
-XcmpL OUT VTHL_F CMPL VDD 0 TLV3601
-XcmpH OUT VTHH_F CMPH VDD 0 TLV3601
+* Dual comparators on 3.3 V rail (active-low outputs)
+XcmpL OUT VTHL_F CMPL VDD33 0 TLV3601
+XcmpH OUT VTHH_F CMPH VDD33 0 TLV3601
 
 * Series damping into FPGA (iCE40 pins)
 Rgl   CMPL FPAL 33
@@ -64,27 +70,22 @@ Cgl   FPAL 0 6p
 Rgh   CMPH FPAH 33
 Cgh   FPAH 0 6p
 
-* ---------------- Charge injection hook (DNP or used in cal mode) ------------
-* Drive INJ node with a fast voltage step (e.g. 0->1V through 1-5 pF)
-* or use a current source for controlled charge.
+* ---------------- Charge injection hook (cal mode) -----------------------
+* Drive INJ with a fast step for calibration studies, e.g.:
+* Vstep INJ 0 PULSE(0 1.0 100n 2n 2n 50n 1)   ; 1.5 pC ~ 3 p.e.
 Xinj  INJ INA CHARGE_INJ CINJ=1.5p
-* Example test source (comment out for normal runs):
-* Vstep INJ 0 PULSE(0 1.0 100n 2n 2n 50n 1)
 
-* ---------------- Decoupling (place at package pins in layout) -------------
-Cdec1 VDD 0 100n
-Cdec2 VDD 0 2.2u
+* ---------------- Decoupling (place at package pins in layout) -----------
+Cdec1 VANA_R 0 100n
+Cdec2 VANA_R 0 2.2u
+Cdec3 VDD33  0 100n
 
 .control
   set wr_vecnames
   set wr_singlescale
   shell mkdir -p results
-  reset
-  tran 0.2n 800n
+  tran 0.2n 1000n
   wrdata results/wave_dual.csv v(OUT) v(CMPL) v(CMPH) v(INA) v(FPAL)
   echo "NGSPICE SINGLE RUN COMPLETE"
 .endc
 .end
-
-
-

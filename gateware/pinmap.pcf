@@ -1,0 +1,22 @@
+# Muon3 iCE40UP5K-SG48 pinmap (using validated IO pins)
+set_io clk_25m 21
+set_io pps 20
+
+set_io cmp_low_0  2
+set_io cmp_high_0 3
+set_io cmp_low_1  4
+set_io cmp_high_1 6
+set_io cmp_low_2  9
+set_io cmp_high_2 10
+set_io cmp_low_3  11
+set_io cmp_high_3 12
+
+set_io spi_sck   13
+set_io spi_mosi  14
+set_io spi_miso  15
+set_io spi_cs_n  16
+
+set_io debug[0]  17
+set_io debug[1]  18
+set_io debug[2]  19
+set_io debug[3]  23

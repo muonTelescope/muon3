@@ -37,9 +37,11 @@ np.random.seed(123)
 def simulate_panel(n_events=2000):
     # MIP dE ~ 2 MeV in 1cm plastic
     dedx = 2.0  # MeV
-    scint_yield = 10000  # ph/MeV
-    trapping = 0.004     # realistic low collection for loop fiber + WLS + transport + one end (project expects ~20-40 p.e. detected)
-    pde = 0.35
+    scint_yield = 10000  # ph/MeV (literature: Eljen EJ-200 ~8-10k for MIPs; see citations in paper)
+    # Reference values cross-checked against phyxch/fiberPanel, local CAD, and public papers
+    # (Kuraray Y-11 trapping ~few %, overall collection ~0.25-0.4% including PDE).
+    trapping = 0.0035
+    pde = 0.38  # MicroFC-30035 at WLS emission (onsemi + muon telescope refs)
 
     xs = np.random.uniform(-90, 90, n_events)
     ys = np.random.uniform(-90, 90, n_events)

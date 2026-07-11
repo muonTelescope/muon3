@@ -1,38 +1,61 @@
 #!/bin/bash
-# Parametric runner for Muon3 AFE.
-# Substitutes .param NPE= in a temp netlist for each value, runs ngspice (single run per .cir).
-set -e
-NGSPICE="/opt/homebrew/bin/ngspice"
+# Parametric runner for Muon3 AFE (rev 2).
+# - fails loudly instead of hiding ngspice errors (rev 1 used `|| true`
+#   and silently fell back to synthetic data downstream)
+# - NPE sweep + low-threshold scan + cable comparison + HV model
+set -euo pipefail
+NGSPICE="$(command -v ngspice || echo /opt/homebrew/bin/ngspice)"
+[ -x "$NGSPICE" ] || { echo "ERROR: ngspice not found"; exit 1; }
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
 OUTDIR="results"
-PLOTDIR="plots"
-mkdir -p "$OUTDIR" "$PLOTDIR"
-
+mkdir -p "$OUTDIR" plots
 SRC="afe_dual_threshold.cir"
 
-echo "=== Muon3 ngspice AFE parametric sweeps ==="
-
-for n in 1 3 10 30 100; do
-  echo "  NPE=$n"
-  TMP=$(mktemp /tmp/muon3_afe_XXXX.cir)
-  # Substitute the .param NPE= line
-  sed "s/^\.param NPE=.*/.param NPE=$n/" "$SRC" > "$TMP"
-  $NGSPICE -b "$TMP" > /dev/null 2>&1 || true
-  # Move/rename the written file
-  if [ -f results/wave_dual.csv ]; then
-    mv results/wave_dual.csv "results/wave_dual_n${n}.csv"
+run_one () {
+  local tmp; tmp=$(mktemp /tmp/muon3_afe_XXXX.cir)
+  # shellcheck disable=SC2086
+  sed $1 "$SRC" > "$tmp"
+  local log; log=$(mktemp /tmp/muon3_afe_XXXX.log)
+  if ! "$NGSPICE" -b "$tmp" > "$log" 2>&1; then
+    echo "ERROR: ngspice failed for: $1"; tail -20 "$log"; exit 1
   fi
-  rm -f "$TMP"
+  grep -q "NGSPICE SINGLE RUN COMPLETE" "$log" || { echo "ERROR: run did not complete for: $1"; tail -20 "$log"; exit 1; }
+  [ -f "$OUTDIR/wave_dual.csv" ] || { echo "ERROR: no output CSV for: $1"; exit 1; }
+  mv "$OUTDIR/wave_dual.csv" "$OUTDIR/$2"
+  rm -f "$tmp" "$log"
+}
+
+echo "=== Muon3 ngspice AFE parametric sweeps (rev 2) ==="
+
+echo "-- NPE sweep --"
+for n in 1 2 3 5 10 20 30 50 100; do
+  echo "  NPE=$n"
+  run_one "-e s/^\.param NPE=.*/.param NPE=$n/" "wave_dual_n${n}.csv"
 done
 
-echo "Sweeps done."
-ls -l results/*.csv 2>/dev/null | cat || echo "(no csv yet - check ngspice)"
+echo "-- Low-threshold scan at NPE=30 --"
+for vth in 1.789 1.778 1.767 1.745 1.712 1.690; do
+  echo "  VTH_LOW=$vth"
+  run_one "-e s/^\.param NPE=.*/.param NPE=30/ -e s/^\.param VTH_LOW=.*/.param VTH_LOW=$vth/" \
+          "wave_dual_vth${vth}.csv"
+done
+
+echo "-- 50 cm cable comparison --"
+"$NGSPICE" -b cable_50cm.cir > /tmp/muon3_cable.log 2>&1 || { echo "ERROR: cable run failed"; tail -20 /tmp/muon3_cable.log; exit 1; }
+grep -q "CABLE MODEL RUN COMPLETE" /tmp/muon3_cable.log
+
+echo "-- HV bias model --"
+"$NGSPICE" -b hv_tps61170.cir > /tmp/muon3_hv.log 2>&1 || { echo "ERROR: HV run failed"; tail -20 /tmp/muon3_hv.log; exit 1; }
+grep -q "HV MODEL RUN COMPLETE" /tmp/muon3_hv.log
+
+echo "Sweeps done:"
+ls -l "$OUTDIR"/*.csv
 
 echo "Running analysis..."
-cd ..
-source ../.venv/bin/activate || true
-python circuit/analyze_muon3.py
+PY="$SCRIPT_DIR/../../.venv/bin/python"
+[ -x "$PY" ] || PY=python3
+"$PY" analyze_muon3.py
 echo "=== Complete ==="
-ls -l circuit/plots/ 2>/dev/null || true
+ls -l plots/

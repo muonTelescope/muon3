@@ -230,8 +230,9 @@ Store results in a CSV with columns like: `panel_id, x, y, angle, temp_C, ov_V, 
 ## References
 
 - `pcb/PART_SELECTION.md`, `pcb/DESIGN_RULES.md`, `pcb/SCHEMATIC_FREEZE_CHECK.md`
-- `reference_documentation/repositories/scintillatorPanel/readme.md` (mechanical assembly)
-- Prior AFE work: `reference_documentation/next_generation/nextgen_review/sim/`
+- `reference_documentation/repositories/scintillatorPanel/readme.md` (mechanical assembly, looped fiber)
+- `reference_documentation/repositories/fiberPanel/` (phyxch) — Geant4 panel + embedded WLS fiber optical sim; material definitions, optical processes, collection studies (https://github.com/phyxch/fiberPanel)
+- `reference_documentation/repositories/magnetocosmics/` (phyxch) — cosmic ray geomagnetic tracking (https://github.com/phyxch/magnetocosmics)
 - Publications: GSU ICRC2019, sPHENIX beam test (in `reference_documentation/publications/`)
 
 ## Contribution Guidelines

@@ -26,8 +26,10 @@ G4bool PanelSensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*) {
     fEventAction = dynamic_cast<PanelEventAction*>(ua);
   }
 
-  // Simple PDE application here (could be more sophisticated with wavelength)
-  G4double pde = 0.40; // default; better to read from construction
+  // PDE application (wavelength dependent in full model; here average for shifted ~510nm light).
+  // Literature: MicroFC-30035 PDE ~35-45% at peak after WLS (onsemi C-series datasheet + typical muon panel papers).
+  // Approach modeled after phyxch/fiberPanel (ref: reference_documentation/repositories/fiberPanel).
+  G4double pde = 0.38; // updated from literature cross-check
   if (G4UniformRand() < pde) {
     fPhotonCountThisEvent++;
     if (fEventAction) fEventAction->AddPhotonDetected(1);
