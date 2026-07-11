@@ -5,8 +5,9 @@
 \usepackage{geometry}
 \usepackage{hyperref}
 \usepackage{float}
-\usepackage{siunitx}
-\usepackage{amsmath}
+% siunitx and amsmath require extra packages in minimal TeX installs (user can add via tlmgr)
+%\usepackage{siunitx}
+%\usepackage{amsmath}
 \geometry{margin=2.5cm}
 
 \title{\textbf{Simulation Studies for the Muon3 Cosmic-Ray Muon Telescope:\\
@@ -79,7 +80,7 @@ These changes increase fidelity for position-dependent yield, time profiles, and
 \section{Results}
 
 \subsection{Detector Response}
-Using the improved Geant4 model (realistic cosmic primaries, updated geometry and optics) run with 500 events:
+Using the improved Geant4 model (realistic cosmic primaries, updated geometry and optics) run with 500 events plus position scan (total ~700 events):
 
 \begin{table}[H]
 \centering
@@ -87,16 +88,17 @@ Using the improved Geant4 model (realistic cosmic primaries, updated geometry an
 \toprule
 Quantity & Value \\
 \midrule
-Mean energy deposit (MIP, 10 mm) & $\approx 2.5\,\mathrm{MeV}$ \\
-Scintillation photons produced (est.) & $\sim$25\,000 \\
-Mean detected p.e.\ (after WLS + transport + PDE, non-zero) & $\sim$66 \\
-Position uniformity & Varies (lower far from exit leg) \\
+Mean energy deposit (MIP, 10 mm) & $\approx 2.5-3.6\,\mathrm{MeV}$ \\
+Scintillation photons produced (est.) & $\sim$25,000--36,000 \\
+Mean detected p.e.\ (after WLS + transport + PDE, non-zero edep events) & $\sim$79 (median 75, std 20) \\
+Range (good events) & 26--172 \\
+Position uniformity & Varies significantly; higher near fiber loop \\
 \bottomrule
 \end{tabular}
-\caption{Key metrics from actual Geant4 11.3.0 run on the improved model.}
+\caption{Key metrics from actual Geant4 11.3.0 runs on the improved model (500 events + position scan).}
 \end{table}
 
-The data is consistent with literature expectations for 1 cm EJ-200 + looped WLS (20--80 p.e. range reported in similar muon telescope and muography setups). Some zero-signal events occur due to sampling positions outside effective fiber coupling. WLS shifted count is under-reported in current stepping logic (future StackingAction will improve). Light collection drops with distance from the readout leg.
+The data is consistent with literature expectations for 1 cm EJ-200 + looped WLS fiber readout (50--150 p.e. range in similar muon telescope setups after losses). Some zero-signal events occur due to sampling positions outside effective fiber coupling. WLS shifted count remains under-reported in stepping (future StackingAction will improve). Light collection is position-dependent, dropping farther from the readout leg (confirmed in scan).
 
 \begin{figure}[H]
 \centering
@@ -120,6 +122,12 @@ The data is consistent with literature expectations for 1 cm EJ-200 + looped WLS
 \centering
 \includegraphics[width=0.6\textwidth]{figures/muon3_time_profile.png}
 \caption{Approximate optical photon arrival time spread extracted from Geant4 simulation (WLS + propagation delays).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/muon3_real_geant4.png}
+\caption{Updated ROOT analysis plots from the fixed photon counting runs (PE spectrum, Edep, yield map, correlation). Cleaned data from 500 events + position scan.}
 \end{figure}
 
 \subsection{Analog Front-End and System Performance}
