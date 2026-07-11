@@ -11,13 +11,30 @@ struct ContentView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            Text("Muon3 Vision")
-                .font(.largeTitle)
-                .fontWeight(.bold)
+            // High quality logo
+            HStack {
+                Image("AppIcon-1024")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 80, height: 80)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .shadow(radius: 5)
+                
+                VStack(alignment: .leading) {
+                    Text("Muon3Vision")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                    Text("Spatial Muon Telescope Simulator")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(.bottom, 10)
             
-            Text("High-Fidelity Visualization of Muon Telescope Simulations")
+            Text("Immersive visualization of Geant4 muon panel simulations for Apple Vision Pro")
                 .font(.title3)
                 .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
             
             // Controls - High quality UI with glass effect
             VStack(alignment: .leading, spacing: 16) {
@@ -83,13 +100,13 @@ struct ContentView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             }
             
-            Text("Use the Immersive Space for high-quality 3D visualization with particle photon paths and interactive panel.")
+            Text("Use the Immersive Space for high-quality 3D visualization with particle photon paths and interactive panel. The logo above represents the Muon3Vision brand.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
         }
         .padding(40)
-        .frame(width: 600, height: 500)
+        .frame(width: 620, height: 520)
         .glassBackgroundEffect()
     }
 }

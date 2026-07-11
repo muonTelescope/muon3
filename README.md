@@ -467,3 +467,44 @@ Reciprocal, `CERN-OHL-S-2.0`. See [LICENSE](LICENSE).
 Historical submodules retain their individual licenses and copyright. Bundled vendor/community
 libraries, downloaded data sheets, and public papers retain their own license terms. Review those
 terms before redistribution, modification, or commercial use.
+
+## Building the Paper (LaTeX)
+
+The main paper is `Muon3_Simulation_Studies.tex`.
+
+### Install LaTeX (macOS)
+
+```bash
+# Install minimal TeX distribution
+brew install --cask basictex
+
+# Update PATH (or restart your terminal)
+eval "$(/usr/libexec/path_helper)"
+
+# Verify
+pdflatex --version
+
+# If some packages missing (e.g. siunitx, booktabs), install via tlmgr:
+# sudo tlmgr install siunitx booktabs
+```
+
+**Note:** The cask installer requires administrator privileges. Run the brew command in a regular terminal.
+
+### Compile
+
+```bash
+cd /path/to/physics
+./build_paper.sh
+```
+
+Or manually:
+
+```bash
+pdflatex -interaction=nonstopmode Muon3_Simulation_Studies.tex
+bibtex Muon3_Simulation_Studies
+pdflatex -interaction=nonstopmode Muon3_Simulation_Studies.tex
+pdflatex -interaction=nonstopmode Muon3_Simulation_Studies.tex
+```
+
+A pre-generated PDF (`Muon3_Simulation_Studies.pdf`) is included, produced via fpdf2 with embedded plots from the simulations (for environments without native pdflatex).
+

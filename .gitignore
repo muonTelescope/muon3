@@ -38,3 +38,21 @@ gateware/build/
 sim/geant4/build2/
 sim/geant4/build3/
 sim/geant4/testbuild/
+# Additional build artifacts
+sim/geant4/build*/
+**/build*/
+**/.build/
+# LaTeX temp files (keep the main PDF)
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+# Muon3Vision build
+Muon3Vision/.build/
+Muon3Vision/Package.resolved
+# Python cache etc already covered

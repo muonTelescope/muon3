@@ -104,7 +104,7 @@ void PanelDetectorConstruction::DefineMaterials() {
   fReflectorSurf = new G4OpticalSurface("Reflector", unified, ground, dielectric_metal);
   auto* refMPT = new G4MaterialPropertiesTable();
   G4double refE[2] = {2.0*eV, 3.5*eV};
-  G4double refR[2] = {0.92, 0.92};
+  G4double refR[2] = {0.96, 0.96};  // improved to 96% for better match to literature collection eff.
   refMPT->AddProperty("REFLECTIVITY", refE, refR, 2);
   fReflectorSurf->SetMaterialPropertiesTable(refMPT);
 }

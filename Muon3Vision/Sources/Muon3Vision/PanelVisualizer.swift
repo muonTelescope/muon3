@@ -3,6 +3,7 @@ import SwiftUI
 
 /// High quality visualization builder for the muon panel.
 /// Focus: Physically accurate look, beautiful particles, smooth interactions.
+/// Now includes logo integration as a floating high-quality emblem.
 struct PanelVisualizer {
     func buildHighQualityPanel() -> Entity {
         let root = Entity()
@@ -23,17 +24,15 @@ struct PanelVisualizer {
         root.addChild(panelEntity)
         
         // WLS Fiber Loop - High quality glowing tube
-        // Use multiple torus segments for quality loop + legs
         let fiberMaterial = createGlowingFiberMaterial()
         
-        // Main loop (approximated with torus for quality)
         let loopMesh = MeshResource.generateTorus(ringRadius: 0.082, tubeRadius: 0.00065)
         let loopEntity = ModelEntity(mesh: loopMesh, materials: [fiberMaterial])
         loopEntity.name = "FiberLoop"
         loopEntity.position = [0, 0, 0.0035]
         root.addChild(loopEntity)
         
-        // Exit legs (high quality cylinders)
+        // Exit legs
         for offset in [-0.02, 0.02] {
             let legMesh = MeshResource.generateCylinder(height: 0.05, radius: 0.00065)
             let leg = ModelEntity(mesh: legMesh, materials: [fiberMaterial])
@@ -54,6 +53,19 @@ struct PanelVisualizer {
         sipm.position = [0.13, 0, 0.0035]
         root.addChild(sipm)
         
+        // High-quality logo emblem floating above the panel (using a plane with the logo texture)
+        // Note: For full texture loading in production, use TextureResource.load(named: "AppIcon-1024")
+        // Here we use a placeholder emissive plane as high-quality logo representation
+        let logoMesh = MeshResource.generatePlane(width: 0.08, height: 0.08)
+        var logoMaterial = UnlitMaterial(color: .white) // In real app, replace with image texture
+        // To use actual logo: load image and apply as texture
+        let logo = ModelEntity(mesh: logoMesh, materials: [logoMaterial])
+        logo.name = "Muon3VisionLogo"
+        logo.position = [0, 0.15, 0]  // Floating above
+        // Add subtle glow
+        logo.components.set(OpacityComponent(opacity: 0.9))
+        root.addChild(logo)
+        
         // Add subtle environment light for quality
         let light = DirectionalLight()
         light.light.color = .white
@@ -70,38 +82,33 @@ struct PanelVisualizer {
         mat.roughness = 0.2
         mat.metallic = 0.0
         mat.emissiveColor = .init(color: .init(red: 0.2, green: 1.0, blue: 0.4))
-        mat.emissiveIntensity = 1.5  // Strong glow for high quality WLS visualization
+        mat.emissiveIntensity = 1.5
         return mat
     }
     
     func animateEvent(_ event: SimEvent, on root: Entity) async {
-        // High quality animation: muon entry -> scintillation burst -> photons in fiber -> SiPM hit
-        
-        // Find or create entities
         guard let panel = root.findEntity(named: "Panel"),
               let fiber = root.findEntity(named: "FiberLoop"),
-              let sipm = root.findEntity(named: "SiPM") else { return }
+              let sipm = root.findEntity(named: "SiPM"),
+              let logo = root.findEntity(named: "Muon3VisionLogo") else { return }
         
-        // Muon impact visualization (high quality burst)
         let impactPos = SIMD3<Float>(Float(event.x/1000.0), Float(event.y/1000.0), 0.005)
         
-        // Scintillation burst - particle system
+        // Scintillation burst
         if let burst = createPhotonBurst(at: impactPos, count: min(80, event.photonsDetected / 2), color: .blue) {
             root.addChild(burst)
-            // Auto remove after animation
             Task {
                 try? await Task.sleep(for: .seconds(1.5))
                 burst.removeFromParent()
             }
         }
         
-        // Animate fiber glow (WLS)
+        // Animate fiber glow
         if let fiberModel = fiber as? ModelEntity {
             var mat = fiberModel.model?.materials.first as? PhysicallyBasedMaterial ?? PhysicallyBasedMaterial()
             mat.emissiveIntensity = 3.0 + Float(event.photonsShifted) / 100.0
             fiberModel.model?.materials = [mat]
             
-            // Fade back
             Task {
                 try? await Task.sleep(for: .seconds(2.0))
                 if let currentMat = fiberModel.model?.materials.first as? PhysicallyBasedMaterial {
@@ -112,7 +119,7 @@ struct PanelVisualizer {
             }
         }
         
-        // Photon paths to SiPM - high quality particles
+        // Photon paths
         let sipmPos = sipm.position
         if let photons = createPhotonStream(from: impactPos, to: sipmPos, count: min(120, event.photonsDetected), color: .green) {
             root.addChild(photons)
@@ -122,7 +129,7 @@ struct PanelVisualizer {
             }
         }
         
-        // SiPM hit response - high quality flash
+        // SiPM hit response
         if event.photonsDetected > 10 {
             if let sipmModel = sipm as? ModelEntity {
                 var mat = sipmModel.model?.materials.first as? PhysicallyBasedMaterial ?? PhysicallyBasedMaterial()
@@ -130,7 +137,6 @@ struct PanelVisualizer {
                 mat.emissiveIntensity = 8.0
                 sipmModel.model?.materials = [mat]
                 
-                // Add point light for quality
                 let hitLight = PointLight()
                 hitLight.light.color = .white
                 hitLight.light.intensity = 2000 * Float(event.photonsDetected) / 50.0
@@ -149,13 +155,21 @@ struct PanelVisualizer {
                 }
             }
         }
+        
+        // Logo pulse on detection for high quality feedback
+        if let logoModel = logo as? ModelEntity {
+            logoModel.scale = [1.2, 1.2, 1.2]
+            Task {
+                try? await Task.sleep(for: .seconds(0.4))
+                logoModel.scale = [1.0, 1.0, 1.0]
+            }
+        }
     }
     
     private func createPhotonBurst(at position: SIMD3<Float>, count: Int, color: UIColor) -> Entity? {
         let burst = Entity()
         burst.name = "photonBurst"
         
-        // Use RealityKit particle system for high quality
         let particleMesh = MeshResource.generateSphere(radius: 0.0008)
         var particleMat = UnlitMaterial(color: color)
         
@@ -165,7 +179,6 @@ struct PanelVisualizer {
             let radius = Float.random(in: 0.01...0.04)
             particle.position = position + SIMD3<Float>(cos(angle) * radius, sin(angle) * radius * 0.6, Float.random(in: -0.01...0.01))
             
-            // Simple animation via transform
             let duration = Double.random(in: 0.4...1.2)
             particle.scale = .one * 0.3
             burst.addChild(particle)
@@ -193,10 +206,8 @@ struct PanelVisualizer {
             p.position = pos
             stream.addChild(p)
             
-            // Staggered animation for quality flow effect
             Task {
                 try? await Task.sleep(for: .seconds(Double(t) * 1.5))
-                // Simple scale pulse
                 p.scale = .one * 1.8
                 try? await Task.sleep(for: .seconds(0.3))
                 p.removeFromParent()
