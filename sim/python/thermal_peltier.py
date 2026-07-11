@@ -207,6 +207,62 @@ def main():
         print(f"DCR reduction at 1.5 A (dT={drop:.0f} K), x0.5 per {per:.0f} K: "
               f"factor {2 ** (drop / per):.1f}")
 
+    # --- Additional analyses: leak sensitivity + worst-case + system trade-off ---
+    print("\n=== Additional thermal analyses ===")
+
+    # 1. Heat leak sensitivity (fixed I=1.6 A, vary r_leak)
+    I_test = 1.6
+    leaks = [4, 8, 12, 20, 40]  # K/W (very leaky to well insulated)
+    print("r_leak (K/W)   Tcold   dT   Pelec(W)  dew_margin")
+    leak_dts = []
+    for rl in leaks:
+        p2 = ThermalParams(r_leak=rl)
+        tc2, th2 = steady_state(I_test, p=p2)
+        v2 = tec_voltage(tc2, th2, I_test, p2)
+        pel2 = v2 * I_test
+        marg2 = tc2 - dew_point(p2.t_amb, p2.rh)
+        leak_dts.append(p.t_amb - tc2)
+        print(f"  {rl:4.0f}        {tc2:5.1f}  {p.t_amb-tc2:5.1f}   {pel2:6.2f}     {marg2:5.1f}")
+
+    # Plot leak sensitivity
+    fig, ax = plt.subplots(figsize=(7, 3.8))
+    ax.plot(leaks, leak_dts, 'o-', color='#2e7d32')
+    ax.set_xlabel('Cold-side leak resistance R_leak (K/W)')
+    ax.set_ylabel(f'Cold block dT below ambient @ {I_test:.1f} A (K)')
+    ax.set_title('Sensitivity to parasitic heat leak (higher R = better insulation)')
+    ax.grid(alpha=0.3)
+    ax.axvline(12, color='gray', ls=':', label='nominal model')
+    ax.legend(fontsize=7)
+    fig.tight_layout()
+    fig.savefig(os.path.join(PLOTS, 'thermal_leak_sweep.png'), dpi=130)
+    plt.close(fig)
+    print("Saved plots/thermal_leak_sweep.png")
+
+    # 2. Worst-case ambient (hot + humid day)
+    p_worst = ThermalParams(t_amb=35.0, rh=80.0)
+    dp_worst = dew_point(p_worst.t_amb, p_worst.rh)
+    tc_w, th_w = steady_state(1.5, p=p_worst)
+    print(f"\nWorst-case (35 C, 80% RH): dew point = {dp_worst:.1f} C")
+    print(f"  With 1.5 A: Tcold={tc_w:.1f} C (dT={p_worst.t_amb-tc_w:.1f} K), margin over dew = {tc_w - dp_worst:.1f} K")
+
+    # 3. Rough system-level trade-off (4 channels)
+    # Assume nominal DCR reduction valuable, scint yield ~ -0.3 %/K (typical plastic)
+    # Power cost from power_budget
+    print("\n4-channel system example (nominal leak):")
+    for I in [0.0, 1.0, 1.5, 1.8]:
+        tcs, _ = steady_state(I)
+        dT = p.t_amb - tcs
+        dcr_factor = 2 ** (dT / 9.0)   # approx
+        yield_gain = 1 + 0.003 * dT    # rough +0.3%/K cooling
+        p_tec_4ch = 4 * (tec_voltage(tcs, p.t_amb + 15, I, p) * I + 1.44)  # +fans rough
+        print(f"  I={I:.1f}A  dT={dT:.0f}K  DCR x{1/dcr_factor:.1f}  yield~{yield_gain:.2f}x  4ch+fan ~{p_tec_4ch:.1f} W")
+
+    print("\nKey requirements takeaway:")
+    print(" - Target 15-25 K cooling for good DCR reduction (factor ~4-8) and gain stability.")
+    print(" - Requires good insulation (R_leak >~10 K/W) and fan-cooled sink.")
+    print(" - Must enforce dew-point interlock; open-loop over-cool is dangerous.")
+    print(" - 4ch cooling is the dominant power consumer (20-35 W); science mode viable without it.")
+
 
 if __name__ == "__main__":
     main()

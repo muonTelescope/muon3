@@ -249,7 +249,57 @@ The simulations confirm the expected logarithmic ToT vs NPE behavior (fit for NP
 
 Additional ngspice results confirm robustness to cable length and threshold settings. The HV model validates bias stability.
 
-Power budget: 5 V fallback (electronics only) $\approx 2\,\mathrm{W}$; full 4-channel cooling at 20 V reaches $\sim$37 W (supported by TPS25751 + BQ charger path with battery/solar). Thermal step-response simulations confirm 1.5--1.8 A Peltier operation yields adequate cooling with hardware interlocks required for dew-point safety.
+\subsection{Thermal Management (Peltier / TEC)}
+
+The baseline uses one Same Sky CP30238 (20\times20 mm, 8.6 V / 3 A, Qmax 15 W) per SiPM, driven by DRV8873 H-bridges with hardware interlocks (hot-side NTC, fan tach, dew-point floor, PD contract, overcurrent, watchdog). A lumped-parameter model captures the dominant physics:
+
+\begin{itemize}
+  \item Peltier cooling $Q_c = S I T_c - \frac12 I^2 R - K \Delta T$
+  \item Correct signs for cold-side / hot-side heat flow.
+  \item Parasitic leak ($R_\text{leak} \approx 12\,\mathrm{K/W}$ nominal) + SiPM self-heat + fan-cooled sink ($R_\text{sink} \approx 1.8\,\mathrm{K/W}$).
+\end{itemize}
+
+Key derived parameters from datasheet corner points (Th = 300 K): $S \approx 28.7\,\mathrm{mV/K}$, $R \approx 2.24\,\Omega$, $K \approx 0.152\,\mathrm{W/K}$.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/thermal_step.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/thermal_sweep.png}
+\end{minipage}
+\caption{CP30238 step responses (left) and steady-state sweep (right). 1.5--1.8 A gives $\sim$25--29 K cooling; Joule heating limits gains above $\sim$2 A. Electrical power per channel $\sim$7--10 W at useful operating point.}
+\end{figure}
+
+A PI controller with dew-point safety (setpoint $\ge$ dew point + 3 °C) prevents condensation while still achieving the target. Open-loop operation at the same current would drive the cold block far below dew point on warm/humid days (critical interlock requirement).
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/thermal_pi_loop.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/thermal_leak_sweep.png}
+\end{minipage}
+\caption{Left: Closed-loop PI response to a dew-point-limited setpoint. Right: sensitivity of achievable $\Delta T$ to cold-cavity insulation (R$_\text{leak}$). Good sealing is essential.}
+\end{figure}
+
+\textbf{Requirements summary:}
+\begin{itemize}
+  \item Target 15--25 K cooling for substantial DCR reduction (factor $\sim$4--8) and SiPM gain stability.
+  \item Requires fan-cooled hot-side sink + cavity insulation $R_\text{leak} \gtrsim 10$ K/W.
+  \item 4-channel cooling dominates the power budget (20--35 W total at 12--20 V); pure science mode at 5 V fallback remains fully functional with TECs/fans disabled.
+  \item Worst-case (35 °C, 80 % RH) dew point $\approx$ 31 °C; hardware interlock is non-negotiable.
+\end{itemize}
+
+Power budget: 5 V fallback (electronics only) $\approx 2\,\mathrm{W}$; full 4-channel cooling at 20 V reaches $\sim$37 W (supported by TPS25751 + BQ charger path with battery/solar).
 
 Coincidence studies at a 3 p.e. threshold yield $>98\%$ efficiency for typical muon NPE with negligible electronics accidentals when using delayed shadow windows.
 
