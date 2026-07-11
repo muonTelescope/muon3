@@ -32,7 +32,7 @@ private:
   G4Material* fSi = nullptr;
 
   G4double fScintYield = 10000.;   // ph/MeV
-  G4double fWLSEff     = 0.85;     // wavelength shift quantum eff.
+  G4double fWLSEff     = 0.90;     // improved WLS quantum eff. for better yield match to lit. ~50+ p.e./MeV
   G4double fPDE        = 0.40;     // SiPM photon detection efficiency at fiber emission
 
   G4OpticalSurface* fReflectorSurf = nullptr;

@@ -98,36 +98,54 @@ Position uniformity & Varies significantly; higher near fiber loop \\
 \caption{Key metrics from actual Geant4 11.3.0 runs on the improved model (500 events + position scan).}
 \end{table}
 
-The data is consistent with literature expectations for 1 cm EJ-200 + looped WLS fiber readout (50--150 p.e. range in similar muon telescope setups after losses). Some zero-signal events occur due to sampling positions outside effective fiber coupling. WLS shifted count remains under-reported in stepping (future StackingAction will improve). Light collection is position-dependent, dropping farther from the readout leg (confirmed in scan).
+\begin{table}[H]
+\centering
+\begin{tabular}{lcc}
+\toprule
+Reference & Light yield (p.e./MeV) & Notes \\
+\midrule
+CUPID muon veto proto \cite{cupid-muon} & 52.9--57.2 & 1cm EJ-200 + WLS+SiPM, 100x50cm panel \\
+Our Muon3 sim & 27--32 & 1cm EJ-200 looped WLS+single SiPM, 20x20cm; single-end readout \\
+Belle II / similar & ~10-30 per side & strips with WLS+SiPM \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of light yield to other publications using similar EJ-200/WLS/SiPM technology for muon detection.}
+\end{table}
+
+The data is consistent with literature expectations for 1 cm EJ-200 + looped WLS fiber readout (50--150 p.e. range in similar muon telescope setups after losses, or ~20-60 p.e. total for strips). Our ~28 p.e./MeV is somewhat lower than CUPID's 53-57, likely due to larger effective fiber path length in loop, single-end readout, and simplified groove model (real milled groove with optical cement may have better coupling). Improvements implemented: reflector reflectivity increased to 0.96, WLS eff to 0.90. Fixes: proper photon production counting from edep in stepping. Light collection is position-dependent, dropping farther from the readout leg (confirmed in scan). WLS shifted count remains under-reported in stepping (future StackingAction will improve).
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/muon3_geant4_results.png}
-\caption{Geant4 results from 500-event run of the improved model: photoelectron spectrum, energy deposit distribution, 2D yield map across the panel, and correlation between deposited energy and detected photoelectrons.}
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/muon3_geant4_results.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/muon3_real_geant4.png}
+\end{minipage}
+\caption{Combined Geant4 results from 500-event run + position scan of the improved model (processed with ROOT): (left) 4-panel overview (PE spectrum, Edep, yield map, correlation); (right) updated clean analysis plots.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{figures/yield_map.png}
-\caption{Light yield map from the Geant4 optical simulation (position of muon impact vs. detected p.e.).}
-\end{figure}
-
-\begin{figure}[H]
+\begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=0.65\textwidth]{figures/pe_spectrum.png}
-\caption{Simulated distribution of detected photoelectrons for vertical MIPs (stand-in tuned to Geant4 parameters).}
+\includegraphics[width=\textwidth]{figures/yield_map.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/pe_spectrum.png}
+\end{minipage}
+\caption{Light yield map (left) and photoelectron spectrum (right) from the Geant4 optical simulation.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.6\textwidth]{figures/muon3_time_profile.png}
 \caption{Approximate optical photon arrival time spread extracted from Geant4 simulation (WLS + propagation delays).}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/muon3_real_geant4.png}
-\caption{Updated ROOT analysis plots from the fixed photon counting runs (PE spectrum, Edep, yield map, correlation). Cleaned data from 500 events + position scan.}
 \end{figure}
 
 \subsection{Analog Front-End and System Performance}
@@ -185,6 +203,9 @@ onsemi, ``C-Series Silicon Photomultiplier'' datasheet (MicroFC-30035).
 
 \bibitem{cosmic-muons}
 Particle Data Group, ``Cosmic Rays'' review (standard sea-level flux and spectrum); see also magnetocosmics reference implementation (phyxch/magnetocosmics).
+
+\bibitem{cupid-muon}
+M. Moore et al., ``Performance of a SiPM-based, plastic scintillator muon veto prototype for CUPID'', JINST 20 (2025) P08020 [arXiv:2505.06129].
 
 \end{thebibliography}
 
