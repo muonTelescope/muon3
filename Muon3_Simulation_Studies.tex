@@ -98,6 +98,30 @@ Position uniformity & Varies (lower far from exit leg) \\
 
 The data is consistent with literature expectations for 1 cm EJ-200 + looped WLS (20--80 p.e. range reported in similar muon telescope and muography setups). Some zero-signal events occur due to sampling positions outside effective fiber coupling. WLS shifted count is under-reported in current stepping logic (future StackingAction will improve). Light collection drops with distance from the readout leg.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/muon3_geant4_results.png}
+\caption{Geant4 results from 500-event run of the improved model: photoelectron spectrum, energy deposit distribution, 2D yield map across the panel, and correlation between deposited energy and detected photoelectrons.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/yield_map.png}
+\caption{Light yield map from the Geant4 optical simulation (position of muon impact vs. detected p.e.).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.65\textwidth]{figures/pe_spectrum.png}
+\caption{Simulated distribution of detected photoelectrons for vertical MIPs (stand-in tuned to Geant4 parameters).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{figures/muon3_time_profile.png}
+\caption{Approximate optical photon arrival time spread extracted from Geant4 simulation (WLS + propagation delays).}
+\end{figure}
+
 \subsection{Analog Front-End and System Performance}
 ngspice modeling of the OPA858 + dual-comparator chain reproduces the expected logarithmic ToT vs.\ NPE relationship, enabling good separation between noise (1--3~p.e.) and muon signals (tens of p.e.) within 10~ns FPGA bins.
 
