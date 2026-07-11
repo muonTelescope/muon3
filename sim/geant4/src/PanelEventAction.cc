@@ -22,9 +22,16 @@ void PanelEventAction::BeginOfEventAction(const G4Event* event) {
   fEventID = event->GetEventID();
 }
 
-void PanelEventAction::EndOfEventAction(const G4Event* /*event*/) {
-  // Simple logging. In a real run you would also record primary vertex position.
-  G4double x = 0, y = 0, z = 0; // would be filled from primary in better code
+void PanelEventAction::EndOfEventAction(const G4Event* event) {
+  G4double x = 0, y = 0, z = 0;
+  if (event) {
+    auto* prim = event->GetPrimaryVertex(0);
+    if (prim) {
+      x = prim->GetX0();
+      y = prim->GetY0();
+      z = prim->GetZ0();
+    }
+  }
 
   gHitsFile << fEventID << "," << x << "," << y << "," << z << ","
             << fEdepScint / MeV << ","
