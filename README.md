@@ -366,6 +366,10 @@ Recommended order:
 
 ## License and third-party material
 
-No single umbrella license has yet been selected. Historical submodules retain their individual
-licenses and copyright. Bundled vendor/community libraries and public papers retain their own
-license terms. Review those terms before redistribution, modification, or commercial use.
+Muon3 project documentation, hardware design files, generated design artifacts, and original
+repository content are released under the CERN Open Hardware Licence Version 2 - Strongly
+Reciprocal, `CERN-OHL-S-2.0`. See [LICENSE](LICENSE).
+
+Historical submodules retain their individual licenses and copyright. Bundled vendor/community
+libraries, downloaded data sheets, and public papers retain their own license terms. Review those
+terms before redistribution, modification, or commercial use.
