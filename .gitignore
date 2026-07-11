@@ -34,3 +34,7 @@ gateware/build/
 *.asc
 *.json
 *.elf
+
+sim/geant4/build2/
+sim/geant4/build3/
+sim/geant4/testbuild/
