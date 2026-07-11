@@ -5,8 +5,11 @@
 - Miniforge installed at ~/miniforge for conda.
 - Homebrew deps: boost, cmake, hdf5, tinyxml2.
 - Python packages (via homebrew python3): numpy, matplotlib, h5py, cython.
-- openEMS: No prebuilt in conda-forge for osx-arm64. Brew tap trusted and install attempted (source build in progress, may take time; check with `brew list | grep openem`).
-- Full source build via update_openEMS.sh had CMake issues with fparser.
+- openEMS core installed via brew tap (vinn-ie/openems) + update script.
+- Python modules build **failed** (see log: /opt/homebrew/Library/Taps/thliebig/homebrew-openems/build_20260711_233124.log ).
+  Error during wheel build for CSXCAD/openEMS (dist-info file exists, backend deps issues).
+  Simulations currently use synthetic data as fallback.
+- Full source build via update_openEMS.sh had CMake issues with fparser (resolved by submodule init in this run, but Python build failed).
 
 ## Running the Simulations
 
