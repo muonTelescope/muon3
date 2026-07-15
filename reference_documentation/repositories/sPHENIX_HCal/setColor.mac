@@ -1,0 +1,29 @@
+/vis/geometry/list
+/vis/geometry/set/forceSolid
+/vis/geometry/set/colour RingSupport_steel_1 1 1 0 0
+/vis/geometry/set/colour RingSupport_steel_2 1 1 0 0
+/vis/geometry/set/colour RingSupport_alum_2 1 0.8 0.3 0.3
+/vis/geometry/set/colour RingSupport_alum_2 1 0.7 0.3 0.3
+/vis/geometry/set/colour RingSupport_alum_2 1 0.5 0.5 0.5
+/vis/geometry/set/colour RingSupport_alum_2 1 0.7 0.5 0.5
+/vis/geometry/set/colour RingSupport_alum_1 1 0.7 0.5 0.5
+/vis/geometry/set/colour  HCalRing_alum_1 1 0.6 0.3 0.3
+/vis/geometry/set/colour  HCalRing_alum_1 1 0.7 0.5 0.5
+/vis/geometry/set/colour  HCalRing_alum_2 1 0.7 0.5 0.5
+/vis/geometry/set/colour  Magnet 1 0.5 0.6 0.6
+/vis/geometry/set/colour  EMCal 1 0.5 0.8 0.8
+/vis/geometry/set/colour  OuterHCalSector_Steel 1 0 1 0
+/vis/geometry/set/colour  OuterHCalSector_Steel 1 0 0 1
+/vis/geometry/set/colour  OuterHCalSector_Steel 1 0.5 0.5 1
+/vis/geometry/set/colour  OuterHCalSector_Steel 1 0 0.5 1
+/vis/geometry/set/colour  OuterHCalChimneySector_Steel 1 0 0.5 1
+/vis/viewer/set/background white
+/vis/viewer/refresh
+/vis/viewer/set/viewpointThetaPhi 0 90
+/vis/viewer/refresh
+/vis/viewer/set/viewpointThetaPhi 0 270
+/vis/viewer/refresh
+/vis/viewer/set/viewpointThetaPhi 0 -90
+/vis/viewer/addCutawayPlane 0 0 0 m 1 0 1
+/vis/viewer/clearCutawayPlanes
+/vis/viewer/addCutawayPlane 0 0 0 m 1 0 0

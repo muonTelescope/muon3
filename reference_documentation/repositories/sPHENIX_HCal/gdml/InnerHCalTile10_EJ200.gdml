@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+
+    <define>
+        <position name="InnerHCalTile10_EJ200_v0" unit="mm" x="1281.968" y="181.95" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v1" unit="mm" x="1350.438" y="181.95" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v2" unit="mm" x="1281.968" y="181.95" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v3" unit="mm" x="1350.438" y="181.95" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v4" unit="mm" x="1280.468" y="183.45" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v5" unit="mm" x="1280.468" y="183.45" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v6" unit="mm" x="1280.519" y="183.0618" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v7" unit="mm" x="1280.519" y="183.0618" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v8" unit="mm" x="1280.669" y="182.7" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v9" unit="mm" x="1280.669" y="182.7" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v10" unit="mm" x="1280.907" y="182.3893" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v11" unit="mm" x="1280.907" y="182.3893" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v12" unit="mm" x="1281.218" y="182.151" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v13" unit="mm" x="1281.218" y="182.151" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v14" unit="mm" x="1281.58" y="182.0011" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v15" unit="mm" x="1281.58" y="182.0011" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v16" unit="mm" x="1280.468" y="190.62" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v17" unit="mm" x="1280.468" y="190.62" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v18" unit="mm" x="1350.826" y="182.0011" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v19" unit="mm" x="1350.826" y="182.0011" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v20" unit="mm" x="1351.188" y="182.151" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v21" unit="mm" x="1351.188" y="182.151" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v22" unit="mm" x="1351.499" y="182.3893" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v23" unit="mm" x="1351.499" y="182.3893" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v24" unit="mm" x="1351.737" y="182.7" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v25" unit="mm" x="1351.737" y="182.7" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v26" unit="mm" x="1351.887" y="183.0618" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v27" unit="mm" x="1351.887" y="183.0618" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v28" unit="mm" x="1351.938" y="183.45" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v29" unit="mm" x="1351.938" y="183.45" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v30" unit="mm" x="1228.064" y="-0.38" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v31" unit="mm" x="1398.064" y="190.62" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v32" unit="mm" x="1351.938" y="190.62" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v33" unit="mm" x="1078.864" y="-0.38" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v34" unit="mm" x="1227.964" y="190.62" z="-3.5052"/>
+        <position name="InnerHCalTile10_EJ200_v35" unit="mm" x="1351.938" y="190.62" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v36" unit="mm" x="1227.964" y="190.62" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v37" unit="mm" x="1398.064" y="190.62" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v38" unit="mm" x="1228.064" y="-0.38" z="3.4948"/>
+        <position name="InnerHCalTile10_EJ200_v39" unit="mm" x="1078.864" y="-0.38" z="3.4948"/>
+    </define>
+
+    <solids>
+        <tessellated aunit="deg" lunit="mm" name="InnerHCalTile10_EJ200-SOL">
+             <triangular vertex1="InnerHCalTile10_EJ200_v0" vertex2="InnerHCalTile10_EJ200_v1" vertex3="InnerHCalTile10_EJ200_v2"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v2" vertex2="InnerHCalTile10_EJ200_v1" vertex3="InnerHCalTile10_EJ200_v3"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v4" vertex2="InnerHCalTile10_EJ200_v5" vertex3="InnerHCalTile10_EJ200_v6"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v6" vertex2="InnerHCalTile10_EJ200_v5" vertex3="InnerHCalTile10_EJ200_v7"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v6" vertex2="InnerHCalTile10_EJ200_v7" vertex3="InnerHCalTile10_EJ200_v8"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v8" vertex2="InnerHCalTile10_EJ200_v7" vertex3="InnerHCalTile10_EJ200_v9"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v8" vertex2="InnerHCalTile10_EJ200_v9" vertex3="InnerHCalTile10_EJ200_v10"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v10" vertex2="InnerHCalTile10_EJ200_v9" vertex3="InnerHCalTile10_EJ200_v11"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v10" vertex2="InnerHCalTile10_EJ200_v11" vertex3="InnerHCalTile10_EJ200_v12"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v12" vertex2="InnerHCalTile10_EJ200_v11" vertex3="InnerHCalTile10_EJ200_v13"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v12" vertex2="InnerHCalTile10_EJ200_v13" vertex3="InnerHCalTile10_EJ200_v14"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v14" vertex2="InnerHCalTile10_EJ200_v13" vertex3="InnerHCalTile10_EJ200_v15"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v14" vertex2="InnerHCalTile10_EJ200_v15" vertex3="InnerHCalTile10_EJ200_v2"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v2" vertex2="InnerHCalTile10_EJ200_v15" vertex3="InnerHCalTile10_EJ200_v0"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v4" vertex2="InnerHCalTile10_EJ200_v16" vertex3="InnerHCalTile10_EJ200_v5"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v5" vertex2="InnerHCalTile10_EJ200_v16" vertex3="InnerHCalTile10_EJ200_v17"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v3" vertex2="InnerHCalTile10_EJ200_v1" vertex3="InnerHCalTile10_EJ200_v18"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v18" vertex2="InnerHCalTile10_EJ200_v1" vertex3="InnerHCalTile10_EJ200_v19"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v18" vertex2="InnerHCalTile10_EJ200_v19" vertex3="InnerHCalTile10_EJ200_v20"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v20" vertex2="InnerHCalTile10_EJ200_v19" vertex3="InnerHCalTile10_EJ200_v21"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v20" vertex2="InnerHCalTile10_EJ200_v21" vertex3="InnerHCalTile10_EJ200_v22"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v22" vertex2="InnerHCalTile10_EJ200_v21" vertex3="InnerHCalTile10_EJ200_v23"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v22" vertex2="InnerHCalTile10_EJ200_v23" vertex3="InnerHCalTile10_EJ200_v24"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v24" vertex2="InnerHCalTile10_EJ200_v23" vertex3="InnerHCalTile10_EJ200_v25"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v24" vertex2="InnerHCalTile10_EJ200_v25" vertex3="InnerHCalTile10_EJ200_v26"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v26" vertex2="InnerHCalTile10_EJ200_v25" vertex3="InnerHCalTile10_EJ200_v27"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v26" vertex2="InnerHCalTile10_EJ200_v27" vertex3="InnerHCalTile10_EJ200_v28"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v28" vertex2="InnerHCalTile10_EJ200_v27" vertex3="InnerHCalTile10_EJ200_v29"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v14" vertex2="InnerHCalTile10_EJ200_v2" vertex3="InnerHCalTile10_EJ200_v30"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v30" vertex2="InnerHCalTile10_EJ200_v2" vertex3="InnerHCalTile10_EJ200_v3"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v30" vertex2="InnerHCalTile10_EJ200_v3" vertex3="InnerHCalTile10_EJ200_v18"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v30" vertex2="InnerHCalTile10_EJ200_v18" vertex3="InnerHCalTile10_EJ200_v31"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v31" vertex2="InnerHCalTile10_EJ200_v18" vertex3="InnerHCalTile10_EJ200_v20"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v31" vertex2="InnerHCalTile10_EJ200_v20" vertex3="InnerHCalTile10_EJ200_v22"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v22" vertex2="InnerHCalTile10_EJ200_v24" vertex3="InnerHCalTile10_EJ200_v31"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v31" vertex2="InnerHCalTile10_EJ200_v24" vertex3="InnerHCalTile10_EJ200_v26"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v31" vertex2="InnerHCalTile10_EJ200_v26" vertex3="InnerHCalTile10_EJ200_v28"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v28" vertex2="InnerHCalTile10_EJ200_v32" vertex3="InnerHCalTile10_EJ200_v31"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v33" vertex2="InnerHCalTile10_EJ200_v34" vertex3="InnerHCalTile10_EJ200_v30"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v30" vertex2="InnerHCalTile10_EJ200_v34" vertex3="InnerHCalTile10_EJ200_v14"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v16" vertex2="InnerHCalTile10_EJ200_v4" vertex3="InnerHCalTile10_EJ200_v34"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v34" vertex2="InnerHCalTile10_EJ200_v4" vertex3="InnerHCalTile10_EJ200_v6"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v34" vertex2="InnerHCalTile10_EJ200_v6" vertex3="InnerHCalTile10_EJ200_v8"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v8" vertex2="InnerHCalTile10_EJ200_v10" vertex3="InnerHCalTile10_EJ200_v34"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v34" vertex2="InnerHCalTile10_EJ200_v10" vertex3="InnerHCalTile10_EJ200_v12"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v34" vertex2="InnerHCalTile10_EJ200_v12" vertex3="InnerHCalTile10_EJ200_v14"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v32" vertex2="InnerHCalTile10_EJ200_v28" vertex3="InnerHCalTile10_EJ200_v35"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v35" vertex2="InnerHCalTile10_EJ200_v28" vertex3="InnerHCalTile10_EJ200_v29"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v16" vertex2="InnerHCalTile10_EJ200_v34" vertex3="InnerHCalTile10_EJ200_v17"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v17" vertex2="InnerHCalTile10_EJ200_v34" vertex3="InnerHCalTile10_EJ200_v36"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v35" vertex2="InnerHCalTile10_EJ200_v37" vertex3="InnerHCalTile10_EJ200_v32"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v32" vertex2="InnerHCalTile10_EJ200_v37" vertex3="InnerHCalTile10_EJ200_v31"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v35" vertex2="InnerHCalTile10_EJ200_v29" vertex3="InnerHCalTile10_EJ200_v37"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v37" vertex2="InnerHCalTile10_EJ200_v29" vertex3="InnerHCalTile10_EJ200_v27"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v37" vertex2="InnerHCalTile10_EJ200_v27" vertex3="InnerHCalTile10_EJ200_v25"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v25" vertex2="InnerHCalTile10_EJ200_v23" vertex3="InnerHCalTile10_EJ200_v37"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v37" vertex2="InnerHCalTile10_EJ200_v23" vertex3="InnerHCalTile10_EJ200_v21"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v37" vertex2="InnerHCalTile10_EJ200_v21" vertex3="InnerHCalTile10_EJ200_v19"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v37" vertex2="InnerHCalTile10_EJ200_v19" vertex3="InnerHCalTile10_EJ200_v38"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v38" vertex2="InnerHCalTile10_EJ200_v19" vertex3="InnerHCalTile10_EJ200_v1"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v38" vertex2="InnerHCalTile10_EJ200_v1" vertex3="InnerHCalTile10_EJ200_v0"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v0" vertex2="InnerHCalTile10_EJ200_v15" vertex3="InnerHCalTile10_EJ200_v38"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v38" vertex2="InnerHCalTile10_EJ200_v15" vertex3="InnerHCalTile10_EJ200_v36"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v38" vertex2="InnerHCalTile10_EJ200_v36" vertex3="InnerHCalTile10_EJ200_v39"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v15" vertex2="InnerHCalTile10_EJ200_v13" vertex3="InnerHCalTile10_EJ200_v36"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v36" vertex2="InnerHCalTile10_EJ200_v13" vertex3="InnerHCalTile10_EJ200_v11"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v36" vertex2="InnerHCalTile10_EJ200_v11" vertex3="InnerHCalTile10_EJ200_v9"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v9" vertex2="InnerHCalTile10_EJ200_v7" vertex3="InnerHCalTile10_EJ200_v36"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v36" vertex2="InnerHCalTile10_EJ200_v7" vertex3="InnerHCalTile10_EJ200_v5"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v36" vertex2="InnerHCalTile10_EJ200_v5" vertex3="InnerHCalTile10_EJ200_v17"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v30" vertex2="InnerHCalTile10_EJ200_v31" vertex3="InnerHCalTile10_EJ200_v38"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v38" vertex2="InnerHCalTile10_EJ200_v31" vertex3="InnerHCalTile10_EJ200_v37"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v33" vertex2="InnerHCalTile10_EJ200_v30" vertex3="InnerHCalTile10_EJ200_v39"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v39" vertex2="InnerHCalTile10_EJ200_v30" vertex3="InnerHCalTile10_EJ200_v38"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v34" vertex2="InnerHCalTile10_EJ200_v33" vertex3="InnerHCalTile10_EJ200_v36"/>
+             <triangular vertex1="InnerHCalTile10_EJ200_v36" vertex2="InnerHCalTile10_EJ200_v33" vertex3="InnerHCalTile10_EJ200_v39"/>
+        </tessellated>
+    </solids>
+
+    <structure>
+        <volume name="InnerHCalTile10_EJ200">
+            <materialref ref="EJ200"/>
+            <solidref ref="InnerHCalTile10_EJ200-SOL"/>
+        </volume>
+    </structure>
+
+    <setup name="Default" version="1.0">
+        <world ref="InnerHCalTile10_EJ200"/>
+    </setup>
+</gdml>

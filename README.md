@@ -32,6 +32,9 @@ cloned under `reference_documentation/repositories/`:
   variant, detailed optical physics, material defs, position scans). Used to refine the current
   looped-fiber muon3 model.
 - `magnetocosmics/` — cosmic-ray tracking in the geomagnetic field (reference for primaries).
+- `sPHENIX_HCal/` — standalone Geant4 + GDML geometry for sPHENIX Inner/Outer HCal tiles
+  (originals kept). STEP assemblies with fibers, light blockers, and coverings live in
+  `cad/sphenix_hcal/step/`; Geant4 optical runs use the `hcal_tile` app in `sim/geant4/`.
 
 > **Engineering status:** research and architecture phase. The included 2026 Rev A KiCad design
 > is reference material, not a fabrication release. It has known electrical blockers and no routed
@@ -120,12 +123,13 @@ A comprehensive simulation suite supports detector design, threshold optimizatio
   - Realistic cosmic muon energy spectrum (power-law sampling) and $\cos^2\theta$ angular distribution.
   - More representative looped-fiber geometry (straights + corner tori + exit legs + simplified optical cement).
   - Updated material and optical properties cross-checked against Eljen/Luxium EJ-200 documentation, Kuraray WLS fiber data, onsemi SiPM PDE curves, and prior collaboration work (phyxch/fiberPanel).
+  - **sPHENIX Inner HCal tiles** (`hcal_tile` executable): original tessellated GDML tiles + WLS fiber + diffuse coating + light-tight wrap + light blocker + SiPM; STEP in `cad/sphenix_hcal/step/`. Tile-01 run (200 events): ⟨Edep⟩ ≈ 2.04 MeV, ⟨p.e.⟩ ≈ 55.
 - **Analog front-end** (`sim/circuit/`): ngspice models of SiPM + OPA858 TIA + dual comparators.
 - **Behavioral models** (`sim/python/`): thermal/Peltier (enhanced with leak sensitivity, PI dew-point control, system trade-offs), power budget under USB-C PD, coincidence/accidental rates.
 - **EM / RF / SI / PI** (`sim/openems/`): openEMS FDTD for nRF9151 antenna, cables, traces, PDN (Python bindings active; scripts auto-detect real vs. fallback models).
-- **Procedural 3D visualization** (`cad/blender/`): Blender/Cycles renders of panel (scintillator, WLS loop, SiPM, frame, base) for paper figures (isometric + orthographic views).
+- **Procedural 3D visualization** (`cad/blender/`, `cad/sphenix_hcal/`): Blender/Cycles renders of Muon3 panel and sPHENIX Inner HCal tile assemblies for paper figures.
 
-Stand-in and partial real Geant4 data (hits.csv) indicate a mean detected yield of ~25--40 p.e.\ per MIP after all losses, with usable uniformity and timing.
+Stand-in and partial real Geant4 data (hits.csv) indicate a mean detected yield of ~25--40 p.e.\ per MIP after all losses for the Muon3 loop panel, with usable uniformity and timing. sPHENIX Inner tile assemblies yield ~55 p.e.\ per MIP in the current optical setup (see paper Section on HCal tiles).
 
 ### Paper
 An overall summary and findings paper has been written in the base directory:
@@ -147,12 +151,26 @@ The paper replaces/augments the earlier short simulation report in `sim/reports/
 ![Side](figures/muon3_panel_side.png)
 ![Front](figures/muon3_panel_front.png)
 
-**Thermal / Peltier analysis** (new subsection in paper):
+**sPHENIX Inner HCal tile assemblies** (original GDML + fiber + coating + light blocker + SiPM; STEP in `cad/sphenix_hcal/step/`):
+
+![HCal tile 01 iso](figures/hcal_InnerHCalTile01_EJ200_iso.png)
+![HCal tile 01 top](figures/hcal_InnerHCalTile01_EJ200_top.png)
+![HCal tile 06 iso](figures/hcal_InnerHCalTile06_EJ200_iso.png)
+![HCal tile 12 iso](figures/hcal_InnerHCalTile12_EJ200_iso.png)
+
+**Geant4 results for Inner HCal tile 01** (200 cosmic-like muons):
+
+![HCal edep](figures/hcal_inner_tile_edep.png)
+![HCal p.e.](figures/hcal_inner_tile_pe.png)
+![HCal yield map](figures/hcal_inner_tile_yield_map.png)
+![HCal summary](figures/hcal_inner_tile_summary.png)
+
+**Thermal / Peltier analysis** (subsection in paper):
 
 ![Thermal Step](figures/thermal_step.png)
 ![Thermal Sweep](figures/thermal_sweep.png)
 
-See `figures/`, `cad/blender/`, `sim/`, and the paper for more (openEMS results in `figures/openems/`, Geant4/ngspice yields, power budgets, etc.).
+See `figures/`, `cad/blender/`, `cad/sphenix_hcal/`, `sim/`, and the paper for more (openEMS results in `figures/openems/`, Geant4/ngspice yields, power budgets, etc.).
 
 ### How to build and run simulations
 See `sim/geant4/README.md`, `sim/README.md`, and the paper for instructions. Full Geant4 (with visualization and all required libraries) is needed for the complete optical model; stand-in + Python models provide rapid iteration.

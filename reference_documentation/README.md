@@ -24,6 +24,7 @@ The active starting points are:
 Relevant public repositories from Xiaochun He (GSU) have been cloned under `repositories/` for offline reference and parameter cross-checks:
 
 - `repositories/fiberPanel/` — GEANT4 simulation of scintillation light collection from a scintillator panel with embedded WLS fiber + SiPM. Direct prior/parallel art (straight-fiber position scans, detailed optical properties for EJ-200 / Y-11, Al wrapping, optical cement). Used for material definitions, surface modeling, photon counting approach, and yield scaling studies.
+- `repositories/sPHENIX_HCal/` — standalone Geant4 + GDML geometry for sPHENIX Inner/Outer HCal tiles (originals retained). Muon3 builds STEP assemblies with fibers, light blockers, and coverings in `cad/sphenix_hcal/` and runs optical studies with `sim/geant4` target `hcal_tile`.
 - `repositories/magnetocosmics/` — Cosmic-ray shower particle tracking through the geomagnetic field. Useful for future realistic primary generation (angular/energy spectra) beyond simple muon guns.
 
 See the dedicated index `repositories/phyxch-references.md` for usage notes in the current analysis.

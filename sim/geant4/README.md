@@ -21,15 +21,21 @@ cd physics/sim/geant4
 mkdir -p build && cd build
 cmake .. -DGeant4_DIR=/path/to/geant4/install/lib/Geant4-11.2.0   # or let CMake find it
 make -j$(nproc)
-./muon_panel -m ../macros/run.mac
+./muon_panel macros/run.mac
 # or with visualization:
-./muon_panel -m ../macros/vis.mac
+./muon_panel macros/vis.mac
+
+# sPHENIX Inner HCal tile assembly (tessellated original + fiber + coating + wrap + blocker + SiPM)
+./hcal_tile -g gdml/InnerHCalTile01_EJ200_assembly.gdml \
+  --tile-center 60 95 0 55 90 macros/hcal_tile_run.mac
+python3 ../scripts/plot_hcal_tile_results.py --csv muon_panel_hits.csv
 ```
 
 **Important macros**
 - `macros/run.mac` — batch run, 1000 vertical muons, text output.
 - `macros/vis.mac` — interactive with OpenGL + trajectory + optical photon tracks (slow for many photons).
 - `macros/scan_position.mac` — example for position-dependent yield study.
+- `macros/hcal_tile_run.mac` / `hcal_tile_vis.mac` — Inner HCal tile batch / visualization.
 
 **Geometry (configurable in PanelDetectorConstruction)**
 - Scintillator box: 200×200×10 mm, EJ-200 equivalent material.
@@ -111,4 +117,11 @@ See the comprehensive paper `Muon3_Simulation_Studies.tex` (base directory) for 
 **Related external work (same group)**
 The current looped model is informed by and cross-checked against `reference_documentation/repositories/fiberPanel` (straight-fiber Geant4 study with configurable fiber position, precise EJ-200 mass fractions, full optical surfaces, WLS + SiPM photon counting). Material definitions were harmonized with that reference.
 
-Improve the geometry with CAD import (GDML/STEP) once the mechanical model is frozen.
+**sPHENIX Inner HCal tiles (`hcal_tile`)**
+- Originals: `reference_documentation/repositories/sPHENIX_HCal/` and `cad/sphenix_hcal/originals/gdml/` (unmodified tile GDMLs).
+- STEP assemblies (scintillator + fiber + coating + wrap + light blocker + SiPM): `cad/sphenix_hcal/step/`.
+- Mesh JSON used at runtime (no Geant4 GDML dependency): `gdml/mesh/*_mesh.json`.
+- Example results (tile 01, 200 events): ⟨Edep⟩ ≈ 2.04 MeV, ⟨detected p.e.⟩ ≈ 55 — see `hcal_tile_hits.csv`, `plots/hcal_inner_tile_*.png`, and paper Section “sPHENIX Inner HCal Tile Models”.
+- Build: `make hcal_tile` (same CMake project as `muon_panel`).
+
+Improve the Muon3 loop-panel geometry further with CAD groove import once the mechanical model is frozen; HCal tile STEP/tessellated import is already wired via `hcal_tile`.

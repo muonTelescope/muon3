@@ -1,0 +1,14 @@
+/vis/geometry/set/colour OuterHCalTile01_EJ200 1 1 0 0
+/vis/geometry/set/colour OuterHCalTile02_EJ200 1 0 1 0
+/vis/geometry/set/colour OuterHCalTile03_EJ200 1 0 0 1
+/vis/geometry/set/colour OuterHCalTile04_EJ200 1 1 1 0
+/vis/geometry/set/colour OuterHCalTile05_EJ200 1 0 1 1
+/vis/geometry/set/colour OuterHCalTile06_EJ200 1 1 0 1
+/vis/geometry/set/colour OuterHCalTile07_EJ200 1 1 0 0
+/vis/geometry/set/colour OuterHCalTile08_EJ200 1 0 1 0
+/vis/geometry/set/colour OuterHCalTile09_EJ200 1 0 0 1
+/vis/geometry/set/colour OuterHCalTile10_EJ200 1 1 1 0
+/vis/geometry/set/colour OuterHCalTile11_EJ200 1 0 1 1
+/vis/geometry/set/colour OuterHCalTile12_EJ200 1 1 0 1
+#/vis/geometry/set/forceWireframe OuterHCalSector_Steel 1 1
+#/vis/geometry/set/forceWireframe OuterHCalChimneySector_Steel 1 1

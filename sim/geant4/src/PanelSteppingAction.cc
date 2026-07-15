@@ -16,7 +16,10 @@ void PanelSteppingAction::UserSteppingAction(const G4Step* step) {
   // Scintillator energy deposit - record edep and estimate produced photons
   // (using the material's SCINTILLATIONYIELD of 10000 ph/MeV)
   G4String volName = step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetName();
-  if (volName.find("Panel") != std::string::npos) {
+  // Muon3 panel volumes ("Panel*") and sPHENIX Inner HCal tessellated tiles
+  if (volName.find("Panel") != std::string::npos ||
+      volName.find("InnerHCal") != std::string::npos ||
+      volName.find("EJ200") != std::string::npos) {
     G4double edep = step->GetTotalEnergyDeposit();
     if (edep > 0 && fEventAction) {
       fEventAction->AddScintEnergy(edep);

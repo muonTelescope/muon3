@@ -372,7 +372,77 @@ Parameters were cross-checked against:
 
 Remaining uncertainties (fiber groove polish quality, exact cement refractive index, long-term fiber aging) will be constrained by bench measurements once panels are fabricated.
 
-The current Geant4 geometry remains an approximation; future work will import a precise CAD groove model via GDML or STEP.
+The current Geant4 Muon3 panel geometry remains an approximation of the milled groove; the new sPHENIX Inner HCal tile work (Section~\ref{sec:hcal-tiles}) imports the collaboration's tessellated tile solids and adds parametric fiber, coating, wrap, and light-blocker volumes for CAD (STEP) and optical studies.
+
+\section{sPHENIX Inner HCal Tile Models}
+\label{sec:hcal-tiles}
+
+To strengthen the connection between Muon3 panel modeling and the collaboration's calorimeter heritage, we ingested the public \texttt{phyxch/sPHENIX\_HCal} geometry package \cite{phyxch-sphenix-hcal}. Original Inner HCal tile GDMLs (tiles 01--12) are retained unmodified under \texttt{reference\_documentation/repositories/sPHENIX\_HCal/} and mirrored in \texttt{cad/sphenix\_hcal/originals/gdml/}. Each tile is a $\sim$7~mm thick EJ-200-class tessellated solid with an outer-radius fiber-exit pocket; radial length increases from $\sim$121~mm (tile~01) to $\sim$403~mm (tile~12).
+
+Upstream GDMLs encode only the scintillator solid. Following Aidala et al.\ \cite{sphenix-hcal-tns} (reflective chemical coating $\sim$50~$\mu$m, dual-end Kuraray single-clad WLS fiber, outer-radius SiPM coupler), we constructed complete assemblies that add:
+\begin{itemize}
+  \item a dual-end serpentine WLS fiber path (design rules: deposit-to-fiber $\lesssim 2.5$~cm, bend radius $\gtrsim 2.5$~cm);
+  \item a diffuse white coating shell and light-tight outer wrap;
+  \item a plastic light blocker / SiPM coupler at the fiber exit; and
+  \item a 3$\times$3~mm$^2$ SiPM body.
+\end{itemize}
+Multi-body STEP files for all twelve Inner tiles are stored in \texttt{cad/sphenix\_hcal/step/} (FreeCAD pipeline). Assembly GDMLs and mesh JSON exports feed the Geant4 \texttt{hcal\_tile} application (tessellated scintillator + optical materials; GDML parser not required).
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/hcal_InnerHCalTile01_EJ200_iso.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/hcal_InnerHCalTile01_EJ200_top.png}
+\end{minipage}
+
+\vspace{0.25cm}
+
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/hcal_InnerHCalTile06_EJ200_iso.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/hcal_InnerHCalTile12_EJ200_iso.png}
+\end{minipage}
+\caption{Blender/Cycles renders of sPHENIX Inner HCal tile assemblies built from original GDML tessellations plus added WLS fiber, diffuse coating, light blocker, and SiPM: tile~01 isometric and top (top row); tile~06 and tile~12 isometric (bottom row). STEP counterparts are in \texttt{cad/sphenix\_hcal/step/}.}
+\end{figure}
+
+A Geant4 run of 200 cosmic-like $\mu^-$ events on tile~01 (tessellated solid + fiber + coating + wrap + blocker + SiPM, optical physics enabled) yields a mean scintillator energy deposit of $\approx 2.04$~MeV (RMS $\approx 0.78$~MeV) and a mean of $\approx 55$ detected photoelectrons after a flat SiPM PDE of 0.38. Position-dependent edep and p.e.\ distributions are shown in Figure~\ref{fig:hcal-g4}.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/hcal_inner_tile_edep.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/hcal_inner_tile_pe.png}
+\end{minipage}
+
+\vspace{0.25cm}
+
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/hcal_inner_tile_yield_map.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/hcal_inner_tile_summary.png}
+\end{minipage}
+\caption{\label{fig:hcal-g4}Geant4 results for Inner HCal tile~01 assembly (200 MIP-like muons): energy deposit spectrum, detected photoelectron spectrum, mean edep vs.\ impact position, and summary histograms. Data: \texttt{sim/geant4/hcal\_tile\_hits.csv}.}
+\end{figure}
+
+These tile assemblies provide a bridge between Muon3 looped-panel optics and sPHENIX HCal tile construction practices, and supply manufacturing-ready STEP geometry for mechanical review.
 
 \section{Conclusions}
 The Muon3 simulation suite demonstrates that a simple looped-fiber EJ-200 panel read out by a single MicroFC-30035 SiPM can deliver $\sim$25--40~p.e.\ per MIP with usable uniformity and timing. System-level models confirm that the current baseline (nRF9151 + RP2040 telemetry, TPS25751-class PD + battery/solar power path, two 8-ch precision DACs, hardware TEC interlocks) supports portable, remote operation with strong safety.
@@ -393,6 +463,12 @@ gLOWCOST cosmic ray program, Georgia State University, \url{https://cosmic.gsu.e
 
 \bibitem{phyxch-fiberpanel}
 X. He et al., ``fiberPanel: GEANT4 simulation of scintillation light collection from a scintillator panel with an embedded fiber,'' \url{https://github.com/phyxch/fiberPanel}.
+
+\bibitem{phyxch-sphenix-hcal}
+X. He et al., ``sPHENIX\_HCal: standalone GEANT4 application for studying the sPHENIX HCal,'' \url{https://github.com/phyxch/sPHENIX_HCal}. Local snapshot under \texttt{reference\_documentation/repositories/sPHENIX\_HCal/}.
+
+\bibitem{sphenix-hcal-tns}
+C.A. Aidala et al. (sPHENIX Collaboration), ``Design and Beam Test Results for the sPHENIX Electromagnetic and Hadronic Calorimeter Prototypes,'' IEEE Trans.\ Nucl.\ Sci.\ 65 (2018) 2901 [arXiv:1704.01461]. Local PDF: \texttt{reference\_documentation/publications/sPHENIX\_2018\_Design\_and\_Beam\_Test.pdf}.
 
 \bibitem{scintpanel-cad}
 Muon Telescope historical scintillator panel CAD and assembly notes (retained in reference\_documentation/repositories/scintillatorPanel/).

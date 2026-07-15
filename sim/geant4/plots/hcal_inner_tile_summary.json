@@ -1,0 +1,9 @@
+{
+  "n_events": 200,
+  "mean_edep_MeV": 2.0444916749999997,
+  "std_edep_MeV": 0.7790703127060993,
+  "mean_pe": 54.5,
+  "std_pe": 20.34158302591025,
+  "mean_photons_prod": 20444.89,
+  "csv": "muon_panel_hits.csv"
+}

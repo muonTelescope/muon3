@@ -13,8 +13,7 @@ endif()
 
 include(${Geant4_USE_FILE})
 
-set(SOURCES
-  muon_panel.cc
+set(COMMON_SOURCES
   src/PanelDetectorConstruction.cc
   src/PanelPrimaryGeneratorAction.cc
   src/PanelPhysicsList.cc
@@ -23,9 +22,12 @@ set(SOURCES
   src/PanelSteppingAction.cc
   src/PanelSensitiveDetector.cc
   src/PanelActionInitialization.cc
+  src/HcalTileDetectorConstruction.cc
+  src/HcalTilePrimaryGeneratorAction.cc
+  src/HcalTileActionInitialization.cc
 )
 
-set(HEADERS
+set(COMMON_HEADERS
   include/PanelDetectorConstruction.hh
   include/PanelPrimaryGeneratorAction.hh
   include/PanelPhysicsList.hh
@@ -34,22 +36,29 @@ set(HEADERS
   include/PanelSteppingAction.hh
   include/PanelSensitiveDetector.hh
   include/PanelActionInitialization.hh
+  include/HcalTileDetectorConstruction.hh
+  include/HcalTilePrimaryGeneratorAction.hh
+  include/HcalTileActionInitialization.hh
 )
 
-add_executable(muon_panel ${SOURCES} ${HEADERS})
+add_executable(muon_panel muon_panel.cc ${COMMON_SOURCES} ${COMMON_HEADERS})
+add_executable(hcal_tile hcal_tile.cc ${COMMON_SOURCES} ${COMMON_HEADERS})
 
-target_include_directories(muon_panel PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-  ${Geant4_INCLUDE_DIRS}
-)
+foreach(tgt muon_panel hcal_tile)
+  target_include_directories(${tgt} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${Geant4_INCLUDE_DIRS}
+  )
+  target_link_libraries(${tgt} ${Geant4_LIBRARIES})
+  if(WITH_ROOT)
+    target_link_libraries(${tgt} ROOT::Core ROOT::Tree)
+  endif()
+endforeach()
 
-target_link_libraries(muon_panel ${Geant4_LIBRARIES})
-
-if(WITH_ROOT)
-  target_link_libraries(muon_panel ROOT::Core ROOT::Tree)
+# Copy macros and assembly GDMLs into the build tree
+file(COPY macros DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/gdml)
+  file(COPY gdml DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
-# Copy macros to build dir for convenience
-file(COPY macros DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
-install(TARGETS muon_panel DESTINATION bin)
+install(TARGETS muon_panel hcal_tile DESTINATION bin)

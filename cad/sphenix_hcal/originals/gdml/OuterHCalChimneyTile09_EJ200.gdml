@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+
+    <define>
+        <position name="OuterHCalChimneyTile09_EJ200_v0" unit="mm" x="589.5381" y="676.832" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v1" unit="mm" x="589.5381" y="676.832" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v2" unit="mm" x="589.5892" y="676.4438" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v3" unit="mm" x="589.5892" y="676.4438" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v4" unit="mm" x="589.739" y="676.082" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v5" unit="mm" x="589.739" y="676.082" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v6" unit="mm" x="589.9774" y="675.7713" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v7" unit="mm" x="589.9774" y="675.7713" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v8" unit="mm" x="590.2881" y="675.533" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v9" unit="mm" x="590.2881" y="675.533" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v10" unit="mm" x="590.6498" y="675.3831" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v11" unit="mm" x="590.6498" y="675.3831" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v12" unit="mm" x="591.0381" y="675.332" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v13" unit="mm" x="591.0381" y="675.332" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v14" unit="mm" x="591.6871" y="675.332" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v15" unit="mm" x="658.859" y="675.332" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v16" unit="mm" x="659.5081" y="675.332" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v17" unit="mm" x="659.5081" y="675.332" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v18" unit="mm" x="591.6871" y="675.332" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v19" unit="mm" x="658.859" y="675.332" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v20" unit="mm" x="659.8963" y="675.3831" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v21" unit="mm" x="659.8963" y="675.3831" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v22" unit="mm" x="660.2581" y="675.533" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v23" unit="mm" x="660.2581" y="675.533" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v24" unit="mm" x="660.5687" y="675.7713" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v25" unit="mm" x="660.5687" y="675.7713" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v26" unit="mm" x="660.8071" y="676.082" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v27" unit="mm" x="660.8071" y="676.082" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v28" unit="mm" x="660.957" y="676.4438" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v29" unit="mm" x="660.957" y="676.4438" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v30" unit="mm" x="661.0081" y="676.832" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v31" unit="mm" x="661.0081" y="676.832" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v32" unit="mm" x="661.0081" y="677.3179" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v33" unit="mm" x="661.0081" y="678.882" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v34" unit="mm" x="661.0081" y="681.882" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v35" unit="mm" x="661.0081" y="677.3179" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v36" unit="mm" x="661.0081" y="678.882" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v37" unit="mm" x="661.0081" y="681.882" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v38" unit="mm" x="661.0081" y="684.382" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v39" unit="mm" x="661.0081" y="684.382" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v40" unit="mm" x="589.5381" y="677.3179" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v41" unit="mm" x="589.5381" y="677.3179" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v42" unit="mm" x="589.2527" y="677.0622" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v43" unit="mm" x="589.2527" y="677.0622" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v44" unit="mm" x="589.0413" y="676.7426" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v45" unit="mm" x="589.0413" y="676.7426" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v46" unit="mm" x="588.9179" y="676.3798" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v47" unit="mm" x="588.9179" y="676.3798" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v48" unit="mm" x="588.8905" y="675.9976" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v49" unit="mm" x="588.8905" y="675.9976" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v50" unit="mm" x="588.9607" y="675.6209" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v51" unit="mm" x="588.9607" y="675.6209" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v52" unit="mm" x="589.1241" y="675.2742" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v53" unit="mm" x="589.1241" y="675.2742" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v54" unit="mm" x="589.37" y="674.9804" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v55" unit="mm" x="589.37" y="674.9804" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v56" unit="mm" x="589.6824" y="674.7584" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v57" unit="mm" x="589.6824" y="674.7584" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v58" unit="mm" x="590.0408" y="674.6228" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v59" unit="mm" x="590.0408" y="674.6228" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v60" unit="mm" x="590.4219" y="674.5824" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v61" unit="mm" x="590.4219" y="674.5824" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v62" unit="mm" x="590.8007" y="674.6399" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v63" unit="mm" x="590.8007" y="674.6399" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v64" unit="mm" x="591.1527" y="674.7915" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v65" unit="mm" x="591.1527" y="674.7915" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v66" unit="mm" x="591.4547" y="675.0273" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v67" unit="mm" x="591.4547" y="675.0273" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v68" unit="mm" x="589.5381" y="681.882" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v69" unit="mm" x="589.5381" y="681.882" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v70" unit="mm" x="589.1498" y="681.8309" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v71" unit="mm" x="589.1498" y="681.8309" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v72" unit="mm" x="588.7881" y="681.681" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v73" unit="mm" x="588.7881" y="681.681" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v74" unit="mm" x="588.4774" y="681.4427" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v75" unit="mm" x="588.4774" y="681.4427" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v76" unit="mm" x="588.239" y="681.132" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v77" unit="mm" x="588.239" y="681.132" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v78" unit="mm" x="588.0892" y="680.7702" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v79" unit="mm" x="588.0892" y="680.7702" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v80" unit="mm" x="588.0381" y="680.382" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v81" unit="mm" x="588.0381" y="680.382" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v82" unit="mm" x="588.0892" y="679.9938" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v83" unit="mm" x="588.0892" y="679.9938" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v84" unit="mm" x="588.239" y="679.632" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v85" unit="mm" x="588.239" y="679.632" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v86" unit="mm" x="588.4774" y="679.3213" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v87" unit="mm" x="588.4774" y="679.3213" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v88" unit="mm" x="588.7881" y="679.083" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v89" unit="mm" x="588.7881" y="679.083" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v90" unit="mm" x="589.1498" y="678.9331" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v91" unit="mm" x="589.1498" y="678.9331" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v92" unit="mm" x="589.5381" y="678.882" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v93" unit="mm" x="589.5381" y="678.882" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v94" unit="mm" x="661.3963" y="678.9331" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v95" unit="mm" x="661.3963" y="678.9331" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v96" unit="mm" x="661.7581" y="679.083" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v97" unit="mm" x="661.7581" y="679.083" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v98" unit="mm" x="662.0687" y="679.3213" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v99" unit="mm" x="662.0687" y="679.3213" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v100" unit="mm" x="662.3071" y="679.632" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v101" unit="mm" x="662.3071" y="679.632" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v102" unit="mm" x="662.457" y="679.9938" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v103" unit="mm" x="662.457" y="679.9938" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v104" unit="mm" x="662.5081" y="680.382" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v105" unit="mm" x="662.5081" y="680.382" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v106" unit="mm" x="662.457" y="680.7702" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v107" unit="mm" x="662.457" y="680.7702" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v108" unit="mm" x="662.3071" y="681.132" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v109" unit="mm" x="662.3071" y="681.132" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v110" unit="mm" x="662.0687" y="681.4427" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v111" unit="mm" x="662.0687" y="681.4427" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v112" unit="mm" x="661.7581" y="681.681" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v113" unit="mm" x="661.7581" y="681.681" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v114" unit="mm" x="661.3963" y="681.8309" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v115" unit="mm" x="661.3963" y="681.8309" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v116" unit="mm" x="659.0915" y="675.0273" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v117" unit="mm" x="659.0915" y="675.0273" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v118" unit="mm" x="659.3935" y="674.7915" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v119" unit="mm" x="659.3935" y="674.7915" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v120" unit="mm" x="659.7454" y="674.6399" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v121" unit="mm" x="659.7454" y="674.6399" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v122" unit="mm" x="660.1243" y="674.5824" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v123" unit="mm" x="660.1243" y="674.5824" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v124" unit="mm" x="660.5054" y="674.6228" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v125" unit="mm" x="660.5054" y="674.6228" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v126" unit="mm" x="660.8638" y="674.7584" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v127" unit="mm" x="660.8638" y="674.7584" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v128" unit="mm" x="661.1761" y="674.9804" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v129" unit="mm" x="661.1761" y="674.9804" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v130" unit="mm" x="661.422" y="675.2742" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v131" unit="mm" x="661.422" y="675.2742" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v132" unit="mm" x="661.5854" y="675.6209" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v133" unit="mm" x="661.5854" y="675.6209" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v134" unit="mm" x="661.6557" y="675.9976" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v135" unit="mm" x="661.6557" y="675.9976" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v136" unit="mm" x="661.6282" y="676.3798" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v137" unit="mm" x="661.6282" y="676.3798" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v138" unit="mm" x="661.5048" y="676.7426" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v139" unit="mm" x="661.5048" y="676.7426" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v140" unit="mm" x="661.2935" y="677.0622" z="1.5"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v141" unit="mm" x="661.2935" y="677.0622" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v142" unit="mm" x="589.5381" y="684.382" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v143" unit="mm" x="589.5381" y="684.382" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v144" unit="mm" x="535.8906" y="684.382" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v145" unit="mm" x="554.6046" y="353.702" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v146" unit="mm" x="852.9778" y="684.382" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v147" unit="mm" x="277.2655" y="353.702" z="0.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v148" unit="mm" x="852.9778" y="684.382" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v149" unit="mm" x="535.8906" y="684.382" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v150" unit="mm" x="554.6046" y="353.702" z="7.0"/>
+        <position name="OuterHCalChimneyTile09_EJ200_v151" unit="mm" x="277.2655" y="353.702" z="7.0"/>
+    </define>
+
+    <solids>
+        <tessellated aunit="deg" lunit="mm" name="OuterHCalChimneyTile09_EJ200-SOL">
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v0" vertex2="OuterHCalChimneyTile09_EJ200_v1" vertex3="OuterHCalChimneyTile09_EJ200_v2"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v2" vertex2="OuterHCalChimneyTile09_EJ200_v1" vertex3="OuterHCalChimneyTile09_EJ200_v3"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v2" vertex2="OuterHCalChimneyTile09_EJ200_v3" vertex3="OuterHCalChimneyTile09_EJ200_v4"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v4" vertex2="OuterHCalChimneyTile09_EJ200_v3" vertex3="OuterHCalChimneyTile09_EJ200_v5"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v4" vertex2="OuterHCalChimneyTile09_EJ200_v5" vertex3="OuterHCalChimneyTile09_EJ200_v6"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v6" vertex2="OuterHCalChimneyTile09_EJ200_v5" vertex3="OuterHCalChimneyTile09_EJ200_v7"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v6" vertex2="OuterHCalChimneyTile09_EJ200_v7" vertex3="OuterHCalChimneyTile09_EJ200_v8"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v8" vertex2="OuterHCalChimneyTile09_EJ200_v7" vertex3="OuterHCalChimneyTile09_EJ200_v9"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v8" vertex2="OuterHCalChimneyTile09_EJ200_v9" vertex3="OuterHCalChimneyTile09_EJ200_v10"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v10" vertex2="OuterHCalChimneyTile09_EJ200_v9" vertex3="OuterHCalChimneyTile09_EJ200_v11"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v10" vertex2="OuterHCalChimneyTile09_EJ200_v11" vertex3="OuterHCalChimneyTile09_EJ200_v12"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v12" vertex2="OuterHCalChimneyTile09_EJ200_v11" vertex3="OuterHCalChimneyTile09_EJ200_v13"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v13" vertex2="OuterHCalChimneyTile09_EJ200_v14" vertex3="OuterHCalChimneyTile09_EJ200_v12"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v12" vertex2="OuterHCalChimneyTile09_EJ200_v14" vertex3="OuterHCalChimneyTile09_EJ200_v15"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v12" vertex2="OuterHCalChimneyTile09_EJ200_v15" vertex3="OuterHCalChimneyTile09_EJ200_v16"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v16" vertex2="OuterHCalChimneyTile09_EJ200_v15" vertex3="OuterHCalChimneyTile09_EJ200_v17"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v18" vertex2="OuterHCalChimneyTile09_EJ200_v19" vertex3="OuterHCalChimneyTile09_EJ200_v14"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v14" vertex2="OuterHCalChimneyTile09_EJ200_v19" vertex3="OuterHCalChimneyTile09_EJ200_v15"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v16" vertex2="OuterHCalChimneyTile09_EJ200_v17" vertex3="OuterHCalChimneyTile09_EJ200_v20"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v20" vertex2="OuterHCalChimneyTile09_EJ200_v17" vertex3="OuterHCalChimneyTile09_EJ200_v21"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v20" vertex2="OuterHCalChimneyTile09_EJ200_v21" vertex3="OuterHCalChimneyTile09_EJ200_v22"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v22" vertex2="OuterHCalChimneyTile09_EJ200_v21" vertex3="OuterHCalChimneyTile09_EJ200_v23"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v22" vertex2="OuterHCalChimneyTile09_EJ200_v23" vertex3="OuterHCalChimneyTile09_EJ200_v24"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v24" vertex2="OuterHCalChimneyTile09_EJ200_v23" vertex3="OuterHCalChimneyTile09_EJ200_v25"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v24" vertex2="OuterHCalChimneyTile09_EJ200_v25" vertex3="OuterHCalChimneyTile09_EJ200_v26"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v26" vertex2="OuterHCalChimneyTile09_EJ200_v25" vertex3="OuterHCalChimneyTile09_EJ200_v27"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v26" vertex2="OuterHCalChimneyTile09_EJ200_v27" vertex3="OuterHCalChimneyTile09_EJ200_v28"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v28" vertex2="OuterHCalChimneyTile09_EJ200_v27" vertex3="OuterHCalChimneyTile09_EJ200_v29"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v28" vertex2="OuterHCalChimneyTile09_EJ200_v29" vertex3="OuterHCalChimneyTile09_EJ200_v30"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v30" vertex2="OuterHCalChimneyTile09_EJ200_v29" vertex3="OuterHCalChimneyTile09_EJ200_v31"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v31" vertex2="OuterHCalChimneyTile09_EJ200_v32" vertex3="OuterHCalChimneyTile09_EJ200_v30"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v30" vertex2="OuterHCalChimneyTile09_EJ200_v32" vertex3="OuterHCalChimneyTile09_EJ200_v33"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v30" vertex2="OuterHCalChimneyTile09_EJ200_v33" vertex3="OuterHCalChimneyTile09_EJ200_v34"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v35" vertex2="OuterHCalChimneyTile09_EJ200_v36" vertex3="OuterHCalChimneyTile09_EJ200_v32"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v32" vertex2="OuterHCalChimneyTile09_EJ200_v36" vertex3="OuterHCalChimneyTile09_EJ200_v33"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v37" vertex2="OuterHCalChimneyTile09_EJ200_v38" vertex3="OuterHCalChimneyTile09_EJ200_v34"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v34" vertex2="OuterHCalChimneyTile09_EJ200_v38" vertex3="OuterHCalChimneyTile09_EJ200_v39"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v34" vertex2="OuterHCalChimneyTile09_EJ200_v39" vertex3="OuterHCalChimneyTile09_EJ200_v30"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v40" vertex2="OuterHCalChimneyTile09_EJ200_v41" vertex3="OuterHCalChimneyTile09_EJ200_v42"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v42" vertex2="OuterHCalChimneyTile09_EJ200_v41" vertex3="OuterHCalChimneyTile09_EJ200_v43"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v42" vertex2="OuterHCalChimneyTile09_EJ200_v43" vertex3="OuterHCalChimneyTile09_EJ200_v44"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v44" vertex2="OuterHCalChimneyTile09_EJ200_v43" vertex3="OuterHCalChimneyTile09_EJ200_v45"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v44" vertex2="OuterHCalChimneyTile09_EJ200_v45" vertex3="OuterHCalChimneyTile09_EJ200_v46"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v46" vertex2="OuterHCalChimneyTile09_EJ200_v45" vertex3="OuterHCalChimneyTile09_EJ200_v47"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v46" vertex2="OuterHCalChimneyTile09_EJ200_v47" vertex3="OuterHCalChimneyTile09_EJ200_v48"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v48" vertex2="OuterHCalChimneyTile09_EJ200_v47" vertex3="OuterHCalChimneyTile09_EJ200_v49"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v48" vertex2="OuterHCalChimneyTile09_EJ200_v49" vertex3="OuterHCalChimneyTile09_EJ200_v50"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v50" vertex2="OuterHCalChimneyTile09_EJ200_v49" vertex3="OuterHCalChimneyTile09_EJ200_v51"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v50" vertex2="OuterHCalChimneyTile09_EJ200_v51" vertex3="OuterHCalChimneyTile09_EJ200_v52"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v52" vertex2="OuterHCalChimneyTile09_EJ200_v51" vertex3="OuterHCalChimneyTile09_EJ200_v53"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v52" vertex2="OuterHCalChimneyTile09_EJ200_v53" vertex3="OuterHCalChimneyTile09_EJ200_v54"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v54" vertex2="OuterHCalChimneyTile09_EJ200_v53" vertex3="OuterHCalChimneyTile09_EJ200_v55"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v54" vertex2="OuterHCalChimneyTile09_EJ200_v55" vertex3="OuterHCalChimneyTile09_EJ200_v56"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v56" vertex2="OuterHCalChimneyTile09_EJ200_v55" vertex3="OuterHCalChimneyTile09_EJ200_v57"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v56" vertex2="OuterHCalChimneyTile09_EJ200_v57" vertex3="OuterHCalChimneyTile09_EJ200_v58"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v58" vertex2="OuterHCalChimneyTile09_EJ200_v57" vertex3="OuterHCalChimneyTile09_EJ200_v59"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v58" vertex2="OuterHCalChimneyTile09_EJ200_v59" vertex3="OuterHCalChimneyTile09_EJ200_v60"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v60" vertex2="OuterHCalChimneyTile09_EJ200_v59" vertex3="OuterHCalChimneyTile09_EJ200_v61"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v60" vertex2="OuterHCalChimneyTile09_EJ200_v61" vertex3="OuterHCalChimneyTile09_EJ200_v62"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v62" vertex2="OuterHCalChimneyTile09_EJ200_v61" vertex3="OuterHCalChimneyTile09_EJ200_v63"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v62" vertex2="OuterHCalChimneyTile09_EJ200_v63" vertex3="OuterHCalChimneyTile09_EJ200_v64"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v64" vertex2="OuterHCalChimneyTile09_EJ200_v63" vertex3="OuterHCalChimneyTile09_EJ200_v65"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v64" vertex2="OuterHCalChimneyTile09_EJ200_v65" vertex3="OuterHCalChimneyTile09_EJ200_v66"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v66" vertex2="OuterHCalChimneyTile09_EJ200_v65" vertex3="OuterHCalChimneyTile09_EJ200_v67"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v66" vertex2="OuterHCalChimneyTile09_EJ200_v67" vertex3="OuterHCalChimneyTile09_EJ200_v14"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v14" vertex2="OuterHCalChimneyTile09_EJ200_v67" vertex3="OuterHCalChimneyTile09_EJ200_v18"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v40" vertex2="OuterHCalChimneyTile09_EJ200_v42" vertex3="OuterHCalChimneyTile09_EJ200_v1"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v1" vertex2="OuterHCalChimneyTile09_EJ200_v42" vertex3="OuterHCalChimneyTile09_EJ200_v44"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v1" vertex2="OuterHCalChimneyTile09_EJ200_v44" vertex3="OuterHCalChimneyTile09_EJ200_v3"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v3" vertex2="OuterHCalChimneyTile09_EJ200_v44" vertex3="OuterHCalChimneyTile09_EJ200_v46"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v3" vertex2="OuterHCalChimneyTile09_EJ200_v46" vertex3="OuterHCalChimneyTile09_EJ200_v48"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v3" vertex2="OuterHCalChimneyTile09_EJ200_v48" vertex3="OuterHCalChimneyTile09_EJ200_v5"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v5" vertex2="OuterHCalChimneyTile09_EJ200_v48" vertex3="OuterHCalChimneyTile09_EJ200_v50"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v5" vertex2="OuterHCalChimneyTile09_EJ200_v50" vertex3="OuterHCalChimneyTile09_EJ200_v7"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v7" vertex2="OuterHCalChimneyTile09_EJ200_v50" vertex3="OuterHCalChimneyTile09_EJ200_v52"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v7" vertex2="OuterHCalChimneyTile09_EJ200_v52" vertex3="OuterHCalChimneyTile09_EJ200_v54"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v7" vertex2="OuterHCalChimneyTile09_EJ200_v54" vertex3="OuterHCalChimneyTile09_EJ200_v9"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v9" vertex2="OuterHCalChimneyTile09_EJ200_v54" vertex3="OuterHCalChimneyTile09_EJ200_v56"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v9" vertex2="OuterHCalChimneyTile09_EJ200_v56" vertex3="OuterHCalChimneyTile09_EJ200_v58"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v58" vertex2="OuterHCalChimneyTile09_EJ200_v60" vertex3="OuterHCalChimneyTile09_EJ200_v9"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v9" vertex2="OuterHCalChimneyTile09_EJ200_v60" vertex3="OuterHCalChimneyTile09_EJ200_v11"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v11" vertex2="OuterHCalChimneyTile09_EJ200_v60" vertex3="OuterHCalChimneyTile09_EJ200_v62"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v11" vertex2="OuterHCalChimneyTile09_EJ200_v62" vertex3="OuterHCalChimneyTile09_EJ200_v13"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v13" vertex2="OuterHCalChimneyTile09_EJ200_v62" vertex3="OuterHCalChimneyTile09_EJ200_v64"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v13" vertex2="OuterHCalChimneyTile09_EJ200_v64" vertex3="OuterHCalChimneyTile09_EJ200_v66"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v66" vertex2="OuterHCalChimneyTile09_EJ200_v14" vertex3="OuterHCalChimneyTile09_EJ200_v13"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v68" vertex2="OuterHCalChimneyTile09_EJ200_v69" vertex3="OuterHCalChimneyTile09_EJ200_v70"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v70" vertex2="OuterHCalChimneyTile09_EJ200_v69" vertex3="OuterHCalChimneyTile09_EJ200_v71"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v70" vertex2="OuterHCalChimneyTile09_EJ200_v71" vertex3="OuterHCalChimneyTile09_EJ200_v72"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v72" vertex2="OuterHCalChimneyTile09_EJ200_v71" vertex3="OuterHCalChimneyTile09_EJ200_v73"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v72" vertex2="OuterHCalChimneyTile09_EJ200_v73" vertex3="OuterHCalChimneyTile09_EJ200_v74"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v74" vertex2="OuterHCalChimneyTile09_EJ200_v73" vertex3="OuterHCalChimneyTile09_EJ200_v75"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v74" vertex2="OuterHCalChimneyTile09_EJ200_v75" vertex3="OuterHCalChimneyTile09_EJ200_v76"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v76" vertex2="OuterHCalChimneyTile09_EJ200_v75" vertex3="OuterHCalChimneyTile09_EJ200_v77"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v76" vertex2="OuterHCalChimneyTile09_EJ200_v77" vertex3="OuterHCalChimneyTile09_EJ200_v78"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v78" vertex2="OuterHCalChimneyTile09_EJ200_v77" vertex3="OuterHCalChimneyTile09_EJ200_v79"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v78" vertex2="OuterHCalChimneyTile09_EJ200_v79" vertex3="OuterHCalChimneyTile09_EJ200_v80"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v80" vertex2="OuterHCalChimneyTile09_EJ200_v79" vertex3="OuterHCalChimneyTile09_EJ200_v81"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v80" vertex2="OuterHCalChimneyTile09_EJ200_v81" vertex3="OuterHCalChimneyTile09_EJ200_v82"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v82" vertex2="OuterHCalChimneyTile09_EJ200_v81" vertex3="OuterHCalChimneyTile09_EJ200_v83"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v82" vertex2="OuterHCalChimneyTile09_EJ200_v83" vertex3="OuterHCalChimneyTile09_EJ200_v84"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v84" vertex2="OuterHCalChimneyTile09_EJ200_v83" vertex3="OuterHCalChimneyTile09_EJ200_v85"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v84" vertex2="OuterHCalChimneyTile09_EJ200_v85" vertex3="OuterHCalChimneyTile09_EJ200_v86"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v86" vertex2="OuterHCalChimneyTile09_EJ200_v85" vertex3="OuterHCalChimneyTile09_EJ200_v87"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v86" vertex2="OuterHCalChimneyTile09_EJ200_v87" vertex3="OuterHCalChimneyTile09_EJ200_v88"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v88" vertex2="OuterHCalChimneyTile09_EJ200_v87" vertex3="OuterHCalChimneyTile09_EJ200_v89"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v88" vertex2="OuterHCalChimneyTile09_EJ200_v89" vertex3="OuterHCalChimneyTile09_EJ200_v90"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v90" vertex2="OuterHCalChimneyTile09_EJ200_v89" vertex3="OuterHCalChimneyTile09_EJ200_v91"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v90" vertex2="OuterHCalChimneyTile09_EJ200_v91" vertex3="OuterHCalChimneyTile09_EJ200_v92"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v92" vertex2="OuterHCalChimneyTile09_EJ200_v91" vertex3="OuterHCalChimneyTile09_EJ200_v93"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v68" vertex2="OuterHCalChimneyTile09_EJ200_v70" vertex3="OuterHCalChimneyTile09_EJ200_v92"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v92" vertex2="OuterHCalChimneyTile09_EJ200_v70" vertex3="OuterHCalChimneyTile09_EJ200_v90"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v90" vertex2="OuterHCalChimneyTile09_EJ200_v70" vertex3="OuterHCalChimneyTile09_EJ200_v88"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v88" vertex2="OuterHCalChimneyTile09_EJ200_v70" vertex3="OuterHCalChimneyTile09_EJ200_v72"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v88" vertex2="OuterHCalChimneyTile09_EJ200_v72" vertex3="OuterHCalChimneyTile09_EJ200_v86"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v86" vertex2="OuterHCalChimneyTile09_EJ200_v72" vertex3="OuterHCalChimneyTile09_EJ200_v74"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v86" vertex2="OuterHCalChimneyTile09_EJ200_v74" vertex3="OuterHCalChimneyTile09_EJ200_v84"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v84" vertex2="OuterHCalChimneyTile09_EJ200_v74" vertex3="OuterHCalChimneyTile09_EJ200_v76"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v84" vertex2="OuterHCalChimneyTile09_EJ200_v76" vertex3="OuterHCalChimneyTile09_EJ200_v82"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v82" vertex2="OuterHCalChimneyTile09_EJ200_v76" vertex3="OuterHCalChimneyTile09_EJ200_v78"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v82" vertex2="OuterHCalChimneyTile09_EJ200_v78" vertex3="OuterHCalChimneyTile09_EJ200_v80"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v33" vertex2="OuterHCalChimneyTile09_EJ200_v36" vertex3="OuterHCalChimneyTile09_EJ200_v94"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v94" vertex2="OuterHCalChimneyTile09_EJ200_v36" vertex3="OuterHCalChimneyTile09_EJ200_v95"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v94" vertex2="OuterHCalChimneyTile09_EJ200_v95" vertex3="OuterHCalChimneyTile09_EJ200_v96"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v96" vertex2="OuterHCalChimneyTile09_EJ200_v95" vertex3="OuterHCalChimneyTile09_EJ200_v97"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v96" vertex2="OuterHCalChimneyTile09_EJ200_v97" vertex3="OuterHCalChimneyTile09_EJ200_v98"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v98" vertex2="OuterHCalChimneyTile09_EJ200_v97" vertex3="OuterHCalChimneyTile09_EJ200_v99"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v98" vertex2="OuterHCalChimneyTile09_EJ200_v99" vertex3="OuterHCalChimneyTile09_EJ200_v100"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v100" vertex2="OuterHCalChimneyTile09_EJ200_v99" vertex3="OuterHCalChimneyTile09_EJ200_v101"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v100" vertex2="OuterHCalChimneyTile09_EJ200_v101" vertex3="OuterHCalChimneyTile09_EJ200_v102"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v102" vertex2="OuterHCalChimneyTile09_EJ200_v101" vertex3="OuterHCalChimneyTile09_EJ200_v103"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v102" vertex2="OuterHCalChimneyTile09_EJ200_v103" vertex3="OuterHCalChimneyTile09_EJ200_v104"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v104" vertex2="OuterHCalChimneyTile09_EJ200_v103" vertex3="OuterHCalChimneyTile09_EJ200_v105"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v104" vertex2="OuterHCalChimneyTile09_EJ200_v105" vertex3="OuterHCalChimneyTile09_EJ200_v106"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v106" vertex2="OuterHCalChimneyTile09_EJ200_v105" vertex3="OuterHCalChimneyTile09_EJ200_v107"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v106" vertex2="OuterHCalChimneyTile09_EJ200_v107" vertex3="OuterHCalChimneyTile09_EJ200_v108"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v108" vertex2="OuterHCalChimneyTile09_EJ200_v107" vertex3="OuterHCalChimneyTile09_EJ200_v109"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v108" vertex2="OuterHCalChimneyTile09_EJ200_v109" vertex3="OuterHCalChimneyTile09_EJ200_v110"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v110" vertex2="OuterHCalChimneyTile09_EJ200_v109" vertex3="OuterHCalChimneyTile09_EJ200_v111"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v110" vertex2="OuterHCalChimneyTile09_EJ200_v111" vertex3="OuterHCalChimneyTile09_EJ200_v112"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v112" vertex2="OuterHCalChimneyTile09_EJ200_v111" vertex3="OuterHCalChimneyTile09_EJ200_v113"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v112" vertex2="OuterHCalChimneyTile09_EJ200_v113" vertex3="OuterHCalChimneyTile09_EJ200_v114"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v114" vertex2="OuterHCalChimneyTile09_EJ200_v113" vertex3="OuterHCalChimneyTile09_EJ200_v115"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v114" vertex2="OuterHCalChimneyTile09_EJ200_v115" vertex3="OuterHCalChimneyTile09_EJ200_v34"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v34" vertex2="OuterHCalChimneyTile09_EJ200_v115" vertex3="OuterHCalChimneyTile09_EJ200_v37"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v34" vertex2="OuterHCalChimneyTile09_EJ200_v33" vertex3="OuterHCalChimneyTile09_EJ200_v114"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v114" vertex2="OuterHCalChimneyTile09_EJ200_v33" vertex3="OuterHCalChimneyTile09_EJ200_v94"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v114" vertex2="OuterHCalChimneyTile09_EJ200_v94" vertex3="OuterHCalChimneyTile09_EJ200_v96"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v114" vertex2="OuterHCalChimneyTile09_EJ200_v96" vertex3="OuterHCalChimneyTile09_EJ200_v112"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v112" vertex2="OuterHCalChimneyTile09_EJ200_v96" vertex3="OuterHCalChimneyTile09_EJ200_v98"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v112" vertex2="OuterHCalChimneyTile09_EJ200_v98" vertex3="OuterHCalChimneyTile09_EJ200_v110"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v110" vertex2="OuterHCalChimneyTile09_EJ200_v98" vertex3="OuterHCalChimneyTile09_EJ200_v100"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v110" vertex2="OuterHCalChimneyTile09_EJ200_v100" vertex3="OuterHCalChimneyTile09_EJ200_v108"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v108" vertex2="OuterHCalChimneyTile09_EJ200_v100" vertex3="OuterHCalChimneyTile09_EJ200_v102"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v108" vertex2="OuterHCalChimneyTile09_EJ200_v102" vertex3="OuterHCalChimneyTile09_EJ200_v106"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v106" vertex2="OuterHCalChimneyTile09_EJ200_v102" vertex3="OuterHCalChimneyTile09_EJ200_v104"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v15" vertex2="OuterHCalChimneyTile09_EJ200_v19" vertex3="OuterHCalChimneyTile09_EJ200_v116"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v116" vertex2="OuterHCalChimneyTile09_EJ200_v19" vertex3="OuterHCalChimneyTile09_EJ200_v117"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v116" vertex2="OuterHCalChimneyTile09_EJ200_v117" vertex3="OuterHCalChimneyTile09_EJ200_v118"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v118" vertex2="OuterHCalChimneyTile09_EJ200_v117" vertex3="OuterHCalChimneyTile09_EJ200_v119"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v118" vertex2="OuterHCalChimneyTile09_EJ200_v119" vertex3="OuterHCalChimneyTile09_EJ200_v120"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v120" vertex2="OuterHCalChimneyTile09_EJ200_v119" vertex3="OuterHCalChimneyTile09_EJ200_v121"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v120" vertex2="OuterHCalChimneyTile09_EJ200_v121" vertex3="OuterHCalChimneyTile09_EJ200_v122"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v122" vertex2="OuterHCalChimneyTile09_EJ200_v121" vertex3="OuterHCalChimneyTile09_EJ200_v123"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v122" vertex2="OuterHCalChimneyTile09_EJ200_v123" vertex3="OuterHCalChimneyTile09_EJ200_v124"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v124" vertex2="OuterHCalChimneyTile09_EJ200_v123" vertex3="OuterHCalChimneyTile09_EJ200_v125"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v124" vertex2="OuterHCalChimneyTile09_EJ200_v125" vertex3="OuterHCalChimneyTile09_EJ200_v126"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v126" vertex2="OuterHCalChimneyTile09_EJ200_v125" vertex3="OuterHCalChimneyTile09_EJ200_v127"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v126" vertex2="OuterHCalChimneyTile09_EJ200_v127" vertex3="OuterHCalChimneyTile09_EJ200_v128"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v128" vertex2="OuterHCalChimneyTile09_EJ200_v127" vertex3="OuterHCalChimneyTile09_EJ200_v129"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v128" vertex2="OuterHCalChimneyTile09_EJ200_v129" vertex3="OuterHCalChimneyTile09_EJ200_v130"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v130" vertex2="OuterHCalChimneyTile09_EJ200_v129" vertex3="OuterHCalChimneyTile09_EJ200_v131"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v130" vertex2="OuterHCalChimneyTile09_EJ200_v131" vertex3="OuterHCalChimneyTile09_EJ200_v132"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v132" vertex2="OuterHCalChimneyTile09_EJ200_v131" vertex3="OuterHCalChimneyTile09_EJ200_v133"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v132" vertex2="OuterHCalChimneyTile09_EJ200_v133" vertex3="OuterHCalChimneyTile09_EJ200_v134"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v134" vertex2="OuterHCalChimneyTile09_EJ200_v133" vertex3="OuterHCalChimneyTile09_EJ200_v135"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v134" vertex2="OuterHCalChimneyTile09_EJ200_v135" vertex3="OuterHCalChimneyTile09_EJ200_v136"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v136" vertex2="OuterHCalChimneyTile09_EJ200_v135" vertex3="OuterHCalChimneyTile09_EJ200_v137"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v136" vertex2="OuterHCalChimneyTile09_EJ200_v137" vertex3="OuterHCalChimneyTile09_EJ200_v138"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v138" vertex2="OuterHCalChimneyTile09_EJ200_v137" vertex3="OuterHCalChimneyTile09_EJ200_v139"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v138" vertex2="OuterHCalChimneyTile09_EJ200_v139" vertex3="OuterHCalChimneyTile09_EJ200_v140"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v140" vertex2="OuterHCalChimneyTile09_EJ200_v139" vertex3="OuterHCalChimneyTile09_EJ200_v141"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v140" vertex2="OuterHCalChimneyTile09_EJ200_v141" vertex3="OuterHCalChimneyTile09_EJ200_v32"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v32" vertex2="OuterHCalChimneyTile09_EJ200_v141" vertex3="OuterHCalChimneyTile09_EJ200_v35"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v15" vertex2="OuterHCalChimneyTile09_EJ200_v116" vertex3="OuterHCalChimneyTile09_EJ200_v17"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v17" vertex2="OuterHCalChimneyTile09_EJ200_v116" vertex3="OuterHCalChimneyTile09_EJ200_v118"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v17" vertex2="OuterHCalChimneyTile09_EJ200_v118" vertex3="OuterHCalChimneyTile09_EJ200_v120"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v17" vertex2="OuterHCalChimneyTile09_EJ200_v120" vertex3="OuterHCalChimneyTile09_EJ200_v21"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v21" vertex2="OuterHCalChimneyTile09_EJ200_v120" vertex3="OuterHCalChimneyTile09_EJ200_v122"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v21" vertex2="OuterHCalChimneyTile09_EJ200_v122" vertex3="OuterHCalChimneyTile09_EJ200_v23"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v23" vertex2="OuterHCalChimneyTile09_EJ200_v122" vertex3="OuterHCalChimneyTile09_EJ200_v124"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v23" vertex2="OuterHCalChimneyTile09_EJ200_v124" vertex3="OuterHCalChimneyTile09_EJ200_v126"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v126" vertex2="OuterHCalChimneyTile09_EJ200_v128" vertex3="OuterHCalChimneyTile09_EJ200_v23"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v23" vertex2="OuterHCalChimneyTile09_EJ200_v128" vertex3="OuterHCalChimneyTile09_EJ200_v25"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v25" vertex2="OuterHCalChimneyTile09_EJ200_v128" vertex3="OuterHCalChimneyTile09_EJ200_v130"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v25" vertex2="OuterHCalChimneyTile09_EJ200_v130" vertex3="OuterHCalChimneyTile09_EJ200_v132"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v25" vertex2="OuterHCalChimneyTile09_EJ200_v132" vertex3="OuterHCalChimneyTile09_EJ200_v27"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v27" vertex2="OuterHCalChimneyTile09_EJ200_v132" vertex3="OuterHCalChimneyTile09_EJ200_v134"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v27" vertex2="OuterHCalChimneyTile09_EJ200_v134" vertex3="OuterHCalChimneyTile09_EJ200_v29"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v29" vertex2="OuterHCalChimneyTile09_EJ200_v134" vertex3="OuterHCalChimneyTile09_EJ200_v136"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v29" vertex2="OuterHCalChimneyTile09_EJ200_v136" vertex3="OuterHCalChimneyTile09_EJ200_v138"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v29" vertex2="OuterHCalChimneyTile09_EJ200_v138" vertex3="OuterHCalChimneyTile09_EJ200_v31"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v31" vertex2="OuterHCalChimneyTile09_EJ200_v138" vertex3="OuterHCalChimneyTile09_EJ200_v140"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v31" vertex2="OuterHCalChimneyTile09_EJ200_v140" vertex3="OuterHCalChimneyTile09_EJ200_v32"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v1" vertex2="OuterHCalChimneyTile09_EJ200_v0" vertex3="OuterHCalChimneyTile09_EJ200_v40"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v40" vertex2="OuterHCalChimneyTile09_EJ200_v0" vertex3="OuterHCalChimneyTile09_EJ200_v92"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v40" vertex2="OuterHCalChimneyTile09_EJ200_v92" vertex3="OuterHCalChimneyTile09_EJ200_v41"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v41" vertex2="OuterHCalChimneyTile09_EJ200_v92" vertex3="OuterHCalChimneyTile09_EJ200_v93"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v92" vertex2="OuterHCalChimneyTile09_EJ200_v0" vertex3="OuterHCalChimneyTile09_EJ200_v68"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v68" vertex2="OuterHCalChimneyTile09_EJ200_v0" vertex3="OuterHCalChimneyTile09_EJ200_v142"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v68" vertex2="OuterHCalChimneyTile09_EJ200_v142" vertex3="OuterHCalChimneyTile09_EJ200_v143"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v143" vertex2="OuterHCalChimneyTile09_EJ200_v69" vertex3="OuterHCalChimneyTile09_EJ200_v68"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v142" vertex2="OuterHCalChimneyTile09_EJ200_v0" vertex3="OuterHCalChimneyTile09_EJ200_v144"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v144" vertex2="OuterHCalChimneyTile09_EJ200_v0" vertex3="OuterHCalChimneyTile09_EJ200_v2"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v144" vertex2="OuterHCalChimneyTile09_EJ200_v2" vertex3="OuterHCalChimneyTile09_EJ200_v4"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v4" vertex2="OuterHCalChimneyTile09_EJ200_v6" vertex3="OuterHCalChimneyTile09_EJ200_v144"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v144" vertex2="OuterHCalChimneyTile09_EJ200_v6" vertex3="OuterHCalChimneyTile09_EJ200_v8"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v144" vertex2="OuterHCalChimneyTile09_EJ200_v8" vertex3="OuterHCalChimneyTile09_EJ200_v10"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v144" vertex2="OuterHCalChimneyTile09_EJ200_v10" vertex3="OuterHCalChimneyTile09_EJ200_v145"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v145" vertex2="OuterHCalChimneyTile09_EJ200_v10" vertex3="OuterHCalChimneyTile09_EJ200_v12"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v145" vertex2="OuterHCalChimneyTile09_EJ200_v12" vertex3="OuterHCalChimneyTile09_EJ200_v16"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v16" vertex2="OuterHCalChimneyTile09_EJ200_v20" vertex3="OuterHCalChimneyTile09_EJ200_v145"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v145" vertex2="OuterHCalChimneyTile09_EJ200_v20" vertex3="OuterHCalChimneyTile09_EJ200_v146"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v146" vertex2="OuterHCalChimneyTile09_EJ200_v20" vertex3="OuterHCalChimneyTile09_EJ200_v22"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v146" vertex2="OuterHCalChimneyTile09_EJ200_v22" vertex3="OuterHCalChimneyTile09_EJ200_v24"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v24" vertex2="OuterHCalChimneyTile09_EJ200_v26" vertex3="OuterHCalChimneyTile09_EJ200_v146"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v146" vertex2="OuterHCalChimneyTile09_EJ200_v26" vertex3="OuterHCalChimneyTile09_EJ200_v28"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v146" vertex2="OuterHCalChimneyTile09_EJ200_v28" vertex3="OuterHCalChimneyTile09_EJ200_v30"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v30" vertex2="OuterHCalChimneyTile09_EJ200_v39" vertex3="OuterHCalChimneyTile09_EJ200_v146"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v145" vertex2="OuterHCalChimneyTile09_EJ200_v147" vertex3="OuterHCalChimneyTile09_EJ200_v144"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v38" vertex2="OuterHCalChimneyTile09_EJ200_v148" vertex3="OuterHCalChimneyTile09_EJ200_v39"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v39" vertex2="OuterHCalChimneyTile09_EJ200_v148" vertex3="OuterHCalChimneyTile09_EJ200_v146"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v142" vertex2="OuterHCalChimneyTile09_EJ200_v144" vertex3="OuterHCalChimneyTile09_EJ200_v143"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v143" vertex2="OuterHCalChimneyTile09_EJ200_v144" vertex3="OuterHCalChimneyTile09_EJ200_v149"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v145" vertex2="OuterHCalChimneyTile09_EJ200_v146" vertex3="OuterHCalChimneyTile09_EJ200_v150"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v150" vertex2="OuterHCalChimneyTile09_EJ200_v146" vertex3="OuterHCalChimneyTile09_EJ200_v148"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v147" vertex2="OuterHCalChimneyTile09_EJ200_v145" vertex3="OuterHCalChimneyTile09_EJ200_v151"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v151" vertex2="OuterHCalChimneyTile09_EJ200_v145" vertex3="OuterHCalChimneyTile09_EJ200_v150"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v144" vertex2="OuterHCalChimneyTile09_EJ200_v147" vertex3="OuterHCalChimneyTile09_EJ200_v149"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v149" vertex2="OuterHCalChimneyTile09_EJ200_v147" vertex3="OuterHCalChimneyTile09_EJ200_v151"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v19" vertex2="OuterHCalChimneyTile09_EJ200_v18" vertex3="OuterHCalChimneyTile09_EJ200_v117"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v117" vertex2="OuterHCalChimneyTile09_EJ200_v18" vertex3="OuterHCalChimneyTile09_EJ200_v67"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v117" vertex2="OuterHCalChimneyTile09_EJ200_v67" vertex3="OuterHCalChimneyTile09_EJ200_v119"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v119" vertex2="OuterHCalChimneyTile09_EJ200_v67" vertex3="OuterHCalChimneyTile09_EJ200_v65"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v119" vertex2="OuterHCalChimneyTile09_EJ200_v65" vertex3="OuterHCalChimneyTile09_EJ200_v121"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v121" vertex2="OuterHCalChimneyTile09_EJ200_v65" vertex3="OuterHCalChimneyTile09_EJ200_v63"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v121" vertex2="OuterHCalChimneyTile09_EJ200_v63" vertex3="OuterHCalChimneyTile09_EJ200_v123"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v123" vertex2="OuterHCalChimneyTile09_EJ200_v63" vertex3="OuterHCalChimneyTile09_EJ200_v61"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v123" vertex2="OuterHCalChimneyTile09_EJ200_v61" vertex3="OuterHCalChimneyTile09_EJ200_v150"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v150" vertex2="OuterHCalChimneyTile09_EJ200_v61" vertex3="OuterHCalChimneyTile09_EJ200_v59"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v150" vertex2="OuterHCalChimneyTile09_EJ200_v59" vertex3="OuterHCalChimneyTile09_EJ200_v149"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v149" vertex2="OuterHCalChimneyTile09_EJ200_v59" vertex3="OuterHCalChimneyTile09_EJ200_v57"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v149" vertex2="OuterHCalChimneyTile09_EJ200_v57" vertex3="OuterHCalChimneyTile09_EJ200_v55"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v55" vertex2="OuterHCalChimneyTile09_EJ200_v53" vertex3="OuterHCalChimneyTile09_EJ200_v149"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v149" vertex2="OuterHCalChimneyTile09_EJ200_v53" vertex3="OuterHCalChimneyTile09_EJ200_v51"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v149" vertex2="OuterHCalChimneyTile09_EJ200_v51" vertex3="OuterHCalChimneyTile09_EJ200_v49"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v47" vertex2="OuterHCalChimneyTile09_EJ200_v85" vertex3="OuterHCalChimneyTile09_EJ200_v49"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v49" vertex2="OuterHCalChimneyTile09_EJ200_v85" vertex3="OuterHCalChimneyTile09_EJ200_v83"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v49" vertex2="OuterHCalChimneyTile09_EJ200_v83" vertex3="OuterHCalChimneyTile09_EJ200_v149"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v149" vertex2="OuterHCalChimneyTile09_EJ200_v83" vertex3="OuterHCalChimneyTile09_EJ200_v81"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v149" vertex2="OuterHCalChimneyTile09_EJ200_v81" vertex3="OuterHCalChimneyTile09_EJ200_v79"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v85" vertex2="OuterHCalChimneyTile09_EJ200_v47" vertex3="OuterHCalChimneyTile09_EJ200_v87"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v87" vertex2="OuterHCalChimneyTile09_EJ200_v47" vertex3="OuterHCalChimneyTile09_EJ200_v45"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v87" vertex2="OuterHCalChimneyTile09_EJ200_v45" vertex3="OuterHCalChimneyTile09_EJ200_v43"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v87" vertex2="OuterHCalChimneyTile09_EJ200_v43" vertex3="OuterHCalChimneyTile09_EJ200_v89"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v89" vertex2="OuterHCalChimneyTile09_EJ200_v43" vertex3="OuterHCalChimneyTile09_EJ200_v41"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v89" vertex2="OuterHCalChimneyTile09_EJ200_v41" vertex3="OuterHCalChimneyTile09_EJ200_v91"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v91" vertex2="OuterHCalChimneyTile09_EJ200_v41" vertex3="OuterHCalChimneyTile09_EJ200_v93"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v79" vertex2="OuterHCalChimneyTile09_EJ200_v77" vertex3="OuterHCalChimneyTile09_EJ200_v149"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v149" vertex2="OuterHCalChimneyTile09_EJ200_v77" vertex3="OuterHCalChimneyTile09_EJ200_v143"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v143" vertex2="OuterHCalChimneyTile09_EJ200_v77" vertex3="OuterHCalChimneyTile09_EJ200_v75"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v143" vertex2="OuterHCalChimneyTile09_EJ200_v75" vertex3="OuterHCalChimneyTile09_EJ200_v73"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v73" vertex2="OuterHCalChimneyTile09_EJ200_v71" vertex3="OuterHCalChimneyTile09_EJ200_v143"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v143" vertex2="OuterHCalChimneyTile09_EJ200_v71" vertex3="OuterHCalChimneyTile09_EJ200_v69"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v149" vertex2="OuterHCalChimneyTile09_EJ200_v151" vertex3="OuterHCalChimneyTile09_EJ200_v150"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v123" vertex2="OuterHCalChimneyTile09_EJ200_v150" vertex3="OuterHCalChimneyTile09_EJ200_v125"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v125" vertex2="OuterHCalChimneyTile09_EJ200_v150" vertex3="OuterHCalChimneyTile09_EJ200_v148"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v125" vertex2="OuterHCalChimneyTile09_EJ200_v148" vertex3="OuterHCalChimneyTile09_EJ200_v127"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v127" vertex2="OuterHCalChimneyTile09_EJ200_v148" vertex3="OuterHCalChimneyTile09_EJ200_v129"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v129" vertex2="OuterHCalChimneyTile09_EJ200_v148" vertex3="OuterHCalChimneyTile09_EJ200_v131"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v131" vertex2="OuterHCalChimneyTile09_EJ200_v148" vertex3="OuterHCalChimneyTile09_EJ200_v133"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v133" vertex2="OuterHCalChimneyTile09_EJ200_v148" vertex3="OuterHCalChimneyTile09_EJ200_v135"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v135" vertex2="OuterHCalChimneyTile09_EJ200_v148" vertex3="OuterHCalChimneyTile09_EJ200_v103"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v135" vertex2="OuterHCalChimneyTile09_EJ200_v103" vertex3="OuterHCalChimneyTile09_EJ200_v101"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v38" vertex2="OuterHCalChimneyTile09_EJ200_v109" vertex3="OuterHCalChimneyTile09_EJ200_v148"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v148" vertex2="OuterHCalChimneyTile09_EJ200_v109" vertex3="OuterHCalChimneyTile09_EJ200_v107"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v148" vertex2="OuterHCalChimneyTile09_EJ200_v107" vertex3="OuterHCalChimneyTile09_EJ200_v105"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v37" vertex2="OuterHCalChimneyTile09_EJ200_v115" vertex3="OuterHCalChimneyTile09_EJ200_v38"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v38" vertex2="OuterHCalChimneyTile09_EJ200_v115" vertex3="OuterHCalChimneyTile09_EJ200_v113"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v38" vertex2="OuterHCalChimneyTile09_EJ200_v113" vertex3="OuterHCalChimneyTile09_EJ200_v111"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v111" vertex2="OuterHCalChimneyTile09_EJ200_v109" vertex3="OuterHCalChimneyTile09_EJ200_v38"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v105" vertex2="OuterHCalChimneyTile09_EJ200_v103" vertex3="OuterHCalChimneyTile09_EJ200_v148"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v135" vertex2="OuterHCalChimneyTile09_EJ200_v101" vertex3="OuterHCalChimneyTile09_EJ200_v137"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v137" vertex2="OuterHCalChimneyTile09_EJ200_v101" vertex3="OuterHCalChimneyTile09_EJ200_v99"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v137" vertex2="OuterHCalChimneyTile09_EJ200_v99" vertex3="OuterHCalChimneyTile09_EJ200_v139"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v139" vertex2="OuterHCalChimneyTile09_EJ200_v99" vertex3="OuterHCalChimneyTile09_EJ200_v141"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v141" vertex2="OuterHCalChimneyTile09_EJ200_v99" vertex3="OuterHCalChimneyTile09_EJ200_v97"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v141" vertex2="OuterHCalChimneyTile09_EJ200_v97" vertex3="OuterHCalChimneyTile09_EJ200_v35"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v35" vertex2="OuterHCalChimneyTile09_EJ200_v97" vertex3="OuterHCalChimneyTile09_EJ200_v95"/>
+             <triangular vertex1="OuterHCalChimneyTile09_EJ200_v35" vertex2="OuterHCalChimneyTile09_EJ200_v95" vertex3="OuterHCalChimneyTile09_EJ200_v36"/>
+        </tessellated>
+    </solids>
+
+    <structure>
+        <volume name="OuterHCalChimneyTile09_EJ200">
+            <materialref ref="EJ200"/>
+            <solidref ref="OuterHCalChimneyTile09_EJ200-SOL"/>
+        </volume>
+    </structure>
+
+    <setup name="Default" version="1.0">
+        <world ref="OuterHCalChimneyTile09_EJ200"/>
+    </setup>
+</gdml>

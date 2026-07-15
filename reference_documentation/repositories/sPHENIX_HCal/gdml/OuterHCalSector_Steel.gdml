@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  PLACEHOLDER: Original file is ~37 MB and was omitted from this archive
+  to keep the muon3 repository size manageable.
+
+  Original upstream: https://github.com/phyxch/sPHENIX_HCal/blob/main/gdml/OuterHCalSector_Steel.gdml
+  Re-download: git clone https://github.com/phyxch/sPHENIX_HCal.git
+  Local backup (if generated on this machine): /tmp/OuterHCalSector_Steel.gdml.bak
+
+  All Inner/Outer *tile* GDMLs and application sources are kept in full.
+-->
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+  <define/>
+  <materials/>
+  <solids>
+    <box name="placeholder" x="1" y="1" z="1" lunit="mm"/>
+  </solids>
+  <structure>
+    <volume name="World">
+      <materialref ref="G4_AIR"/>
+      <solidref ref="placeholder"/>
+    </volume>
+  </structure>
+  <setup name="Default" version="1.0">
+    <world ref="World"/>
+  </setup>
+</gdml>

@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+
+  <define>
+    <constant name="PI" value="1.0*pi"/>
+    <constant name="TWOPI" value="2.*pi"/>
+    <constant name="HALFPI" value="0.5*pi"/>
+    <rotation name="rotatebyx90R" x="-1.0*HALFPI"/>
+    <rotation name="rotatebyx90L" x="1.0*HALFPI"/>
+    <rotation name="rotatebyx180" x="PI"/>
+    <rotation name="tileRotateX" x="360./256"/>   <!-- 256 tile gaps for Inner HCal -->
+    <variable name="j" value="1"/>
+    <variable name="i" value="1"/>
+    <variable name="it" value="1"/>
+    <matrix name="xpos" coldim="1" values="
+		14.4129 43.2301 72.0212 100.769 129.456 158.065 186.579 214.98 243.252  
+		271.378 299.34 327.121 354.706 382.077 409.218 436.112 462.744  
+		489.097 515.155 540.903 566.325 591.406 616.131 640.484 664.452  
+		688.02 711.173 733.897 756.18 778.007 799.366 820.243 840.626  
+		860.502 879.861 898.689 916.976 934.71 951.882 968.48 984.495  
+		999.917 1014.74 1028.94 1042.53 1055.49 1067.82 1079.5 1090.53  
+		1100.9 1110.62 1119.66 1128.03 1135.71 1142.72 1149.03 1154.66  
+		1159.59 1163.82 1167.34 1170.17 1172.29 1173.7 1174.41 1174.41  
+		1173.7 1172.29 1170.17 1167.34 1163.82 1159.59 1154.66 1149.03  
+		1142.72 1135.71 1128.03 1119.66 1110.62 1100.9 1090.53 1079.5  
+		1067.82 1055.49 1042.53 1028.94 1014.74 999.917 984.495 968.48  
+		951.882 934.71 916.976 898.689 879.861 860.502 840.626 820.243  
+		799.366 778.007 756.18 733.897 711.173 688.02 664.452 640.484  
+		616.131 591.406 566.325 540.903 515.155 489.097 462.744 436.112  
+		409.218 382.077 354.706 327.121 299.34 271.378 243.252 214.98  
+		186.579 158.065 129.456 100.769 72.0212 43.2301 14.4129 -14.4129  
+		-43.2301 -72.0212 -100.769 -129.456 -158.065 -186.579 -214.98 -243.252  
+		-271.378 -299.34 -327.121 -354.706 -382.077 -409.218 -436.112 -462.744  
+		-489.097 -515.155 -540.903 -566.325 -591.406 -616.131 -640.484 -664.452  
+		-688.02 -711.173 -733.897 -756.18 -778.007 -799.366 -820.243 -840.626  
+		-860.502 -879.861 -898.689 -916.976 -934.71 -951.882 -968.48 -984.495  
+		-999.917 -1014.74 -1028.94 -1042.53 -1055.49 -1067.82 -1079.5 -1090.53  
+		-1100.9 -1110.62 -1119.66 -1128.03 -1135.71 -1142.72 -1149.03 -1154.66  
+		-1159.59 -1163.82 -1167.34 -1170.17 -1172.29 -1173.7 -1174.41 -1174.41  
+		-1173.7 -1172.29 -1170.17 -1167.34 -1163.82 -1159.59 -1154.66 -1149.03  
+		-1142.72 -1135.71 -1128.03 -1119.66 -1110.62 -1100.9 -1090.53 -1079.5  
+		-1067.82 -1055.49 -1042.53 -1028.94 -1014.74 -999.917 -984.495 -968.48  
+		-951.882 -934.71 -916.976 -898.689 -879.861 -860.502 -840.626 -820.243  
+		-799.366 -778.007 -756.18 -733.897 -711.173 -688.02 -664.452 -640.484  
+		-616.131 -591.406 -566.325 -540.903 -515.155 -489.097 -462.744 -436.112  
+		-409.218 -382.077 -354.706 -327.121 -299.34 -271.378 -243.252 -214.98  
+		-186.579 -158.065 -129.456 -100.769 -72.0212 -43.2301 -14.4129
+		"/>
+    <matrix name="ypos" coldim="1" values="
+		1174.41 1173.7 1172.29 1170.17 1167.34 1163.82 1159.59 1154.66 1149.03  
+		1142.72 1135.71 1128.03 1119.66 1110.62 1100.9 1090.53 1079.5  
+		1067.82 1055.49 1042.53 1028.94 1014.74 999.917 984.495 968.48  
+		951.882 934.71 916.976 898.689 879.861 860.502 840.626 820.243  
+		799.366 778.007 756.18 733.897 711.173 688.02 664.452 640.484  
+		616.131 591.406 566.325 540.903 515.155 489.097 462.744 436.112  
+		409.218 382.077 354.706 327.121 299.34 271.378 243.252 214.98  
+		186.579 158.065 129.456 100.769 72.0212 43.2301 14.4129 -14.4129  
+		-43.2301 -72.0212 -100.769 -129.456 -158.065 -186.579 -214.98 -243.252  
+		-271.378 -299.34 -327.121 -354.706 -382.077 -409.218 -436.112 -462.744  
+		-489.097 -515.155 -540.903 -566.325 -591.406 -616.131 -640.484 -664.452  
+		-688.02 -711.173 -733.897 -756.18 -778.007 -799.366 -820.243 -840.626  
+		-860.502 -879.861 -898.689 -916.976 -934.71 -951.882 -968.48 -984.495  
+		-999.917 -1014.74 -1028.94 -1042.53 -1055.49 -1067.82 -1079.5 -1090.53  
+		-1100.9 -1110.62 -1119.66 -1128.03 -1135.71 -1142.72 -1149.03 -1154.66  
+		-1159.59 -1163.82 -1167.34 -1170.17 -1172.29 -1173.7 -1174.41 -1174.41  
+		-1173.7 -1172.29 -1170.17 -1167.34 -1163.82 -1159.59 -1154.66 -1149.03  
+		-1142.72 -1135.71 -1128.03 -1119.66 -1110.62 -1100.9 -1090.53 -1079.5  
+		-1067.82 -1055.49 -1042.53 -1028.94 -1014.74 -999.917 -984.495 -968.48  
+		-951.882 -934.71 -916.976 -898.689 -879.861 -860.502 -840.626 -820.243  
+		-799.366 -778.007 -756.18 -733.897 -711.173 -688.02 -664.452 -640.484  
+		-616.131 -591.406 -566.325 -540.903 -515.155 -489.097 -462.744 -436.112  
+		-409.218 -382.077 -354.706 -327.121 -299.34 -271.378 -243.252 -214.98  
+		-186.579 -158.065 -129.456 -100.769 -72.0212 -43.2301 -14.4129 14.4129  
+		43.2301 72.0212 100.769 129.456 158.065 186.579 214.98 243.252  
+		271.378 299.34 327.121 354.706 382.077 409.218 436.112 462.744  
+		489.097 515.155 540.903 566.325 591.406 616.131 640.484 664.452  
+		688.02 711.173 733.897 756.18 778.007 799.366 820.243 840.626  
+		860.502 879.861 898.689 916.976 934.71 951.882 968.48 984.495  
+		999.917 1014.74 1028.94 1042.53 1055.49 1067.82 1079.5 1090.53  
+		1100.9 1110.62 1119.66 1128.03 1135.71 1142.72 1149.03 1154.66  
+		1159.59 1163.82 1167.34 1170.17 1172.29 1173.7 1174.41
+		"/>
+  </define>
+  
+    <materials>
+        <!--          -->
+        <!-- elements -->
+        <!--          -->
+        <!-- http://www-cdf.fnal.gov/~kirby/lbne_geo_tests/lbne_10kT_Materials.gdml -->
+        <element name="videRef"    formula="VACUUM" Z="1"> <atom value="1."/>       </element>
+        <element name="hydrogen"   formula="H"   Z="1">    <atom value="1.0079"/>   </element>
+        <element name="carbon"     formula="C"   Z="6">    <atom value="12.0107"/>  </element>
+        <element name="nitrogen"   formula="N"   Z="7">    <atom value="14.0067"/>  </element>
+        <element name="oxygen"     formula="O"   Z="8">    <atom value="15.999"/>   </element>
+        <element name="sodium"     formula="Na"  Z="11">   <atom value="22.99"/>    </element>
+        <element name="magnesium"  formula="Mg"  Z="12">   <atom value="24.305"/>   </element>
+        <element name="aluminum"   formula="Al"  Z="13">   <atom value="26.9815"/>  </element>
+        <element name="silicon"    formula="Si"  Z="14">   <atom value="28.0855"/>  </element>
+        <element name="phosphorus" formula="P"   Z="15">   <atom value="30.973"/>   </element>
+        <element name="sulphur"    formula="S"   Z="16">   <atom value="32.065"/>   </element>
+        <element name="argon"      formula="Ar"  Z="18">   <atom value="39.9480"/>  </element>
+        <element name="potassium"  formula="K"   Z="19">   <atom value="39.0983"/>  </element>
+        <element name="calcium"    formula="Ca"  Z="20">   <atom value="40.078"/>   </element>
+        <element name="titanium"   formula="Ti"  Z="22">   <atom value="47.867"/>   </element>
+        <element name="chromium"   formula="Cr"  Z="24">   <atom value="51.9961"/>  </element>
+        <element name="iron"       formula="Fe"  Z="26">   <atom value="55.8450"/>  </element>
+        <element name="nickel"     formula="Ni"  Z="28">   <atom value="58.6934"/>  </element>
+        <element name="copper"     formula="Cu"  Z="29">   <atom value="63.55"/>    </element>
+        <element name="germanium"  formula="Ge"  Z="32">   <atom value="72.63"/>    </element>
+        <element name="bromine"    formula="Br"  Z="35">   <atom value="79.904"/>   </element>
+        <element name="palladium"  formula="Pd"  Z="46">   <atom value="106.42"/>   </element>
+        <element name="tin"        formula="Sn"  Z="50">   <atom value="118.71"/>   </element>
+        <element name="platinum"   formula="Pt"  Z="78">   <atom value="195.084"/>  </element>
+        <element name="gold"       formula="Au"  Z="79">   <atom value="196.97"/>   </element>
+        <element name="tungsten"   formula="W"   Z="74">   <atom value="183.84"/>   </element>
+        <element name="bismuth"    formula="Bi"  Z="83">   <atom value="208.980"/>  </element>
+
+        <!--          -->
+        <!-- vacuum   -->
+        <!--          -->
+        <material formula=" " name="Vacuum">
+            <D value="1.e-25" unit="g/cm3" />
+            <fraction n="1.0" ref="videRef" />
+        </material>
+
+
+        <!--           -->
+	<!-- materials -->
+        <!--           -->
+     
+     <!-- Aluminum, Hineycomb, Carbon fibre, etc. (simple materials) -->
+     
+     <material formula="Al" name="Aluminum" state="solid">
+       <D value="2.700" unit="g/cm3"/>
+       <fraction n="1." ref="aluminum"/>
+     </material>
+
+     <!-- BC254 (neutron detector) -->
+     <material name="BC254" state="solid">
+        <MEE unit="eV" value="173"/>
+        <D unit="g/cm3" value="1.026"/>
+        <fraction n="0.2492" ref="carbon"/>
+        <fraction n="0.7475" ref="hydrogen"/>
+        <fraction n="0.0033" ref="B"/>
+     </material>
+
+     <!-- BC505 ( Liquid scintillator) -->
+     <material name="BC505" state="solid">
+        <!-- <MEE unit="eV" value="173"/> -->
+        <D unit="g/cm3" value="0.877"/>
+        <fraction n="0.4292" ref="carbon"/>
+        <fraction n="0.5708" ref="hydrogen"/>
+     </material>
+
+     <!-- EJ200 (Plastic scintillator) -->
+     <material name="EJ200" state="solid">
+        <!-- <MEE unit="eV" value="173"/> -->
+        <D unit="g/cm3" value="1.023"/>
+        <fraction n="0.4757" ref="carbon"/>
+        <fraction n="0.5243" ref="hydrogen"/>
+     </material>
+
+
+    </materials>
+
+    <solids>
+        <box lunit="mm" name="world_solid" x="10000.0" y="10000.0" z="10000.0" />
+    </solids>
+
+    <structure>
+      <assembly name="InnerTileAssembly">
+	<physvol>
+          <file name="InnerHCalTile01_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="0.5" y="0" z="0"/>
+	  <rotation name="tileRot01S" unit="degree" x="37.8"/>	  
+        </physvol>
+	<physvol>
+          <file name="InnerHCalTile01_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="-0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot01N" unit="degree" x="37.8" y="180" z="0"/>
+        </physvol>
+        <physvol>
+          <file name="InnerHCalTile02_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot02S" unit="degree" x="37.8"/>	  
+        </physvol>
+	<physvol>
+          <file name="InnerHCalTile02_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="-0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot02N" unit="degree" x="37.8" y="180" z="0"/>
+        </physvol>	
+        <physvol>
+          <file name="InnerHCalTile03_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot03S" unit="degree" x="37.8"/>
+        </physvol>
+	<physvol>
+          <file name="InnerHCalTile03_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="-0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot03N" unit="degree" x="37.8" y="180" z="0"/>
+        </physvol>	
+        <physvol>
+          <file name="InnerHCalTile04_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot04S" unit="degree" x="37.8"/>	  
+        </physvol>
+	<physvol>
+          <file name="InnerHCalTile04_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="-0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot04N" unit="degree" x="37.8" y="180" z="0"/>
+        </physvol>	
+        <physvol>
+          <file name="InnerHCalTile05_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot05S" unit="degree" x="37.8"/>
+        </physvol>
+	<physvol>
+          <file name="InnerHCalTile05_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="-0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot05N" unit="degree" x="37.8" y="180" z="0"/>
+        </physvol>
+        <physvol>
+          <file name="InnerHCalTile06_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot06S" unit="degree" x="37.8"/>	  
+        </physvol>
+	<physvol>
+          <file name="InnerHCalTile06_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="-0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot06N" unit="degree" x="37.8" y="180" z="0"/>
+        </physvol>	
+        <physvol>
+          <file name="InnerHCalTile07_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot07S" unit="degree" x="37.8"/>	  
+        </physvol>
+	<physvol>
+          <file name="InnerHCalTile07_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="-0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot07N" unit="degree" x="37.8" y="180" z="0"/>
+        </physvol>	
+        <physvol>
+          <file name="InnerHCalTile08_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot08S" unit="degree" x="37.8"/>	  
+        </physvol>
+	<physvol>
+          <file name="InnerHCalTile08_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="-0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot08N" unit="degree" x="37.8" y="180" z="0"/>
+        </physvol>	
+        <physvol>
+          <file name="InnerHCalTile09_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot09S" unit="degree" x="37.8"/>	  
+        </physvol>
+	<physvol>
+          <file name="InnerHCalTile09_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="-0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot09N" unit="degree" x="37.8" y="180" z="0"/>
+        </physvol>	
+        <physvol>
+          <file name="InnerHCalTile10_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot10S" unit="degree" x="37.8"/>	  
+        </physvol>
+	<physvol>
+          <file name="InnerHCalTile10_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="-0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot10N" unit="degree" x="37.8" y="180" z="0"/>
+        </physvol>	
+        <physvol>
+          <file name="InnerHCalTile11_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot11S" unit="degree" x="37.8"/>	  
+        </physvol>
+	<physvol>
+          <file name="InnerHCalTile11_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="-0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot11N" unit="degree" x="37.8" y="180" z="0"/>
+        </physvol>	
+        <physvol>
+          <file name="InnerHCalTile12_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot12S" unit="degree" x="37.8"/>	  
+        </physvol>
+	<physvol>
+          <file name="InnerHCalTile12_EJ200.gdml"/>
+	  <position name="shiftX" unit="mm" x="-0.5" y="0" z="0"/>	  
+	  <rotation name="tileRot12N" unit="degree" x="37.8" y="180" z="0"/>
+        </physvol>	
+      </assembly>
+
+      <assembly name="InnerTileAssembly90">
+	<physvol>
+          <volumeref ref="InnerTileAssembly"/>
+	  <rotation name="tilePlaneRot" unit="deg" y="90"/>	  
+	</physvol>
+      </assembly>
+
+      <!-- Inner sector -->
+      <assembly name="InnerSector">
+	<materialref ref="Aluminum"/>  
+	<physvol>
+          <file name="InnerHCalSectorNoEndPlate_Aluminum.gdml"/>
+	  <rotation name ="rot180" unit="deg" y="180.0"/>
+	</physvol>
+      </assembly>
+      
+      <volume name="world_volume">
+        <materialref ref="Vacuum"/>
+        <solidref ref="world_solid"/>
+
+	<!-- Inner HCal Absorber Barrel -->
+	<loop for="i" from="1" to="32" step="1">
+	  <physvol>
+	    <volumeref ref="InnerSector"/>
+	    <rotation name ="rotInner" unit="deg" z="i*11.25+0.0"/>
+	  </physvol>
+	</loop>
+	
+	<!-- Inner HCal tiles -->
+	<loop for="j" from="1" to="256" step="1">
+	  <physvol>
+	    <volumeref ref="InnerTileAssembly90"/>
+	    <position name="pos[j]" unit="mm" x="xpos[j]" y="ypos[j]" z="0"/>
+	    <rotation name="RotateX[j]" unit="degree" z="j*360./256."/>
+	  </physvol>
+	</loop>
+	
+      </volume>
+    </structure>
+    
+    <setup name="Default" version="1.0">
+      <world ref="world_volume"/>
+    </setup>
+  </gdml>
+  

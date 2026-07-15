@@ -76,3 +76,8 @@ sim/additional/drive/
 .rclone.conf
 rclone.conf
 
+
+# Regenerable CAD intermediates (STEP/FCStd are kept)
+cad/sphenix_hcal/stl/
+cad/sphenix_hcal/step/*.FCStd
+**/*.FCBak

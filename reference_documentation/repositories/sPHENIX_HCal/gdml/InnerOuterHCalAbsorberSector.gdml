@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+
+  <define>
+    <constant name="PI" value="1.0*pi"/>
+    <constant name="TWOPI" value="2.*pi"/>
+    <constant name="HALFPI" value="0.5*pi"/>
+    <constant name="sectorRotate" value="6.0"/>  
+    <rotation name="rotatebyx90R" x="-1.0*HALFPI"/>
+    <rotation name="rotatebyx90L" x="1.0*HALFPI"/>
+    <rotation name="rotatebyx180" x="PI"/>
+    <variable name="j" value="1"/>
+    <variable name="it" value="1"/>
+  </define>
+  
+  <materials>
+    <!--          -->
+    <!-- elements -->
+    <!--          -->
+    <!-- http://www-cdf.fnal.gov/~kirby/lbne_geo_tests/lbne_10kT_Materials.gdml -->
+    <element name="videRef"    formula="VACUUM" Z="1"> <atom value="1."/>       </element>
+    <element name="hydrogen"   formula="H"   Z="1">    <atom value="1.0079"/>   </element>
+    <element name="carbon"     formula="C"   Z="6">    <atom value="12.0107"/>  </element>
+    <element name="nitrogen"   formula="N"   Z="7">    <atom value="14.0067"/>  </element>
+    <element name="oxygen"     formula="O"   Z="8">    <atom value="15.999"/>   </element>
+    <element name="sodium"     formula="Na"  Z="11">   <atom value="22.99"/>    </element>
+    <element name="magnesium"  formula="Mg"  Z="12">   <atom value="24.305"/>   </element>
+    <element name="aluminum"   formula="Al"  Z="13">   <atom value="26.9815"/>  </element>
+    <element name="silicon"    formula="Si"  Z="14">   <atom value="28.0855"/>  </element>
+    <element name="phosphorus" formula="P"   Z="15">   <atom value="30.973"/>   </element>
+    <element name="sulphur"    formula="S"   Z="16">   <atom value="32.065"/>   </element>
+    <element name="argon"      formula="Ar"  Z="18">   <atom value="39.9480"/>  </element>
+    <element name="potassium"  formula="K"   Z="19">   <atom value="39.0983"/>  </element>
+    <element name="calcium"    formula="Ca"  Z="20">   <atom value="40.078"/>   </element>
+    <element name="titanium"   formula="Ti"  Z="22">   <atom value="47.867"/>   </element>
+    <element name="chromium"   formula="Cr"  Z="24">   <atom value="51.9961"/>  </element>
+    <element name="iron"       formula="Fe"  Z="26">   <atom value="55.8450"/>  </element>
+    <element name="nickel"     formula="Ni"  Z="28">   <atom value="58.6934"/>  </element>
+    <element name="copper"     formula="Cu"  Z="29">   <atom value="63.55"/>    </element>
+    <element name="germanium"  formula="Ge"  Z="32">   <atom value="72.63"/>    </element>
+    <element name="bromine"    formula="Br"  Z="35">   <atom value="79.904"/>   </element>
+    <element name="palladium"  formula="Pd"  Z="46">   <atom value="106.42"/>   </element>
+    <element name="tin"        formula="Sn"  Z="50">   <atom value="118.71"/>   </element>
+    <element name="platinum"   formula="Pt"  Z="78">   <atom value="195.084"/>  </element>
+    <element name="gold"       formula="Au"  Z="79">   <atom value="196.97"/>   </element>
+    <element name="tungsten"   formula="W"   Z="74">   <atom value="183.84"/>   </element>
+    <element name="bismuth"    formula="Bi"  Z="83">   <atom value="208.980"/>  </element>
+    
+    <!--          -->
+    <!-- vacuum   -->
+    <!--          -->
+    <material formula=" " name="Vacuum">
+      <D value="1.e-25" unit="g/cm3" />
+      <fraction n="1.0" ref="videRef" />
+    </material>
+    
+    <!--           -->
+    <!-- materials -->
+    <!--           -->
+    
+    <!-- FR4 submaterials -->
+    
+    <material name="EpoxyResin" formula="C38H40O6Br4">
+      <D value="1.1250" unit="g/cm3"/>
+      <composite n="38" ref="carbon"/>
+      <composite n="40" ref="hydrogen"/>
+      <composite n="6" ref="oxygen"/>
+      <composite n="4" ref="bromine"/>
+    </material>
+    
+    <material name="SiO2" formula="SiO2">
+      <D value="2.2" unit="g/cm3"/>
+      <composite n="1" ref="silicon"/>
+      <composite n="2" ref="oxygen"/>
+    </material>
+    
+    <material name="Al2O3" formula="Al2O3">
+      <D value="3.97" unit="g/cm3"/>
+      <composite n="2" ref="aluminum"/>
+      <composite n="3" ref="oxygen"/>
+    </material>
+    
+    <material name="Fe2O3" formula="Fe2O3">
+      <D value="5.24" unit="g/cm3"/>
+      <composite n="2" ref="iron"/>
+      <composite n="3" ref="oxygen"/>
+    </material>
+    
+    <!-- Conductive materials for PCB -->
+    
+    <material name="Copper" state="solid">
+      <D value="8.960" unit="g/cm3"/>
+      <fraction n="1." ref="copper"/>
+    </material>
+    
+    <material name="Gold" state="solid">
+      <D value="19.32" unit="g/cm3"/>
+      <fraction n="1." ref="gold"/>
+    </material>
+        
+    <!-- Passivation -->
+    
+    <material name="AlNO" state="solid" formula="AlNO">
+      <!-- Aluminum oxynitride -->
+      <!-- see https://en.wikipedia.org/wiki/Aluminium_oxynitride -->
+      <!-- see https://webbook.nist.gov/cgi/formula?ID=B1000046&Mask=800 -->
+      <D value="3.6935" unit="g/cm3"/>
+      <composite n="1" ref="aluminum"/>
+      <composite n="1" ref="nitrogen"/>
+      <composite n="1" ref="oxygen"/>
+    </material>
+    
+    <!-- Aluminum, Hineycomb, Carbon fibre, etc. (simple materials) -->
+    
+    <material formula="Al" name="Aluminum" state="solid">
+      <D value="2.700" unit="g/cm3"/>
+      <fraction n="1." ref="aluminum"/>
+    </material>
+    
+    <material name="Steel" formular="A36" state="solid">
+      <D value="7.80" unit="g/cm3"/>
+      <fraction n="0.981" ref="iron"/>
+      <fraction n="0.003" ref="silicon"/>
+      <fraction n="0.003" ref="carbon"/>
+      <fraction n="0.011" ref="magnesium"/>
+      <fraction n="0.002" ref="copper"/>
+    </material>
+    
+    <material name="CarbonFibre" state="solid">      
+      <D unit="g/cm3" value="1.55"/>
+      <fraction n="0.85" ref="carbon"/>      
+      <fraction n="0.03" ref="hydrogen"/>      
+      <fraction n="0.04" ref="nitrogen"/>
+      <fraction n="0.08" ref="oxygen"/>
+    </material>     
+    
+    <!-- BC254 (neutron detector) -->
+    <material name="BC254" state="solid">
+      <MEE unit="eV" value="173"/>
+      <D unit="g/cm3" value="1.026"/>
+      <fraction n="0.2492" ref="carbon"/>
+      <fraction n="0.7475" ref="hydrogen"/>
+      <fraction n="0.0033" ref="B"/>
+    </material>
+    
+    <!-- BC505 ( Liquid scintillator) -->
+    <material name="BC505" state="solid">
+      <!-- <MEE unit="eV" value="173"/> -->
+      <D unit="g/cm3" value="0.877"/>
+      <fraction n="0.4292" ref="carbon"/>
+      <fraction n="0.5708" ref="hydrogen"/>
+    </material>
+    
+    <!-- EJ200 (Plastic scintillator) -->
+    <material name="EJ200" state="solid">
+      <!-- <MEE unit="eV" value="173"/> -->
+      <D unit="g/cm3" value="1.023"/>
+      <fraction n="0.4757" ref="carbon"/>
+      <fraction n="0.5243" ref="hydrogen"/>
+    </material>
+       
+  </materials>
+  
+  <solids>
+    <box lunit="mm" name="world_solid" x="10000.0" y="10000.0" z="10000.0" />
+  </solids>
+  
+  <structure>
+    <assembly name="InnerSector">
+      <materialref ref="Aluminum"/>  
+      <physvol>
+        <file name="InnerHCalSectorNoEndPlate_Aluminum.gdml"/>
+      </physvol>
+    </assembly>      
+    
+    <assembly name="sector">
+      <materialref ref="Steel"/>  
+      <physvol>
+        <file name="OuterHCalSector_Steel.gdml"/>
+      </physvol>
+    </assembly>
+    <assembly name="sectorChimney">
+      <materialref ref="Steel"/>  
+      <physvol>
+        <file name="OuterHCalChimneySector_Steel.gdml"/>
+      </physvol>      
+    </assembly> 
+    
+    <volume name="world_volume">
+      <materialref ref="Vacuum"/>
+      <solidref ref="world_solid"/>
+
+      <!-- Inner HCal Absorber Barrel -->
+      <!--	<loop for="i" from="1" to="32" step="1">  -->
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<position name ="posIT0" unit="mm" x="0" y="0" z="0"/>	    
+	<rotation name ="rotIT0" unit="deg" z="0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT1" unit="deg" z="1*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT2" unit="deg" z="2*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT3" unit="deg" z="3*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT4" unit="deg" z="4*11.25+0.0"/>	    
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT5" unit="deg" z="5*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT6" unit="deg" z="6*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT7" unit="deg" z="7*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT8" unit="deg" z="8*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT9" unit="deg" z="9*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT10" unit="deg" z="10*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT11" unit="deg" z="11*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT12" unit="deg" z="12*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT13" unit="deg" z="13*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT14" unit="deg" z="14*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT15" unit="deg" z="15*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT16" unit="deg" z="16*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT17" unit="deg" z="17*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT18" unit="deg" z="18*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT19" unit="deg" z="19*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	  <rotation name ="rotIT20" unit="deg" z="20*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT21" unit="deg" z="21*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT22" unit="deg" z="22*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT23" unit="deg" z="23*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT24" unit="deg" z="24*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT25" unit="deg" z="25*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT26" unit="deg" z="26*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT27" unit="deg" z="27*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT28" unit="deg" z="28*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT29" unit="deg" z="29*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT30" unit="deg" z="30*11.25+0.0"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="InnerSector"/>
+	<rotation name ="rotIT31" unit="deg" z="31*11.25+0.0"/>
+      </physvol>
+
+    <!-- Outer HCal Absorber Barrel -->
+      <physvol>
+	<volumeref ref="sectorChimney"/>
+	<position name ="posOT0" unit="mm" x="0" y="0" z="0"/>	    
+	<rotation name ="rotOT0" unit="deg" z="sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sectorChimney"/>
+	<rotation name ="rotOT1" unit="deg" z="1*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT2" unit="deg" z="2*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT3" unit="deg" z="3*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT4" unit="deg" z="4*11.25+sectorRotate"/>	    
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT5" unit="deg" z="5*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT6" unit="deg" z="6*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT7" unit="deg" z="7*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT8" unit="deg" z="8*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT9" unit="deg" z="9*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT10" unit="deg" z="10*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT11" unit="deg" z="11*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT12" unit="deg" z="12*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT13" unit="deg" z="13*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT14" unit="deg" z="14*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT15" unit="deg" z="15*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT16" unit="deg" z="16*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT17" unit="deg" z="17*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT18" unit="deg" z="18*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT19" unit="deg" z="19*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	  <rotation name ="rotOT20" unit="deg" z="20*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT21" unit="deg" z="21*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT22" unit="deg" z="22*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT23" unit="deg" z="23*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT24" unit="deg" z="24*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT25" unit="deg" z="25*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT26" unit="deg" z="26*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT27" unit="deg" z="27*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT28" unit="deg" z="28*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT29" unit="deg" z="29*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sector"/>
+	<rotation name ="rotOT30" unit="deg" z="30*11.25+sectorRotate"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="sectorChimney"/>
+	<rotation name ="rotOT31" unit="deg" z="31*11.25+sectorRotate"/>
+      </physvol>
+
+    </volume>
+  </structure>
+  
+  <setup name="Default" version="1.0">
+    <world ref="world_volume"/>
+  </setup>
+</gdml>

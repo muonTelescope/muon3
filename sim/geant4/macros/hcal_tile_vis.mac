@@ -1,0 +1,28 @@
+# Visualization of Inner HCal tile assembly (scintillator + fiber + coating + wrap + blocker + SiPM)
+
+/run/initialize
+
+/vis/open OGL 1200x900-0+0
+/vis/viewer/set/autoRefresh false
+/vis/verbose errors
+
+/vis/drawVolume
+/vis/viewer/set/viewpointThetaPhi 55 40
+/vis/viewer/set/style surface
+/vis/viewer/set/hiddenEdge true
+/vis/viewer/zoom 1.4
+
+/vis/scene/add/trajectories smooth
+/vis/scene/add/hits
+/vis/scene/add/axes 0 0 0 50 mm
+/vis/scene/add/scale 50 mm
+
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/set mu- blue
+/vis/modeling/trajectories/drawByParticleID-0/set opticalphoton green
+
+/vis/viewer/set/autoRefresh true
+/vis/verbose warnings
+
+# A few events for geometry + track preview
+/run/beamOn 5
