@@ -126,7 +126,10 @@ The current looped model is informed by and cross-checked against `reference_doc
   - Dual fiber ends into a plastic coupler with **~0.75 mm air gap** to the SiPM face
   - Effective yield: `N_pe = edep_MeV × 10000 × 0.012 × 0.25` ≈ **30 p.e./MeV** (Poisson-sampled); optical SD still applies Hamamatsu PDE to any tracked photons that hit `SiPMLV`
   - Refs: Aidala et al. IEEE TNS 65 (2018); Hamamatsu S12572 datasheet
-- Example results (tile 01, 200 events): ⟨Edep⟩ ≈ 1.92 MeV, ⟨p.e.⟩ ≈ 58 — see `hcal_tile_hits.csv`, `plots/hcal_inner_tile_*.png`, paper Section “sPHENIX Inner HCal Tile Models”.
+- Example results (tile 01, 200 events): ⟨Edep⟩ ≈ 1.92 MeV, ⟨p.e.⟩ ≈ 58 — see `hcal_tile_hits.csv`.
+- **ROOT plots** (preferred): from repo root  
+  `root -l -b -q 'sim/reports/root_hcal_and_geant4.C'`  
+  writes `figures/hcal_inner_tile_*.png`, `figures/root_hcal_combined.png`, and mirrors under `plots/`.
 - Build: `make hcal_tile` (same CMake project as `muon_panel`).
 
 Improve the Muon3 loop-panel geometry further with CAD groove import once the mechanical model is frozen; HCal tile STEP/tessellated import is already wired via `hcal_tile`.

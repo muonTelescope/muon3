@@ -158,12 +158,17 @@ The paper replaces/augments the earlier short simulation report in `sim/reports/
 ![HCal tile 06 iso](figures/hcal_InnerHCalTile06_EJ200_iso.png)
 ![HCal tile 12 iso](figures/hcal_InnerHCalTile12_EJ200_iso.png)
 
-**Geant4 results for Inner HCal tile 01** (200 cosmic-like muons):
+**Geant4 results for Inner HCal tile 01** (ROOT 6 plots, 200 events, Hamamatsu S12572):
 
 ![HCal edep](figures/hcal_inner_tile_edep.png)
 ![HCal p.e.](figures/hcal_inner_tile_pe.png)
 ![HCal yield map](figures/hcal_inner_tile_yield_map.png)
 ![HCal summary](figures/hcal_inner_tile_summary.png)
+![HCal combined ROOT](figures/root_hcal_combined.png)
+
+```bash
+root -l -b -q 'sim/reports/root_hcal_and_geant4.C'
+```
 
 **Thermal / Peltier analysis** (subsection in paper):
 

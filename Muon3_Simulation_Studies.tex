@@ -122,32 +122,46 @@ Using the improved Geant4 model (realistic cosmic primaries, updated geometry an
 
 \begin{table}[H]
 \centering
-\begin{tabular}{lr}
+\small
+\begin{tabular}{@{}p{0.58\textwidth}p{0.32\textwidth}@{}}
 \toprule
-Quantity & Value \\
+\textbf{Quantity} & \textbf{Value} \\
 \midrule
-Mean energy deposit (MIP, 10 mm) & $\approx 2.5-3.6\,\mathrm{MeV}$ \\
-Scintillation photons produced (est.) & $\sim$25,000--36,000 \\
-Mean detected p.e.\ (after WLS + transport + PDE, non-zero edep events) & $\sim$79 (median 75, std 20) \\
-Range (good events) & 26--172 \\
-Position uniformity & Varies significantly; higher near fiber loop \\
+Mean energy deposit (MIP, 10\,mm EJ-200) &
+  $\approx 2.5$--$3.6$\,MeV \\[0.35em]
+Scintillation photons produced (est.) &
+  $\sim$25\,000--36\,000 \\[0.35em]
+Mean detected p.e.\ (WLS + transport + PDE; non-zero edep) &
+  $\sim$79 (median 75, std 20) \\[0.35em]
+Range (good events) &
+  26--172 p.e. \\[0.35em]
+Position uniformity &
+  Varies; higher near fiber loop \\
 \bottomrule
 \end{tabular}
-\caption{Key metrics from actual Geant4 11.3.0 runs on the improved model (500 events + position scan).}
+\caption{Key metrics from Geant4 11.3.0 runs on the improved model (500 events + position scan).}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{lcc}
+\small
+\begin{tabular}{@{}p{0.30\textwidth}p{0.18\textwidth}p{0.42\textwidth}@{}}
 \toprule
-Reference & Light yield (p.e./MeV) & Notes \\
+\textbf{Reference} & \textbf{Yield} & \textbf{Notes} \\
+ & (p.e./MeV) & \\
 \midrule
-CUPID muon veto proto \cite{cupid-muon} & 52.9--57.2 & 1cm EJ-200 + WLS+SiPM, 100x50cm panel \\
-Our Muon3 sim & 27--32 & 1cm EJ-200 looped WLS+single SiPM, 20x20cm; single-end readout \\
-Belle II / similar & ~10-30 per side & strips with WLS+SiPM \\
+CUPID muon veto \cite{cupid-muon} &
+  52.9--57.2 &
+  1\,cm EJ-200 + WLS + SiPM; $100\times50$\,cm panel \\[0.45em]
+Our sim (loop panel) &
+  27--32 &
+  1\,cm EJ-200, looped WLS, single-end SiPM; $20\times20$\,cm \\[0.45em]
+Belle~II / similar &
+  $\sim$10--30 / side &
+  Strips with WLS + SiPM \\
 \bottomrule
 \end{tabular}
-\caption{Comparison of light yield to other publications using similar EJ-200/WLS/SiPM technology for muon detection.}
+\caption{Light-yield comparison for EJ-200 / WLS / SiPM muon detectors.}
 \end{table}
 
 The data is consistent with literature expectations for 1 cm EJ-200 + looped WLS fiber readout (50--150 p.e. range in similar muon telescope setups after losses, or ~20-60 p.e. total for strips). Our ~28 p.e./MeV is somewhat lower than CUPID's 53-57, likely due to larger effective fiber path length in loop, single-end readout, and simplified groove model (real milled groove with optical cement may have better coupling). Improvements implemented: reflector reflectivity increased to 0.96, WLS eff to 0.90. Fixes: proper photon production counting from edep in stepping. Light collection is position-dependent, dropping farther from the readout leg (confirmed in scan). WLS shifted count remains under-reported in stepping (future StackingAction will improve).
@@ -177,7 +191,7 @@ Potential improvements for hardware: adopt swirly fiber patterns \cite{cupid-muo
 \centering
 \includegraphics[width=\textwidth]{figures/muon3_real_geant4.png}
 \end{minipage}
-\caption{Combined Geant4 results from 500-event run + position scan of the improved model (processed with ROOT): (left) 4-panel overview (PE spectrum, Edep, yield map, correlation); (right) updated clean analysis plots.}
+\caption{Combined Geant4 results from the improved model, plotted with ROOT~6: (left) multi-panel overview; (right) clean analysis (\texttt{figures/root\_muon3\_analysis.png}).}
 \end{figure}
 
 \begin{figure}[H]
@@ -191,7 +205,7 @@ Potential improvements for hardware: adopt swirly fiber patterns \cite{cupid-muo
 \centering
 \includegraphics[width=\textwidth]{figures/pe_spectrum.png}
 \end{minipage}
-\caption{Light yield map (left) and photoelectron spectrum (right) from the Geant4 optical simulation.}
+\caption{Light yield map (left) and photoelectron spectrum (right) from the Geant4 optical simulation, plotted with ROOT~6.}
 \end{figure}
 
 \begin{figure}[H]
@@ -444,7 +458,7 @@ $\langle N_\mathrm{p.e.}\rangle = (E_\mathrm{dep}/\mathrm{MeV})\times 10^4\,\mat
 \centering
 \includegraphics[width=\textwidth]{figures/hcal_inner_tile_summary.png}
 \end{minipage}
-\caption{\label{fig:hcal-g4}Geant4 results for Inner HCal tile~01 with \textbf{Hamamatsu S12572-33-015P} readout (200 MIP-like muons): energy deposit spectrum, detected photoelectron spectrum (PDE~$=0.25$, effective collection), mean edep vs.\ impact position, and summary histograms. Data: \texttt{sim/geant4/hcal\_tile\_hits.csv}.}
+\caption{\label{fig:hcal-g4}ROOT~6 plots of Geant4 results for Inner HCal tile~01 with \textbf{Hamamatsu S12572-33-015P} readout (200 MIP-like muons): energy deposit spectrum, detected photoelectron spectrum (PDE~$=0.25$, effective collection), mean edep vs.\ impact position, and summary histograms. Generated via \texttt{root -b -q sim/reports/root\_hcal\_and\_geant4.C}; data: \texttt{sim/geant4/hcal\_tile\_hits.csv}. Also available as a combined canvas \texttt{figures/root\_hcal\_combined.png}.}
 \end{figure}
 
 These tile assemblies provide a bridge between Muon3 looped-panel optics and sPHENIX HCal tile construction practices, and supply manufacturing-ready STEP geometry for mechanical review.
@@ -509,7 +523,7 @@ H. Zhang et al., ``Design and test for the CEPC muon subdetector based on extrud
 
 \section*{Build Notes}
 
-This document was prepared as part of the Muon3 simulation and analysis pipeline. Real Geant4 runs (using the improved optical model with realistic cosmic muon spectrum, angular distribution, and geometry) produced the underlying data in \texttt{sim/geant4/hits.csv}. Data was processed using ROOT 6.40 (via PyROOT) to generate the figures included above (PE spectrum, energy deposits, yield maps, correlations, time profiles).
+This document was prepared as part of the Muon3 / HCal-tile simulation and analysis pipeline. Geant4 runs produce CSV hit files (\texttt{sim/geant4/hits\_fresh.csv}, \texttt{hcal\_tile\_hits.csv}). Publication histograms and maps are generated with \textbf{ROOT 6.40} via \texttt{sim/reports/root\_hcal\_and\_geant4.C} (batch: \texttt{root -l -b -q 'sim/reports/root\_hcal\_and\_geant4.C'}).
 
 Native \texttt{pdflatex}/\texttt{bibtex} was not available in the automated build environment (system search found no \texttt{/Library/TeX}, no \texttt{pdflatex}, and \texttt{brew install --cask basictex} requires an interactive sudo password for the installer package). The accompanying \texttt{Muon3\_Simulation\_Studies.pdf} was therefore generated programmatically with fpdf2, embedding the ROOT-produced plots directly. The \texttt{.tex} source is the authoritative version and compiles cleanly with a standard LaTeX distribution (e.g., MacTeX or TeX Live) that includes the packages used (\texttt{graphicx}, \texttt{booktabs}, \texttt{siunitx}, \texttt{float}, etc.).
 

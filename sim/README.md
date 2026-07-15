@@ -60,6 +60,20 @@ sim/
 └── docs/                         # (populated by runs) generated plots & reports
 ```
 
+## ROOT analysis plots
+
+Geant4 hit CSVs are plotted with **ROOT 6** (not matplotlib) for the paper:
+
+```bash
+# from physics/ root
+root -l -b -q 'sim/reports/root_hcal_and_geant4.C'
+# or
+python3 sim/reports/make_root_charts.py
+```
+
+Inputs: `sim/geant4/hcal_tile_hits.csv`, `hits_fresh.csv` (Muon3 panel).  
+Outputs: `figures/hcal_inner_tile_*.png`, `root_hcal_combined.png`, `pe_spectrum.png`, `yield_map.png`, `root_muon3_analysis.png` (also under `sim/geant4/plots/` and `sim/reports/figures/`).
+
 ## 1. Circuit Simulations (ngspice)
 
 ### Key Files

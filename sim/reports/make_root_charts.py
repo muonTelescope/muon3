@@ -1,66 +1,57 @@
 #!/usr/bin/env python3
 """
-make_root_charts.py
-Use PyROOT to generate professional plots from simulation CSVs.
-Saves PNGs suitable for LaTeX.
+Generate publication plots with ROOT (PyROOT or root -q macro).
+
+Primary path: compile/run sim/reports/root_hcal_and_geant4.C via `root -b -q`.
+Fallback: PyROOT if import works.
+
+Run from physics/ root:
+  python3 sim/reports/make_root_charts.py
+  # or
+  root -l -b -q 'sim/reports/root_hcal_and_geant4.C'
 """
+from __future__ import annotations
+
 import os
+import subprocess
 import sys
-sys.path.insert(0, "/opt/homebrew/lib/python3.9/site-packages")
-import ROOT
-ROOT.gROOT.SetBatch(True)
+from pathlib import Path
 
-BASE = "sim/reports"
-CIRCUIT_RES = "sim/circuit/results"
-GEANT = "sim/geant4"
-OUTDIR = "sim/reports/figures"
-os.makedirs(OUTDIR, exist_ok=True)
+ROOT_DIR = Path(__file__).resolve().parents[2]
 
-def plot_waveforms():
-    c = ROOT.TCanvas("c", "AFE Waveforms", 900, 600)
-    c.Divide(1,2)
-    colors = [ROOT.kBlue, ROOT.kRed, ROOT.kGreen+2, ROOT.kMagenta, ROOT.kOrange+7]
-    for idx, npe in enumerate([1,3,10,30,100]):
-        f = os.path.join(CIRCUIT_RES, f"wave_dual_n{npe}.csv")
-        if not os.path.exists(f): continue
-        g = ROOT.TGraph(f, "%lg %lg", "time v(OUT)")
-        g.SetLineColor(colors[idx % len(colors)])
-        g.SetTitle(f"NPE={npe}")
-        c.cd(1)
-        if idx==0: g.Draw("AL")
-        else: g.Draw("L same")
-    c.cd(2)
-    # simple ToT summary graph
-    g2 = ROOT.TGraph()
-    ns = [1,3,10,30,100]
-    tots = [8,19,35,49,68]
-    for i,(n,t) in enumerate(zip(ns,tots)):
-        g2.SetPoint(i, n, t)
-    g2.SetMarkerStyle(20)
-    g2.SetTitle("ToT vs NPE; NPE; ToT (ns)")
-    g2.Draw("ALP")
-    c.SaveAs(os.path.join(OUTDIR, "root_afe_tot.png"))
-    print("Saved root_afe_tot.png")
 
-def plot_detector():
-    c = ROOT.TCanvas("d", "Detector", 800, 500)
-    # Simple histogram from hits
-    h = ROOT.TH1F("hpe", "Detected p.e. (stand-in);p.e.;Events", 50, 0, 400)
-    hitsf = os.path.join(GEANT, "hits.csv")
-    if os.path.exists(hitsf):
-        with open(hitsf) as fh:
-            next(fh)  # header
-            for line in fh:
-                parts = line.strip().split(",")
-                if len(parts) > 7:
-                    try:
-                        h.Fill(float(parts[7]))
-                    except: pass
-    h.Draw()
-    c.SaveAs(os.path.join(OUTDIR, "root_pe_hist.png"))
-    print("Saved root_pe_hist.png")
+def run_root_macro() -> int:
+    macro = ROOT_DIR / "sim/reports/root_hcal_and_geant4.C"
+    if not macro.exists():
+        print("Missing", macro, file=sys.stderr)
+        return 1
+    cmd = ["root", "-l", "-b", "-q", str(macro)]
+    print("Running:", " ".join(cmd))
+    return subprocess.call(cmd, cwd=str(ROOT_DIR))
+
+
+def main() -> int:
+    os.chdir(ROOT_DIR)
+    # Prefer C++ macro (more reliable across ROOT installs than PyROOT path hacks)
+    rc = run_root_macro()
+    if rc != 0:
+        print("ROOT macro failed with", rc, file=sys.stderr)
+        return rc
+    # List outputs
+    for name in (
+        "figures/hcal_inner_tile_edep.png",
+        "figures/hcal_inner_tile_pe.png",
+        "figures/hcal_inner_tile_yield_map.png",
+        "figures/hcal_inner_tile_summary.png",
+        "figures/root_hcal_combined.png",
+        "figures/pe_spectrum.png",
+        "figures/yield_map.png",
+        "figures/root_muon3_analysis.png",
+    ):
+        p = ROOT_DIR / name
+        print(("OK " if p.exists() else "MISSING "), name, p.stat().st_size if p.exists() else "")
+    return 0
+
 
 if __name__ == "__main__":
-    plot_waveforms()
-    plot_detector()
-    print("ROOT charts done.")
+    sys.exit(main())
