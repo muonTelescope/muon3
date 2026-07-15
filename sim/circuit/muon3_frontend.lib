@@ -95,3 +95,24 @@ Rout OUT VSS 50
 Cinj INJ TIA_IN {CINJ}
 Rbleed INJ 0 10MEG
 .ends CHARGE_INJ
+
+* ---------------------------------------------------------------------
+* Hamamatsu S12572-33-015P behavioral SiPM (sPHENIX HCal MPPC)
+* Datasheet / sPHENIX anchors (Aidala et al. IEEE TNS 2018, HPK S12572):
+*   - Active 3x3 mm^2, 15 um pixels (~40 000), PDE class ~25% (green/WLS)
+*   - Vbr typically 65 +/- 10 V  --> operating bias ~ Vbr+3..4 V (~68-72 V)
+*   - Gain ~2.3e5 at ~4 V overvoltage (sPHENIX operating point)
+*     => QPE = G*e ~ 37 fC (NOT 480 fC of MicroFC-30035)
+*   - Terminal capacitance ~320 pF class (3x3, 15 um) -- lower than 30035's 850 pF
+*   - Microcell recovery faster than 35 um C-series; use TAUD ~20 ns class
+*   - Dark current order 0.1-1 uA (bias/temperature dependent; order-of-mag)
+*
+* NOT a drop-in for the Muon3 ~28.7 V TPS61170 bias rail. Use only with a
+* high-voltage cathode supply (see afe_hamamatsu_s12572.cir notes).
+* Terminals: A (anode to TIA summing node), K (cathode to filtered HV)
+* ---------------------------------------------------------------------
+.subckt S12572_015P A K NPE=20 QPE=37f TAUR=0.8n TAUD=20n T0=100n CT=320p IDC=0.2u
+Bpulse K A I = (time > {T0}) ? {NPE*QPE/(TAUD-TAUR)} * ( exp(-(time-{T0})/{TAUD}) - exp(-(time-{T0})/{TAUR}) ) : 0
+Ct A K {CT}
+Idark K A {IDC}
+.ends S12572_015P

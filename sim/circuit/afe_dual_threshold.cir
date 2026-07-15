@@ -1,6 +1,10 @@
 * =====================================================================
 * afe_dual_threshold.cir - Muon3 single channel with dual comparators
 * DC-coupled MicroFC-30035 -> OPA858 TIA -> low + high TLV3601
+* LEGACY Muon3 loop-panel path: onsemi MicroFC-30035 (~28.7 V / TPS61170).
+* HCal-tile workstation PRIMARY path (S12572 + LT3482 C515895):
+*   afe_hamamatsu_s12572.cir  +  hv_lt3482.cir
+*   HAMAMATSU_SIPM_COMPATIBILITY.md
 * Rev 2 (2026-07-11):
 *   - removed shorted Vgnd source (fatal error in ngspice 46: no run at
 *     all ever completed with the rev 1 deck; prior "results" were the

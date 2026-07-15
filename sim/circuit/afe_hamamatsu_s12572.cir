@@ -1,0 +1,90 @@
+* =====================================================================
+* afe_hamamatsu_s12572.cir
+* PRIMARY AFE netlist for the HCal-tile workstation:
+*   decommissioned sPHENIX Inner HCal tiles + Hamamatsu S12572-33-015P
+*   + OPA858 TIA + dual TLV3601
+*
+* HV on the real board: LT3482 (JLCPCB C515895) — see hv_lt3482.cir
+* This deck uses an ideal cathode source at ~69 V for pulse studies.
+*
+* Params:
+*   - QPE ~37 fC (~13x smaller than MicroFC-30035) => Rf raised
+*   - CT ~320 pF => Cf retuned
+*   - Clamps here still BAV99 (BV=30) for topology only — replace in hardware
+*
+* Legacy MicroFC ~30 V path: afe_dual_threshold.cir
+* See HAMAMATSU_SIPM_COMPATIBILITY.md.
+* =====================================================================
+.include muon3_frontend.lib
+
+* ---------------- Parameters --------------------------------------------
+.param NPE=15
+.param VBOT=1.80
+* Thresholds: re-place after SPE cal; these are placeholders scaled for
+* higher Rf (~13x MicroFC QPE ratio partially compensated by Rf=15k/2k).
+.param VTH_LOW=1.74
+.param VTH_HIGH=1.55
+.param RF=15000            ; raise gain for ~37 fC/p.e. (was 2k for 480 fC)
+.param CF=1.5p             ; start point for CT~320p (re-optimize on bench)
+.param T0=200n
+.param VANA=5.0
+.param VDIG=3.3
+* sPHENIX-like bias: Vbr 65 + OV 4  (ignore VBOT stacking detail here)
+.param VHV=69.0
+
+Vana  VANA_R 0 {VANA}
+Vdig  VDD33  0 {VDIG}
+Vhv   HVQ 0 {VHV}
+
+Vvbot VBOTN 0 {VBOT}
+Rvb   VBOTN VBOTF 1k
+Cvb   VBOTF 0 100n
+
+Vthl  VTHL_N 0 {VTH_LOW}
+Rthl  VTHL_N VTHL_F 1k
+Cthl  VTHL_F 0 100n
+
+Vthh  VTHH_N 0 {VTH_HIGH}
+Rthh  VTHH_N VTHH_F 1k
+Cthh  VTHH_F 0 100n
+
+* HV filter — use 100 V-class parts in hardware
+Rhv   HVQ CATH 10k
+Chv   CATH 0 100n
+
+* Hamamatsu S12572-33-015P
+Xsipm IN CATH S12572_015P NPE={NPE} T0={T0} QPE=37f CT=320p TAUD=20n
+
+Rser  IN INA 10
+* NOTE: BAV99_CLAMP BV=30 is NOT adequate for 69 V cathode fault studies;
+* replace with higher-BV low-C clamps in a real 70 V design.
+Dclp1 INA VANA_R BAV99_CLAMP
+Dclp2 0   INA BAV99_CLAMP
+
+Xamp  VBOTF INA OUT VANA_R 0 OPA858
+Rf    INA OUT {RF}
+Cf    INA OUT {CF}
+
+XcmpL OUT VTHL_F CMPL VDD33 0 TLV3601
+XcmpH OUT VTHH_F CMPH VDD33 0 TLV3601
+
+Rgl   CMPL FPAL 33
+Cgl   FPAL 0 6p
+Rgh   CMPH FPAH 33
+Cgh   FPAH 0 6p
+
+Xinj  INJ INA CHARGE_INJ CINJ=1.5p
+
+Cdec1 VANA_R 0 100n
+Cdec2 VANA_R 0 2.2u
+Cdec3 VDD33 0 100n
+
+.tran 0.2n 800n
+.control
+  run
+  wrdata results/wave_hamamatsu_s12572_n15.csv v(OUT) v(CMPL) v(CMPH) v(INA) v(CATH)
+  echo "HAMAMATSU S12572 AFE RUN COMPLETE (HCal-tile primary; board HV = LT3482 C515895)"
+  echo "See HAMAMATSU_SIPM_COMPATIBILITY.md"
+.endc
+
+.end

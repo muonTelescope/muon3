@@ -45,9 +45,9 @@ echo "-- 50 cm cable comparison --"
 "$NGSPICE" -b cable_50cm.cir > /tmp/muon3_cable.log 2>&1 || { echo "ERROR: cable run failed"; tail -20 /tmp/muon3_cable.log; exit 1; }
 grep -q "CABLE MODEL RUN COMPLETE" /tmp/muon3_cable.log
 
-echo "-- HV bias model --"
-"$NGSPICE" -b hv_tps61170.cir > /tmp/muon3_hv.log 2>&1 || { echo "ERROR: HV run failed"; tail -20 /tmp/muon3_hv.log; exit 1; }
-grep -q "HV MODEL RUN COMPLETE" /tmp/muon3_hv.log
+echo "-- HV bias model (LT3482 / HCal S12572 primary) --"
+"$NGSPICE" -b hv_lt3482.cir > /tmp/muon3_hv.log 2>&1 || { echo "ERROR: HV LT3482 run failed"; tail -20 /tmp/muon3_hv.log; exit 1; }
+grep -q "HV LT3482 MODEL RUN COMPLETE" /tmp/muon3_hv.log
 
 echo "Sweeps done:"
 ls -l "$OUTDIR"/*.csv

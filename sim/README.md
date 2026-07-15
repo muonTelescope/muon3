@@ -21,7 +21,9 @@ All models are **parametric** so they can be anchored to real bench data from fi
 
 - Panels: 200 × 200 × 10 mm EJ-200 (or equivalent polystyrene scintillator)
 - WLS fiber: looped Kuraray K-11 / Y-11 class (~1 mm dia.), embedded groove with optical cement, single-end readout
-- SiPM: onsemi MicroFC-30035 (3×3 mm active area, ~30 V bias class)
+- SiPM (HCal-tile workstation): **Hamamatsu S12572-33-015P** on decommissioned sPHENIX tiles
+- HV: **LT3482 C515895** (~70 V); see `circuit/HAMAMATSU_SIPM_COMPATIBILITY.md` and `pcb/parts/hv_lt3482/`
+- Legacy reference only: MicroFC-30035 + TPS61170 (~30 V)
 - AFE: DC-coupled OPA858 TIA (Rf = 2 kΩ, Cf ≈ 2.2 pF) + dual TLV3601-class comparators (low physics threshold + high shower-discrimination threshold)
 - Interconnect: 50 cm hybrid cable carrying signal, bias, cold/hot NTCs, TEC power, fan power/tach
 - Timing engine: iCE40UP5K (exact-subset coincidence, dual-ToT, PPS latching, histograms)
@@ -68,8 +70,10 @@ sim/
   - `TLV3601` — fast push-pull comparator with ~8 mV hysteresis.
   - `CHARGE_INJ` — simple injection capacitor for calibration studies.
 
-- **afe_dual_threshold.cir**
-  - Complete per-channel model: MicroFC-30035 → protection (10 Ω + BAV99) → OPA858 TIA → two independent TLV3601 comparators (low/high threshold) → FPGA pin RC.
+- **afe_hamamatsu_s12572.cir** + **hv_lt3482.cir** + **HAMAMATSU_SIPM_COMPATIBILITY.md**
+  - **Primary** HCal-tile path: S12572-33-015P, ~69–70 V (LT3482 C515895 on board), Rf/Cf retuned for ~37 fC/p.e.
+- **afe_dual_threshold.cir** / **hv_tps61170.cir**
+  - Legacy MicroFC-30035 + TPS61170 ~30 V reference path only.
   - DAC-derived references (VBOT, VTH_LOW, VTH_HIGH) with RC filtering.
   - Charge injection port on the summing node.
   - Parameters controllable via `alterparam` or command line (NPE, VBOT, VTH_*, RF, CF, VANA).

@@ -7,7 +7,7 @@ It is a complete clean-sheet design in KiCad 9, currently at an early architectu
 
 ---
 
-This directory follows the organization of the legacy `mppcInterface/pcb` directory while starting a clean KiCad project for the next-generation four-channel MicroFC-30035 telescope.
+This directory follows the organization of the legacy `mppcInterface/pcb` directory while starting a clean KiCad project for the **HCal-tile workstation**: four-channel readout of **decommissioned sPHENIX Inner HCal tiles** with **Hamamatsu S12572-33-015P** and **LT3482** (~70 V) bias.
 
 ## Status
 
@@ -17,7 +17,7 @@ The KiCad project is intentionally separate from the unsafe Rev A design. It cap
 
 Open `muon3.kicad_pro` in KiCad 9 or later. The root schematic contains five sheets:
 
-1. `power_usb_pd.kicad_sch` — USB-C input, 12 V PD sink, protected power tree, HV bias.
+1. `power_usb_pd.kicad_sch` — USB-C input, PD sink, protected power tree, **LT3482 SiPM HV** (~70 V for S12572).
 2. `afe.kicad_sch` — four corrected SiPM TIAs and dual thresholds per channel.
 3. `digital_radio.kicad_sch` — direct nRF9151-LACA, iCE40UP5K, flash, timing, SIM/eSIM and RF.
 4. `thermal.kicad_sch` — four reversible Peltier H-bridges, current sensing and four NTC inputs.
@@ -42,7 +42,7 @@ Open `muon3.kicad_pro` in KiCad 9 or later. The root schematic contains five she
 - Upload BOM and CPL before release and reserve all low-stock extended components.
 - ERC and DRC must pass with no unexplained violations.
 - Validate OPA858 common-mode range and stability using extracted layout parasitics.
-- Validate the TPS61170 bias converter at maximum SiPM bias, USB transients and fault conditions.
+- Validate the **LT3482 (C515895)** bias converter at S12572 max OV (~75–80 V), USB transients and fault conditions; 100 V passives and OVP.
 - Validate each Peltier loop with a current-limited supply, disconnected SiPM and independent temperature cutoff.
 - RF layout must follow Nordic reference geometry and receive a conducted/RF review.
 
@@ -85,9 +85,9 @@ Electrical, detector-physics, and system simulations for Muon3 live in `../sim/`
 Full details and usage instructions are in `../sim/README.md`. Summary:
 
 **circuit/**
-- `muon3_frontend.lib`: MicroFC-30035 SiPM (double-exp current), OPA858 TIA, dual TLV3601 comparators, charge-injection subckt.
-- `afe_dual_threshold.cir`: complete channel netlist (DC-coupled, dual thresholds, protection, DAC refs, injection port).
-- `hv_tps61170.cir`: TPS61170-class boost, filter stages, DAC trim, HV_MON divider.
+- `muon3_frontend.lib`: **S12572_015P** + MicroFC models, OPA858 TIA, dual TLV3601, charge inject.
+- `afe_hamamatsu_s12572.cir` / `hv_lt3482.cir`: **primary** HCal-tile AFE + LT3482 ~70 V (C515895).
+- `afe_dual_threshold.cir` / `hv_tps61170.cir`: legacy MicroFC ~30 V reference only.
 - `cable_50cm.cir`: lossy-line model for the 50 cm hybrid cable.
 - `run_sweeps.sh` + `analyze_muon3.py`: NPE families, ToT vs NPE (log fit), time-walk, pulse plots.
 

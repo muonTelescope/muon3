@@ -1,9 +1,9 @@
 Block,Preferred_MPN,Preferred_folder,JLCPCB_LCSC_status,Alternate_1,Alternate_2,Decision,Release_gate
-SiPM,onsemi MicroFC-30035,sipm_microfc_30035,Off-board not JLC assembled,MicroFJ-30035,Fiber-coupled larger-area SiPM,Use user-selected MicroFC-30035 for baseline,Confirm exact package/coupling geometry and breakdown-bin spread
+SiPM,Hamamatsu S12572-33-015P,sipm_hamamatsu_s12572,Off-board on decommissioned HCal tiles,MicroFC-30035 legacy loop panel only,S13360-class only if re-selected,Primary detector for HCal-tile workstation (sPHENIX tiles),Confirm Vbr bin OV target and coupler air-gap mechanical interface
 TIA,OPA858IDSGR,afe_opa858,C970232 from prior audit,OPA846IDBVR,OPA356-class lower bandwidth,Use OPA858 with corrected bias and no-pour summing node,Run pulse/noise/timewalk sims with real MicroFC capacitance
 Comparator,TLV3601IDBVR,comparator_tlv3601,Needs live stock confirmation,TLV3501,ADCMP6xx stocked option,Keep TLV3601 as performance target but do not freeze until stocked,Find JLC-buildable exact comparator or qualify alternate footprint
 Threshold DAC,DAC60508ZRTET,dac_dac60508,Needs live stock confirmation,MCP4728 x3,DAC80508 legacy choice,Prefer DAC60508 for eight thresholds plus second trim DAC,Confirm LCSC/JLC availability and reference accuracy
-SiPM HV,TPS61170DRVR,hv_tps61170,C15163 from prior audit,LT/ADI boost controller,AP3012-class if margin allows,Use TPS61170 for 30 V-class bias,Verify OVP and output range for MicroFC overvoltage and temperature
+SiPM HV,LT3482EUD#TRPBF,hv_lt3482,C515895 live JLC expand stock,LT3482EUD#PBF C117167,LT8361 C3188138 or MAX1932ETC+T C2650346,Use LT3482 for ~70 V S12572 HCal bias (better than MAX1932),Verify OVP HV_MON DAC trim and 100V passives; Standard PCBA
 USB-C PD sink,CH224K,usb_pd_ch224k,C970725 from prior audit,TPS25730DREFR,5 V CC-resistor fallback,Use CH224K for 12 V fixed contract simplicity,Download vendor datasheet/manual and check JLC footprint
 3V3 buck,TPS62933 family,power_3v3_tps62933,Needs live stock confirmation,TPS54302,AP63203,Use TPS62933 if JLC orderable; it has 30 V input and 3 A headroom,Confirm exact LCSC code and inductor/cap values
 1V2 FPGA rail,TPS62933 or small buck,power_3v3_tps62933,Needs live stock confirmation,TLV62569,XC6206P122 only for light load,Prefer buck/LDO with >=200 mA margin,Size from FPGA mode and thermal budget

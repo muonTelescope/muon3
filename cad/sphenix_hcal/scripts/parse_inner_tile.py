@@ -131,6 +131,7 @@ def parse_tile_gdml(path: Path) -> dict:
         "wrap_thickness_mm": 0.20,  # light-tight outer wrapping
         "blocker": {
             # Plastic SiPM coupler / light blocker at outer-radius exit
+            # (sPHENIX tile mount for dual fiber ends + Hamamatsu MPPC)
             "cx": 0.5 * (exit_left[0] + exit_right[0]),
             "cy": ymax + 3.0,
             "cz": z_mid,
@@ -138,12 +139,27 @@ def parse_tile_gdml(path: Path) -> dict:
             "sy": 6.0,
             "sz": max(4.0, thickness + 1.0),
         },
+        # Hamamatsu S12572-33-015P (sPHENIX HCal SiPM / MPPC):
+        #   - 3×3 mm² active area, 15 μm pixels (~40 000 pixels)
+        #   - PDE ~25% (device average; green / WLS band)
+        #   - Gain ~2.3e5 at ~4 V over breakdown (Aidala et al. IEEE TNS 2018)
+        #   - ~0.75 mm air gap from dual fiber ends to SiPM face (spread light,
+        #     limit optical saturation)
+        # Not the Muon3 onsemi MicroFC-30035.
         "sipm": {
+            "part": "Hamamatsu S12572-33-015P",
+            "manufacturer": "Hamamatsu",
+            "active_mm": 3.0,
+            "pixel_pitch_um": 15,
+            "n_pixels": 40000,
+            "pde": 0.25,
+            "air_gap_mm": 0.75,
             "cx": 0.5 * (exit_left[0] + exit_right[0]),
-            "cy": ymax + 6.5,
+            # Face at ymax + air_gap; package center half-depth beyond face
+            "cy": ymax + 0.75 + 0.5 * 1.5,
             "cz": z_mid,
             "sx": 3.0,
-            "sy": 0.5,
+            "sy": 1.5,
             "sz": 3.0,
         },
         "mesh": {

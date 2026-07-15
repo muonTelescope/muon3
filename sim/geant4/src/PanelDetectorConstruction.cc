@@ -157,8 +157,9 @@ G4VPhysicalVolume* PanelDetectorConstruction::ConstructGeometry() {
 void PanelDetectorConstruction::ConstructSDandField() {
   auto* sdManager = G4SDManager::GetSDMpointer();
 
-  // Sensitive detector on the SiPM volume (optical photon counting)
-  auto* sipmSD = new PanelSensitiveDetector("SiPM_SD", nullptr); // event action wired later if needed
+  // Sensitive detector on the SiPM volume (optical photon counting).
+  // Muon3 baseline: onsemi MicroFC-30035, PDE from fPDE (~0.38–0.40).
+  auto* sipmSD = new PanelSensitiveDetector("SiPM_SD", nullptr, fPDE);
   sdManager->AddNewDetector(sipmSD);
 
   // Attach to logical volume named "SiPMLV"

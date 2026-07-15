@@ -1,0 +1,49 @@
+* =====================================================================
+* hv_lt3482.cir — Behavioral LT3482 APD/SiPM bias + filter
+*
+* Board part: LT3482EUD#TRPBF  JLCPCB/LCSC C515895
+* Detector:   Hamamatsu S12572-33-015P on decommissioned HCal tiles
+* Target:     ~70 V quiet cathode (trim spans ~65–80 V)
+*
+* Averaged model for trim span / settling / HV_MON studies — not a
+* switched-mode pin-accurate LT3482 netlist.
+* =====================================================================
+
+.param VTRIM=1.65
+* Mid-trim maps to ~70 V; 0→80 V, 3.3→65 V (linear behavioral map)
+* VOUT = 80 - VTRIM*(80-65)/3.3 = 80 - VTRIM*4.545
+Bset SET 0 V = ( 80 - v(TRIM)*4.545 )
+Vtrim TRIM 0 {VTRIM}
+
+* Soft output impedance + bulk
+Rset SET OUTB 5
+Cbulk OUTB 0 2.2u
+
+* Quieting filter
+R10  OUTB F2 100
+C12  F2 0 2.2u
+Rquiet F2 HV_QUIET 47
+Cquiet HV_QUIET 0 220n
+
+* HV monitor (~70 V → ~1.75 V)
+Rhmon1 HV_QUIET HVMON 2MEG
+Rhmon2 HVMON 0 51k
+
+* OVP reverse clamp near 88 V (cathode on HV rail, anode at 0)
+DOVP 0 HV_QUIET DOVP_M
+.model DOVP_M D(IS=1n RS=20 BV=88 IBV=0.5m)
+
+.control
+  set wr_vecnames
+  set wr_singlescale
+  shell mkdir -p results
+  dc Vtrim 0 3.3 0.05
+  wrdata results/hv_lt3482_trim_sweep.csv v(HV_QUIET) v(HVMON)
+  alter Vtrim=1.65
+  op
+  print v(HV_QUIET) v(HVMON) v(OUTB)
+  tran 50u 20m
+  wrdata results/hv_lt3482_tran.csv v(HV_QUIET) v(HVMON) v(OUTB)
+  echo "HV LT3482 MODEL RUN COMPLETE (HCal S12572 ~70 V path, C515895)"
+.endc
+.end

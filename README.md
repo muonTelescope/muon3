@@ -47,7 +47,7 @@ The baseline station uses three or more detector layers. Each layer is based on:
 
 - a 200 x 200 x 10 mm plastic-scintillator panel;
 - a glued, embedded wavelength-shifting optical fiber routed in a loop;
-- an onsemi MicroFC-30035 SiPM;
+- a Hamamatsu S12572-33-015P SiPM on decommissioned sPHENIX HCal tiles (LT3482 ~70 V bias, C515895);
 - a local temperature sensor and optional thermoelectric cooler; and
 - a single hybrid locking panel connector carrying the shielded signal, bias, cold- and hot-side
   thermal sensing, TEC power, and fan power/tach over a 50 cm cable. TECs now require hardware-default-off interlocks (invalid NTC, hot overtemp, insufficient PD, watchdog, overcurrent).
@@ -70,7 +70,7 @@ The four-channel controller is intended to provide:
 ```text
 Scintillator panel
   -> looped wavelength-shifting fiber
-  -> MicroFC-30035 SiPM
+  -> Hamamatsu S12572-33-015P SiPM
   -> DC-coupled TIA
   -> dual fast comparators
   -> iCE40UP5K timing and histogram engine
@@ -102,8 +102,8 @@ The controlling requirements are documented in
 [NEXT_GENERATION_REQUIREMENTS.md](reference_documentation/review_and_requirements/NEXT_GENERATION_REQUIREMENTS.md).
 Major decisions currently include:
 
-- MicroFC-30035 production SiPM;
-- 20 x 20 x 1 cm loop-fiber baseline panels;
+- Hamamatsu S12572-33-015P on decommissioned HCal tiles; LT3482 HV (C515895);
+- sPHENIX Inner HCal tile assemblies (STEP in `cad/sphenix_hcal/step/`);
 - directly integrated nRF9151-LACA rather than a generic carrier header;
 - Onomondo or Deutsche Telekom nuSIM/eSIM plus physical SIM support;
 - USB-C PD with safe 5 V fallback and higher-power TEC modes;
@@ -123,13 +123,13 @@ A comprehensive simulation suite supports detector design, threshold optimizatio
   - Realistic cosmic muon energy spectrum (power-law sampling) and $\cos^2\theta$ angular distribution.
   - More representative looped-fiber geometry (straights + corner tori + exit legs + simplified optical cement).
   - Updated material and optical properties cross-checked against Eljen/Luxium EJ-200 documentation, Kuraray WLS fiber data, onsemi SiPM PDE curves, and prior collaboration work (phyxch/fiberPanel).
-  - **sPHENIX Inner HCal tiles** (`hcal_tile` executable): original tessellated GDML tiles + WLS fiber + diffuse coating + light-tight wrap + light blocker + SiPM; STEP in `cad/sphenix_hcal/step/`. Tile-01 run (200 events): ⟨Edep⟩ ≈ 2.04 MeV, ⟨p.e.⟩ ≈ 55.
+  - **sPHENIX Inner HCal tiles** (`hcal_tile` executable): original tessellated GDML tiles + WLS fiber + diffuse coating + light-tight wrap + light blocker + **Hamamatsu S12572-33-015P** SiPM (PDE ~25%, dual-fiber air-gap coupler — not the Muon3 MicroFC-30035); STEP in `cad/sphenix_hcal/step/`.
 - **Analog front-end** (`sim/circuit/`): ngspice models of SiPM + OPA858 TIA + dual comparators.
 - **Behavioral models** (`sim/python/`): thermal/Peltier (enhanced with leak sensitivity, PI dew-point control, system trade-offs), power budget under USB-C PD, coincidence/accidental rates.
 - **EM / RF / SI / PI** (`sim/openems/`): openEMS FDTD for nRF9151 antenna, cables, traces, PDN (Python bindings active; scripts auto-detect real vs. fallback models).
 - **Procedural 3D visualization** (`cad/blender/`, `cad/sphenix_hcal/`): Blender/Cycles renders of Muon3 panel and sPHENIX Inner HCal tile assemblies for paper figures.
 
-Stand-in and partial real Geant4 data (hits.csv) indicate a mean detected yield of ~25--40 p.e.\ per MIP after all losses for the Muon3 loop panel, with usable uniformity and timing. sPHENIX Inner tile assemblies yield ~55 p.e.\ per MIP in the current optical setup (see paper Section on HCal tiles).
+Stand-in and partial real Geant4 data (hits.csv) indicate a mean detected yield of ~25--40 p.e.\ per MIP after all losses for the Muon3 loop panel (MicroFC-30035), with usable uniformity and timing. sPHENIX Inner tile assemblies use a **Hamamatsu S12572-33-015P** (PDE ~0.25); see paper Section on HCal tiles and `cad/sphenix_hcal/README.md`.
 
 ### Paper
 An overall summary and findings paper has been written in the base directory:
@@ -192,7 +192,7 @@ The most important live-confirmed prototype choices are:
 - `nRF9151-LACA-R7` for cellular/GNSS/control, requiring JLCPCB Standard PCBA and X-ray;
 - `ICE40UP5K-SG48I` for deterministic timing/coincidence logic;
 - `OPA858IDSGR` for the SiPM TIA, subject to corrected bias and stability validation;
-- `TPS61170DRVR` for the MicroFC-class SiPM bias supply;
+- `LT3482EUD#TRPBF` (**C515895**) for Hamamatsu S12572 ~70 V bias (not TPS61170/MicroFC);
 - `CH224K` as a simple USB-C PD sink for a first USB-powered prototype; and
 - `DRV8873HPWPR` as the Peltier-driver path, frozen by the 2026-07-11 decision that full JLCPCB
   assembly is a hard requirement.
@@ -362,7 +362,8 @@ All new simulation work lives in the top-level `sim/` directory (sibling to `pcb
 See `sim/README.md` for the complete reference. Highlights:
 
 - **circuit/** — ngspice models:
-  - `muon3_frontend.lib` (MicroFC-30035, OPA858 TIA, dual TLV3601 comparators, charge injection).
+  - `muon3_frontend.lib` (S12572_015P + MicroFC, OPA858, dual TLV3601, charge inject).
+  - `hv_lt3482.cir` / `afe_hamamatsu_s12572.cir` — primary HCal-tile HV+AFE (LT3482 C515895).
   - `afe_dual_threshold.cir` (full channel with low/high thresholds, protection, filtered DAC refs).
   - `hv_tps61170.cir` (boost + filtering + trim + HV_MON).
   - `cable_50cm.cir` (lossy 50 cm interconnect).

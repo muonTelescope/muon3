@@ -35,9 +35,27 @@ Do not reuse AMS1117. A synchronous 12 V-capable buck is required for 3.3 V beca
 
 XC6206P122MR-G (`C424699`) is available but limited to about 60 mA, so it is only an alternate for a lightly loaded FPGA core. The preferred 1.2 V rail will be a higher-current regulator with at least 200 mA design margin.
 
-### SiPM high voltage — TPS61170DRVR, C15163
+### SiPM (HCal-tile workstation) — Hamamatsu S12572-33-015P
 
-Preferred because the exact WSON part is publicly stocked and supports the approximately 30 V MicroFC-30035 operating point. The old `C77205` mapping was wrong. Its output rating leaves limited transient margin, so the design must include an OVP path and verify the complete bias range. A higher-voltage controller is the alternate if tests show inadequate margin.
+Primary detector for the station that instruments **decommissioned sPHENIX Inner
+HCal tile assemblies** (dual-end WLS, plastic coupler, ~0.75 mm air gap). Not
+JLCPCB-assembled (already on the tile). MicroFC-30035 remains documented only
+as the legacy Muon3 loop-panel option.
+
+### SiPM high voltage — LT3482EUD#TRPBF, C515895
+
+**Preferred for the new HCal-tile design.** Analog Devices LT3482 is a
+fixed-frequency boost with APD current monitoring, capable of **up to ~90 V** —
+matching Hamamatsu S12572 operation at **~68–75 V**.
+
+Why not MAX1932: still orderable (e.g. C2650346) but older SPI APD controller;
+LT3482 is purpose-built APD bias with current sense and better “new design”
+fit on JLCPCB expand stock (C515895 TR / C117167 tube).
+
+Why not TPS61170: max ~38 V — only for MicroFC ~30 V reference path.
+
+Design gates: 100 V passives, OVP near 85–90 V, HV_MON divider, DAC trim into
+FB, Standard PCBA (extended part), layout isolation from TIA summing nodes.
 
 ## Analog front end
 

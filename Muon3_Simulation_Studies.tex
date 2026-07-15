@@ -384,8 +384,12 @@ Upstream GDMLs encode only the scintillator solid. Following Aidala et al.\ \cit
   \item a dual-end serpentine WLS fiber path (design rules: deposit-to-fiber $\lesssim 2.5$~cm, bend radius $\gtrsim 2.5$~cm);
   \item a diffuse white coating shell and light-tight outer wrap;
   \item a plastic light blocker / SiPM coupler at the fiber exit; and
-  \item a 3$\times$3~mm$^2$ SiPM body.
+  \item a \textbf{Hamamatsu S12572-33-015P} multipixel photon counter (MPPC) --- the sPHENIX HCal photosensor, \emph{not} the Muon3 onsemi MicroFC-30035.
 \end{itemize}
+
+\paragraph{Hamamatsu SiPM details (sPHENIX HCal).}
+The S12572-33-015P provides a $3\times 3$~mm$^2$ active area with 15~$\mu$m pixels ($\sim$40\,000 pixels), chosen for high dynamic range and magnetic-field immunity inside the sPHENIX solenoid \cite{sphenix-hcal-tns,hamamatsu-s12572}. In the beam-test / prototype electronics chain the devices were operated a few volts above breakdown (nominal gain $\sim 2\times 10^{5}$). Our optical sensitive detector applies a device-average PDE of \textbf{0.25} at the WLS green band (as quoted for this sensor class in the sPHENIX calorimeter literature; contrast $\sim$0.38 for the Muon3 MicroFC-30035). Dual fiber ends are glued in the tile edge and face the SiPM through a \textbf{$\sim$0.75~mm air gap} in the plastic coupler so that light is spread across the active area and optical saturation is reduced \cite{sphenix-hcal-tns}. Temperature dependence of gain ($\sim$few percent per $^\circ$C) is not yet simulated event-by-event; it is deferred to offline compensation models matching the sPHENIX slow-control approach.
+
 Multi-body STEP files for all twelve Inner tiles are stored in \texttt{cad/sphenix\_hcal/step/} (FreeCAD pipeline). Assembly GDMLs and mesh JSON exports feed the Geant4 \texttt{hcal\_tile} application (tessellated scintillator + optical materials; GDML parser not required).
 
 \begin{figure}[H]
@@ -414,7 +418,8 @@ Multi-body STEP files for all twelve Inner tiles are stored in \texttt{cad/sphen
 \caption{Blender/Cycles renders of sPHENIX Inner HCal tile assemblies built from original GDML tessellations plus added WLS fiber, diffuse coating, light blocker, and SiPM: tile~01 isometric and top (top row); tile~06 and tile~12 isometric (bottom row). STEP counterparts are in \texttt{cad/sphenix\_hcal/step/}.}
 \end{figure}
 
-A Geant4 run of 200 cosmic-like $\mu^-$ events on tile~01 (tessellated solid + fiber + coating + wrap + blocker + SiPM, optical physics enabled) yields a mean scintillator energy deposit of $\approx 2.04$~MeV (RMS $\approx 0.78$~MeV) and a mean of $\approx 55$ detected photoelectrons after a flat SiPM PDE of 0.38. Position-dependent edep and p.e.\ distributions are shown in Figure~\ref{fig:hcal-g4}.
+A Geant4 run of 200 cosmic-like $\mu^-$ events on tile~01 (tessellated solid + fiber + coating + wrap + blocker + \textbf{Hamamatsu S12572-33-015P}) yields $\langle E_\mathrm{dep}\rangle \approx 1.92$~MeV (RMS $\approx 0.81$~MeV) and $\langle N_\mathrm{p.e.}\rangle \approx 58$ after the Hamamatsu effective yield model:
+$\langle N_\mathrm{p.e.}\rangle = (E_\mathrm{dep}/\mathrm{MeV})\times 10^4\,\mathrm{ph/MeV}\times f_\mathrm{coll}\times\mathrm{PDE}$ with $f_\mathrm{coll}=0.012$ (dual-end WLS + coupler order-of-magnitude) and $\mathrm{PDE}=0.25$ ($\approx 30$~p.e./MeV). Full optical photon transport to the SiPM volume is incomplete for the tessellated + segmented-fiber geometry, so the sensitive detector still implements the Hamamatsu PDE for any tracked hits that do reach the MPPC, while the effective model supplies the event-level yield used in the figures. Position-dependent edep and p.e.\ distributions are shown in Figure~\ref{fig:hcal-g4}.
 
 \begin{figure}[H]
 \centering
@@ -439,7 +444,7 @@ A Geant4 run of 200 cosmic-like $\mu^-$ events on tile~01 (tessellated solid + f
 \centering
 \includegraphics[width=\textwidth]{figures/hcal_inner_tile_summary.png}
 \end{minipage}
-\caption{\label{fig:hcal-g4}Geant4 results for Inner HCal tile~01 assembly (200 MIP-like muons): energy deposit spectrum, detected photoelectron spectrum, mean edep vs.\ impact position, and summary histograms. Data: \texttt{sim/geant4/hcal\_tile\_hits.csv}.}
+\caption{\label{fig:hcal-g4}Geant4 results for Inner HCal tile~01 with \textbf{Hamamatsu S12572-33-015P} readout (200 MIP-like muons): energy deposit spectrum, detected photoelectron spectrum (PDE~$=0.25$, effective collection), mean edep vs.\ impact position, and summary histograms. Data: \texttt{sim/geant4/hcal\_tile\_hits.csv}.}
 \end{figure}
 
 These tile assemblies provide a bridge between Muon3 looped-panel optics and sPHENIX HCal tile construction practices, and supply manufacturing-ready STEP geometry for mechanical review.
@@ -468,7 +473,10 @@ X. He et al., ``fiberPanel: GEANT4 simulation of scintillation light collection 
 X. He et al., ``sPHENIX\_HCal: standalone GEANT4 application for studying the sPHENIX HCal,'' \url{https://github.com/phyxch/sPHENIX_HCal}. Local snapshot under \texttt{reference\_documentation/repositories/sPHENIX\_HCal/}.
 
 \bibitem{sphenix-hcal-tns}
-C.A. Aidala et al. (sPHENIX Collaboration), ``Design and Beam Test Results for the sPHENIX Electromagnetic and Hadronic Calorimeter Prototypes,'' IEEE Trans.\ Nucl.\ Sci.\ 65 (2018) 2901 [arXiv:1704.01461]. Local PDF: \texttt{reference\_documentation/publications/sPHENIX\_2018\_Design\_and\_Beam\_Test.pdf}.
+C.A. Aidala et al. (sPHENIX Collaboration), ``Design and Beam Test Results for the sPHENIX Electromagnetic and Hadronic Calorimeter Prototypes,'' IEEE Trans.\ Nucl.\ Sci.\ 65 (2018) 2901 [arXiv:1704.01461]. Local PDF: \texttt{reference\_documentation/publications/sPHENIX\_2018\_Design\_and\_Beam\_Test.pdf}. Documents the Hamamatsu S12572-33-015P choice for HCal/EMCal SiPM readout, 3$\times$3~mm$^2$ / 15~$\mu$m pixels, dual-fiber air-gap coupler, and temperature compensation practices.
+
+\bibitem{hamamatsu-s12572}
+Hamamatsu Photonics, ``MPPC (Multi-Pixel Photon Counter) S12572-010C/-015C series'' datasheet (S12572-33-015P: 3$\times$3~mm$^2$, 15~$\mu$m pixel pitch).
 
 \bibitem{scintpanel-cad}
 Muon Telescope historical scintillator panel CAD and assembly notes (retained in reference\_documentation/repositories/scintillatorPanel/).

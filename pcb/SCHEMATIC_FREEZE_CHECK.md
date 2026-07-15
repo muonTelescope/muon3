@@ -42,7 +42,7 @@ inside the JLCPCB BOM tool immediately before ordering.
 
 | Block | Part | JLCPCB status | Freeze posture |
 | --- | --- | --- | --- |
-| SiPM HV boost | `TPS61170DRVR`, `C15163` | Extended, WSON-6(2x2), SMT assembly, Economic and Standard PCBA, in stock 3920, available order qty 3731 | Freezeable for prototype, with OVP and bias-margin review. |
+| SiPM HV boost | `LT3482EUD#TRPBF`, `C515895` | Extended, APD boost to 90 V, Standard PCBA (not Basic), re-check live stock | Freeze for HCal-tile S12572 ~70 V path; OVP/HV_MON/DAC trim required. |
 | TIA | `OPA858IDSGR`, `C970232` | JLCPCB page confirms WSON-8-EP(2x2), FET-input amplifier, assembly support, EasyEDA footprint/symbol | Freezeable for prototype after analog bias/common-mode review. |
 | Cellular/GNSS | `nRF9151-LACA-R7`, `C22397843` | LGA-113(12.1x11.1), Standard Only PCBA, MSL 3, X-ray required, SMT assembly | Frozen; Nordic reference layout and Standard PCBA (decision 10). |
 | USB-C PD sink | `CH224K`, `C970725` | ESSOP-10, PD 3.0, advertised 5/9/12/15/20 V output profiles, assembly support | Frozen for this revision (decision 2): USB-C-only input, no onboard battery/solar. |
@@ -66,9 +66,10 @@ inside the JLCPCB BOM tool immediately before ordering.
 
 ## Frozen architecture choices
 
-- Detector: MicroFC-30035; exact package suffix and overvoltage target still
-  set the final HV range.
-- AFE: OPA858 plus TLV3601-class dual thresholds per channel; comparator
+- Detector: Hamamatsu S12572-33-015P on decommissioned HCal tiles; Vbr bin and
+  OV target set the LT3482 ~68–75 V rail (not MicroFC/TPS61170).
+- AFE: OPA858 plus TLV3601-class dual thresholds per channel; Rf/Cf retuned for
+  ~37 fC/p.e.; comparator
   sourcing must be confirmed before symbol freeze.
 - Logic: iCE40UP5K-SG48I plus nRF9151-LACA-R7.
 - USB-C: CH224K PD sink, USB-C-only input this revision (decision 2). A

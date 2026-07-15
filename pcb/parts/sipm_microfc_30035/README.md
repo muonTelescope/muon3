@@ -27,4 +27,10 @@ Alternates:
 - Larger-area SiPM only if photon statistics demand it and capacitance/noise
   remain acceptable.
 
+**Not an alternate on this bias rail:** Hamamatsu **S12572-33-015P** (sPHENIX
+HCal) — correct device for HCal *tile* models, but needs ~70 V and has ~13×
+lower charge/p.e. See `../sipm_hamamatsu_s12572/` and
+`sim/circuit/HAMAMATSU_SIPM_COMPATIBILITY.md`. Prefer keeping MicroFC-30035 as
+the only SiPM that matches the frozen TPS61170 + OPA858 production design.
+
 Downloaded: `MicroC-Series.pdf`

@@ -20,10 +20,24 @@ STEP assemblies and tooling for the sPHENIX Inner Hadronic Calorimeter scintilla
 2. **WLS fiber** — dual-end serpentine path (Kuraray single-clad class, 1 mm diameter), outer-radius exit, design rules from Aidala et al. IEEE TNS 2018 (max deposit-to-fiber ≈2.5 cm, min bend radius ≈2.5 cm).
 3. **Diffuse white coating** — TiO₂-style reflective layer (CAD thickness 0.1 mm; real process ≈50 μm chemical bath).
 4. **Light-tight wrap** — outer black covering shell.
-5. **Light blocker / SiPM coupler** — ABS-style plastic mount at the fiber exit.
-6. **SiPM** — 3×3 mm sensor body at the coupler.
+5. **Light blocker / SiPM coupler** — ABS-style plastic mount at the fiber exit (dual fiber ends).
+6. **Hamamatsu SiPM** — **S12572-33-015P** (MPPC), 3×3 mm² active area, 15 μm pixels (~40k), package depth ≈1.5 mm, with a **0.75 mm air gap** from the polished fiber ends to the SiPM face (sPHENIX design: spreads light, limits optical saturation).
 
-Original GDML files contain only the scintillator solid (with fiber-exit pocket). Fibers, blockers, and coverings are **added** here for CAD and Geant4 optical studies; they are not present as separate volumes in the upstream tessellations.
+### Photosensor + station bias (HCal-tile workstation)
+
+Station design is for **decommissioned HCal tile assemblies**:
+
+| | This design (HCal tiles) | Legacy loop-panel ref |
+|--|--------------------------|------------------------|
+| Device | **Hamamatsu S12572-33-015P** | MicroFC-30035 |
+| Station HV | **LT3482 C515895** (~70 V) | TPS61170 (~30 V) |
+| Active area | 3×3 mm² | 3×3 mm² |
+| Pixel pitch | 15 μm (~40k) | 35 μm class |
+| PDE (sim) | **~25%** | ~38–40% |
+| Coupling | Dual fiber + ~0.75 mm air gap | Single-end loop |
+| Docs | `pcb/parts/hv_lt3482/`, `sipm_hamamatsu_s12572/` | `hv_tps61170/`, `sipm_microfc_30035/` |
+
+Original GDML files contain only the scintillator solid (with fiber-exit pocket). Fibers, blockers, coverings, and the Hamamatsu SiPM are **added** here for CAD and Geant4 optical studies; they are not separate volumes in the upstream tessellations.
 
 ## Regenerate
 

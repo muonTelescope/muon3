@@ -329,13 +329,42 @@ G4VPhysicalVolume* HcalTileDetectorConstruction::Construct() {
   auto* wrapLV = new G4LogicalVolume(wrapShell, wrapMat, "LightTightWrapLV");
   new G4PVPlacement(nullptr, c, wrapLV, "LightTightWrap", worldLV, false, 0);
 
-  // ---- Light blocker + SiPM ----
+  // ---- Light blocker + Hamamatsu S12572-33-015P SiPM ----
+  // Dual WLS fiber ends exit at the outer radius into a plastic coupler (light
+  // blocker). An air gap (~0.75 mm, sPHENIX tile design) between the polished
+  // fiber ends and the SiPM face spreads light over the 3×3 mm² active area and
+  // reduces optical saturation (Aidala et al., IEEE TNS 2018).
   auto* blockLV =
       new G4LogicalVolume(new G4Box("BlockerBox", 0.5 * bsx, 0.5 * bsy, 0.5 * bsz), absPlastic, "LightBlockerLV");
   new G4PVPlacement(nullptr, G4ThreeVector(bx, by, bz), blockLV, "LightBlocker", worldLV, false, 0);
 
+  // Prefer CAD/JSON placement; enforce nominal 3×3 mm active face and package depth.
+  // ssy is the thickness along the fiber-exit axis (local Y in tile coords).
+  G4double sipmFace = 3.0 * mm;   // S12572-33-015P active area 3×3 mm²
+  G4double sipmDepth = 1.5 * mm;  // ceramic package depth (approx.)
+  if (ssx < 2.5 * mm) ssx = sipmFace;
+  if (ssz < 2.5 * mm) ssz = sipmFace;
+  if (ssy < 0.4 * mm) ssy = sipmDepth;
+
+  // Place SiPM so its entrance face is fAirGapMm beyond ymax (fiber exit plane).
+  G4double airGap = fAirGapMm * mm;
+  G4double sipmCy = ymax + airGap + 0.5 * ssy;
+  // Keep JSON cx/cz if provided; override cy for consistent air-gap geometry.
+  if (std::abs(sy) > 0.1 * mm) {
+    // JSON already places beyond exit; still enforce minimum air gap from ymax
+    if (sy - 0.5 * ssy < ymax + airGap) {
+      sipmCy = ymax + airGap + 0.5 * ssy;
+    } else {
+      sipmCy = sy;
+    }
+  }
+  sx = (std::abs(sx) > 0.1 * mm) ? sx : 0.5 * (xmin + xmax);
+  sz = (std::abs(sz) > 0.1 * mm) ? sz : 0.5 * (zmin + zmax);
+
   auto* sipmLV = new G4LogicalVolume(new G4Box("SiPMBox", 0.5 * ssx, 0.5 * ssy, 0.5 * ssz), si, "SiPMLV");
-  new G4PVPlacement(nullptr, G4ThreeVector(sx, sy, sz), sipmLV, "SiPM", worldLV, false, 0);
+  // Volume name encodes the Hamamatsu part for SD / debugging
+  sipmLV->SetName("SiPMLV");  // keep SD attachment name stable
+  new G4PVPlacement(nullptr, G4ThreeVector(sx, sipmCy, sz), sipmLV, "SiPM_S12572_015P", worldLV, false, 0);
 
   SetupSurfaces(worldPV);
 
@@ -344,13 +373,16 @@ G4VPhysicalVolume* HcalTileDetectorConstruction::Construct() {
   coatLV->SetVisAttributes(new G4VisAttributes(G4Colour(0.95, 0.95, 0.95, 0.2)));
   wrapLV->SetVisAttributes(new G4VisAttributes(G4Colour(0.05, 0.05, 0.05, 0.3)));
   blockLV->SetVisAttributes(new G4VisAttributes(G4Colour(0.2, 0.2, 0.25)));
-  sipmLV->SetVisAttributes(new G4VisAttributes(G4Colour(0.9, 0.1, 0.1)));
+  sipmLV->SetVisAttributes(new G4VisAttributes(G4Colour(0.85, 0.15, 0.1)));
 
   G4cout << "HcalTileDetectorConstruction: built tessellated tile from " << meshPath
          << "  verts=" << verts.size() << " faces=" << facesFlat.size() / 3
          << " fiberPts=" << fiberPath.size() << G4endl;
   G4cout << "  bbox mm: x=[" << xmin / mm << "," << xmax / mm << "] y=[" << ymin / mm << ","
          << ymax / mm << "] z=[" << zmin / mm << "," << zmax / mm << "]" << G4endl;
+  G4cout << "  SiPM: " << kSipmPartNumber << "  active=" << ssx / mm << "x" << ssz / mm
+         << " mm  PDE=" << fPDE << "  airGap=" << airGap / mm << " mm  y=" << sipmCy / mm << " mm"
+         << G4endl;
   return worldPV;
 }
 
@@ -434,7 +466,8 @@ void HcalTileDetectorConstruction::SetupSurfaces(G4VPhysicalVolume* /*world*/) {
 
 void HcalTileDetectorConstruction::ConstructSDandField() {
   auto* sdManager = G4SDManager::GetSDMpointer();
-  auto* sipmSD = new PanelSensitiveDetector("HCal_SiPM_SD", nullptr);
+  // Hamamatsu S12572-33-015P PDE (~25%); distinct from Muon3 MicroFC-30035.
+  auto* sipmSD = new PanelSensitiveDetector("HCal_SiPM_SD", nullptr, fPDE);
   sdManager->AddNewDetector(sipmSD);
   if (auto* lv = G4LogicalVolumeStore::GetInstance()->GetVolume("SiPMLV", false)) {
     lv->SetSensitiveDetector(sipmSD);
