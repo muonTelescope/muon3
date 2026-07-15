@@ -74,6 +74,17 @@ python3 sim/reports/make_root_charts.py
 Inputs: `sim/geant4/hcal_tile_hits.csv`, `hits_fresh.csv` (Muon3 panel).  
 Outputs: `figures/hcal_inner_tile_*.png`, `root_hcal_combined.png`, `pe_spectrum.png`, `yield_map.png`, `root_muon3_analysis.png` (also under `sim/geant4/plots/` and `sim/reports/figures/`).
 
+## Octave 3D plots (openEMS + Geant4)
+
+Detailed **3D** surfaces for RF/SI/PI and detector hits:
+
+```bash
+# brew install octave gnuplot
+octave-cli --no-gui --quiet --eval "run('sim/plots_octave/plot_3d_openems_geant4.m')"
+```
+
+Outputs: `figures/octave/octave_*.png` (antenna pattern/S11, cable, HS trace, PDN, HCal/Muon3 Geant4 surfaces). See `sim/plots_octave/README.md`.
+
 ## 1. Circuit Simulations (ngspice)
 
 ### Key Files

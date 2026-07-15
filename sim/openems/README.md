@@ -50,3 +50,18 @@ When openEMS is installed (bindings verified working), re-run scripts for FDTD-c
 **HS Trace & PDN:**
 ![HS Trace](figures/openems/hs_trace_sparams.png)
 ![PDN Impedance](figures/openems/pdn_3v3_impedance.png)
+
+### Octave 3D surfaces
+
+From CSVs above, generate detailed 3D plots with GNU Octave:
+
+```bash
+# needs: brew install octave gnuplot
+octave-cli --no-gui --quiet --eval "run('sim/plots_octave/plot_3d_openems_geant4.m')"
+```
+
+See `sim/plots_octave/README.md` and paper figures under `figures/octave/`.
+
+![3D pattern](figures/octave/octave_nrf9151_pattern_3d.png)
+![3D cable S21](figures/octave/octave_cable_s21_3d.png)
+![3D PDN](figures/octave/octave_pdn_z_3d.png)

@@ -328,7 +328,7 @@ openEMS FDTD simulations address RF, SI, and PI aspects:
   \item PDN (3V3 rail): Impedance profile showing resonances; guides decoupling capacitor placement.
 \end{itemize}
 
-Results (generated via scripts in \texttt{sim/openems/} using the openEMS Python interface when available; plots in \texttt{figures/openems/}):
+Results (openEMS Python scripts in \texttt{sim/openems/}; 2D plots in \texttt{figures/openems/}; detailed \textbf{Octave 3D} surfaces in \texttt{figures/octave/}):
 
 \begin{figure}[H]
 \centering
@@ -341,7 +341,21 @@ Results (generated via scripts in \texttt{sim/openems/} using the openEMS Python
 \centering
 \includegraphics[width=\textwidth]{figures/openems/nrf9151_antenna_pattern.png}
 \end{minipage}
-\caption{nRF9151 antenna S11 (left) and approximate radiation pattern (right) from openEMS-enabled simulation.}
+\caption{nRF9151 antenna S11 (left) and polar pattern (right) from openEMS-enabled simulation.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/octave/octave_nrf9151_pattern_3d.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/octave/octave_nrf9151_s11_3d.png}
+\end{minipage}
+\caption{\label{fig:octave-rf}Octave 3D RF views: nRF9151 radiation pattern surface (left) and S11 vs frequency/azimuth model surface (right). Generated with \texttt{sim/plots\_octave/plot\_3d\_openems\_geant4.m}.}
 \end{figure}
 
 \begin{figure}[H]
@@ -362,6 +376,20 @@ Results (generated via scripts in \texttt{sim/openems/} using the openEMS Python
 \centering
 \begin{minipage}{0.48\textwidth}
 \centering
+\includegraphics[width=\textwidth]{figures/octave/octave_cable_s21_3d.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/octave/octave_cable_s11_3d.png}
+\end{minipage}
+\caption{Octave 3D cable surfaces: $S_{21}$ (left) and $S_{11}$ (right) versus frequency and cable length, extrapolated from the 50\,cm openEMS S-parameter CSV.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
 \includegraphics[width=\textwidth]{figures/openems/hs_trace_sparams.png}
 \end{minipage}
 \hfill
@@ -370,6 +398,20 @@ Results (generated via scripts in \texttt{sim/openems/} using the openEMS Python
 \includegraphics[width=\textwidth]{figures/openems/pdn_3v3_impedance.png}
 \end{minipage}
 \caption{High-speed trace S-params (left) and 3V3 PDN impedance (right) from openEMS simulations.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/octave/octave_hs_trace_z0_3d.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/octave/octave_pdn_z_3d.png}
+\end{minipage}
+\caption{Octave 3D SI/PI views: microstrip $Z_0$ vs frequency and width (left); PDN $|Z|$ surface vs frequency and decoupling capacitance (right).}
 \end{figure}
 
 These confirm layout guidelines (RF keepouts, decoupling, termination) and validate the design for remote operation.
@@ -461,6 +503,32 @@ $\langle N_\mathrm{p.e.}\rangle = (E_\mathrm{dep}/\mathrm{MeV})\times 10^4\,\mat
 \caption{\label{fig:hcal-g4}ROOT~6 plots of Geant4 results for Inner HCal tile~01 with \textbf{Hamamatsu S12572-33-015P} readout (200 MIP-like muons): energy deposit spectrum, detected photoelectron spectrum (PDE~$=0.25$, effective collection), mean edep vs.\ impact position, and summary histograms. Generated via \texttt{root -b -q sim/reports/root\_hcal\_and\_geant4.C}; data: \texttt{sim/geant4/hcal\_tile\_hits.csv}. Also available as a combined canvas \texttt{figures/root\_hcal\_combined.png}.}
 \end{figure}
 
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/octave/octave_hcal_edep_surf_3d.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/octave/octave_hcal_pe_surf_3d.png}
+\end{minipage}
+
+\vspace{0.2cm}
+
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/octave/octave_hcal_scatter_3d.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/octave/octave_hcal_pe_surface_3d.png}
+\end{minipage}
+\caption{\label{fig:octave-g4}Octave 3D Geant4 views for the HCal tile (S12572): $E_\mathrm{dep}(x,y)$ surface, $N_\mathrm{p.e.}(x,y)$ surface, impact vs.\ edep scatter, and $N_\mathrm{p.e.}$ vs.\ edep/position. Generated with GNU Octave (\texttt{sim/plots\_octave/plot\_3d\_openems\_geant4.m}) from \texttt{hcal\_tile\_hits.csv}.}
+\end{figure}
+
 These tile assemblies provide a bridge between Muon3 looped-panel optics and sPHENIX HCal tile construction practices, and supply manufacturing-ready STEP geometry for mechanical review.
 
 \section{Conclusions}
@@ -523,7 +591,7 @@ H. Zhang et al., ``Design and test for the CEPC muon subdetector based on extrud
 
 \section*{Build Notes}
 
-This document was prepared as part of the Muon3 / HCal-tile simulation and analysis pipeline. Geant4 runs produce CSV hit files (\texttt{sim/geant4/hits\_fresh.csv}, \texttt{hcal\_tile\_hits.csv}). Publication histograms and maps are generated with \textbf{ROOT 6.40} via \texttt{sim/reports/root\_hcal\_and\_geant4.C} (batch: \texttt{root -l -b -q 'sim/reports/root\_hcal\_and\_geant4.C'}).
+This document was prepared as part of the Muon3 / HCal-tile simulation and analysis pipeline. Geant4 runs produce CSV hit files (\texttt{sim/geant4/hits\_fresh.csv}, \texttt{hcal\_tile\_hits.csv}). Publication histograms and maps are generated with \textbf{ROOT 6.40} via \texttt{sim/reports/root\_hcal\_and\_geant4.C} (batch: \texttt{root -l -b -q 'sim/reports/root\_hcal\_and\_geant4.C'}). Detailed \textbf{3D surfaces} for openEMS RF/SI/PI CSVs and Geant4 hits are produced with \textbf{GNU Octave} (\texttt{octave-cli --eval "run('sim/plots\_octave/plot\_3d\_openems\_geant4.m')"}; figures under \texttt{figures/octave/}).
 
 Native \texttt{pdflatex}/\texttt{bibtex} was not available in the automated build environment (system search found no \texttt{/Library/TeX}, no \texttt{pdflatex}, and \texttt{brew install --cask basictex} requires an interactive sudo password for the installer package). The accompanying \texttt{Muon3\_Simulation\_Studies.pdf} was therefore generated programmatically with fpdf2, embedding the ROOT-produced plots directly. The \texttt{.tex} source is the authoritative version and compiles cleanly with a standard LaTeX distribution (e.g., MacTeX or TeX Live) that includes the packages used (\texttt{graphicx}, \texttt{booktabs}, \texttt{siunitx}, \texttt{float}, etc.).
 

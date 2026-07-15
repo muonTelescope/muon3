@@ -168,7 +168,16 @@ The paper replaces/augments the earlier short simulation report in `sim/reports/
 
 ```bash
 root -l -b -q 'sim/reports/root_hcal_and_geant4.C'
+# 3D surfaces (openEMS + Geant4):
+octave-cli --no-gui --quiet --eval "run('sim/plots_octave/plot_3d_openems_geant4.m')"
 ```
+
+**Octave 3D (RF / openEMS / Geant4):**
+
+![Octave pattern](figures/octave/octave_nrf9151_pattern_3d.png)
+![Octave cable](figures/octave/octave_cable_s21_3d.png)
+![Octave PDN](figures/octave/octave_pdn_z_3d.png)
+![Octave HCal pe](figures/octave/octave_hcal_pe_surf_3d.png)
 
 **Thermal / Peltier analysis** (subsection in paper):
 
