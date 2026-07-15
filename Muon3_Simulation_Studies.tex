@@ -5,9 +5,10 @@
 \usepackage{geometry}
 \usepackage{hyperref}
 \usepackage{float}
-% siunitx and amsmath require extra packages in minimal TeX installs (user can add via tlmgr)
+% siunitx may need tlmgr on minimal TeX; amsmath/amssymb for \text, \lesssim, etc.
 %\usepackage{siunitx}
-%\usepackage{amsmath}
+\usepackage{amsmath}
+\usepackage{amssymb}
 \geometry{margin=2.5cm}
 
 \title{\textbf{Simulation Studies for the Muon3 Cosmic-Ray Muon Telescope:\\
