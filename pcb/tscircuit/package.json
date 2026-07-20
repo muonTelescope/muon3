@@ -1,0 +1,19 @@
+{
+  "name": "muon3-hcal-tscircuit",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render": "bun run render_placement.ts",
+    "placement": "bun run render_placement.ts"
+  },
+  "dependencies": {
+    "@tscircuit/core": "^0.0.1468",
+    "circuit-json-to-tscircuit": "^0.0.44",
+    "circuit-to-svg": "^0.0.391",
+    "tscircuit": "^0.0.2113"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "typescript": "^5.8.0"
+  }
+}
