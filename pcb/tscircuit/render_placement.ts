@@ -1,5 +1,5 @@
 /**
- * Render HCal-tile placement board → circuit JSON + PCB SVG + summary.
+ * Render Muon3 placement board → circuit JSON + PCB SVG + summary.
  *
  *   cd pcb/tscircuit && bun run render_placement.ts
  */
@@ -7,7 +7,13 @@ import { convertCircuitJsonToPcbSvg } from "circuit-to-svg"
 import { writeFileSync, mkdirSync } from "fs"
 import { join, dirname } from "path"
 import { fileURLToPath } from "url"
-import { buildHcalPlacementCircuit, ZONES, BOARD_W, BOARD_H, TIA_KEEPOUTS } from "./hcal_tile_placement.tsx"
+import {
+  buildMuon3PlacementCircuit,
+  ZONES,
+  BOARD_W,
+  BOARD_H,
+  TIA_KEEPOUTS,
+} from "./muon3_placement.tsx"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const outDir = join(__dirname, "out")
@@ -15,20 +21,23 @@ const figDir = join(__dirname, "..", "..", "figures", "tscircuit")
 mkdirSync(outDir, { recursive: true })
 mkdirSync(figDir, { recursive: true })
 
-const circuit = buildHcalPlacementCircuit()
+const circuit = buildMuon3PlacementCircuit()
 // Disable autorouting for placement-only sketch (faster, no netlist)
 circuit.pcbRoutingDisabled = true
 
-console.log("Rendering tscircuit placement board...")
+console.log("Rendering Muon3 tscircuit placement board...")
 await circuit.renderUntilSettled()
 
 const json = circuit.getCircuitJson()
 const keepouts = json.filter((e: any) => e.type === "pcb_keepout")
 const chips = json.filter((e: any) => e.type === "pcb_component")
 const silk = json.filter((e: any) => String(e.type).includes("silkscreen"))
-const notes = json.filter((e: any) => String(e.type).includes("pcb_note") || String(e.type).includes("fabrication_note"))
+const notes = json.filter(
+  (e: any) =>
+    String(e.type).includes("pcb_note") || String(e.type).includes("fabrication_note"),
+)
 
-writeFileSync(join(outDir, "hcal_placement.circuit.json"), JSON.stringify(json, null, 2))
+writeFileSync(join(outDir, "muon3_placement.circuit.json"), JSON.stringify(json, null, 2))
 console.log(
   `circuit-json: ${json.length} elements | components=${chips.length} keepouts=${keepouts.length} silkscreen=${silk.length} notes=${notes.length}`,
 )
@@ -37,13 +46,13 @@ const svg = convertCircuitJsonToPcbSvg(json, {
   width: 1200,
   height: 900,
 })
-writeFileSync(join(outDir, "hcal_placement_pcb.svg"), svg)
-writeFileSync(join(figDir, "hcal_placement_pcb.svg"), svg)
+writeFileSync(join(outDir, "muon3_placement_pcb.svg"), svg)
+writeFileSync(join(figDir, "muon3_placement_pcb.svg"), svg)
 console.log("Wrote PCB SVG")
 
-// Markdown report of placement rationale
-const report = `# HCal-tile PCB placement & shielding (tscircuit)
+const report = `# Muon3 PCB placement & shielding (tscircuit)
 
+**Project:** Muon3 (\`muon3.kicad_pcb\` / hierarchical sheets)  
 **Board:** ${BOARD_W} × ${BOARD_H} mm · 4-layer JLCPCB Standard PCBA target  
 **Tool:** tscircuit (\`@tscircuit/core\`) placement sketch  
 **Detectors:** decommissioned sPHENIX Inner HCal tiles · Hamamatsu **S12572-33-015P**  
@@ -60,7 +69,7 @@ ${ZONES.map(
     `| **${z.name}** — ${z.label.replace(/\\n/g, " ")} | (${z.cx}, ${z.cy}) | ${z.w}×${z.h} | ${z.shield ?? "—"} |`,
 ).join("\n")}
 
-### Placement principles (from project notes)
+### Placement principles (from Muon3 notes)
 
 1. **RF at board edge** — nRF9151 + U.FL LTE/GNSS with **≥15 mm antenna keepout** (openEMS / Nordic).
 2. **AFE mid-board, connector edge** — four OPA858 banks face panel connectors; short SiPM/bias path.
@@ -83,44 +92,34 @@ TIA keepout centers (mm): ${TIA_KEEPOUTS.map((k) => `${k.name}(${k.x},${k.y})`).
 
 | Region | Recommendation |
 |--------|----------------|
-| AFE bank | **Shield can or stitched GND fence** over OPA858+comparators (note box on PCB); stitch vias ≤1 mm pitch on fence |
+| AFE bank | **Shield can or stitched GND fence** over OPA858+comparators; stitch vias ≤1 mm pitch |
 | RF | Optional shield over nRF9151; mandatory copper keepout for antennas |
-| HV | Plastic/Kapton barrier or fence if enclosure nearby; never U.FL for bias |
-| TEC / PD | No shield required; physical separation + local ground stitching around H-bridges |
+| HV | Fence / creepage for ~70 V; never U.FL for bias |
+| TEC / PD | Separation + local ground stitching around H-bridges |
 | Cable entry | Hybrid connectors along AFE edge; shields to chassis/GND at entry only |
-
-## Signal / power routing priorities (for later autoroute)
-
-| Net class | Width / rules | Path |
-|-----------|---------------|------|
-| SiPM anode (AFE in) | short, guarded, no vias if possible | J_PANEL → TIA |
-| HV cathode | 100 V spacing, thick for IR only if multi-mA | LT3482 filter → J_PANEL bias |
-| CMP → FPGA | 50 Ω class microstrip (openEMS HS trace) | AFE → iCE40 |
-| TEC power | wide pours, away from AFE | DRV8873 → J_PANEL |
-| RF | 50 Ω coplanar to U.FL | nRF9151 only |
 
 ## How to regenerate
 
 \`\`\`bash
 cd pcb/tscircuit
 bun install
-bun run render_placement.ts
+bun run render
 \`\`\`
 
 Outputs:
-- \`out/hcal_placement.circuit.json\`
-- \`out/hcal_placement_pcb.svg\`
-- \`figures/tscircuit/hcal_placement_pcb.svg\`
+- \`out/muon3_placement.circuit.json\`
+- \`out/muon3_placement_pcb.svg\`
+- \`figures/tscircuit/muon3_placement_pcb.svg\`
 
 ## Relation to KiCad
 
-This is a **placement / shielding plan**, not a full schematic dump. Port zone
+This is a **Muon3 placement / shielding plan**, not a full schematic dump. Port zone
 coordinates into \`muon3.kicad_pcb\` before dense routing. Full netlist remains
 in hierarchical KiCad sheets (\`afe\`, \`power_usb_pd\`, \`digital_radio\`, \`thermal\`).
 `
 
-writeFileSync(join(outDir, "PLACEMENT_SHIELDING.md"), report)
-writeFileSync(join(__dirname, "PLACEMENT_SHIELDING.md"), report)
-writeFileSync(join(__dirname, "..", "PLACEMENT_SHIELDING.md"), report)
-console.log("Wrote PLACEMENT_SHIELDING.md")
+writeFileSync(join(outDir, "MUON3_PLACEMENT_SHIELDING.md"), report)
+writeFileSync(join(__dirname, "MUON3_PLACEMENT_SHIELDING.md"), report)
+writeFileSync(join(__dirname, "..", "MUON3_PLACEMENT_SHIELDING.md"), report)
+console.log("Wrote MUON3_PLACEMENT_SHIELDING.md")
 console.log("Done.")

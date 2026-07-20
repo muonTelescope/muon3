@@ -1,5 +1,6 @@
-# HCal-tile PCB placement & shielding (tscircuit)
+# Muon3 PCB placement & shielding (tscircuit)
 
+**Project:** Muon3 (`muon3.kicad_pcb` / hierarchical sheets)  
 **Board:** 160 × 120 mm · 4-layer JLCPCB Standard PCBA target  
 **Tool:** tscircuit (`@tscircuit/core`) placement sketch  
 **Detectors:** decommissioned sPHENIX Inner HCal tiles · Hamamatsu **S12572-33-015P**  
@@ -21,7 +22,7 @@ OPA858+TLV3601 | (18, 15) | 55×70 | AFE shield fence / can over TIA banks |
 | **POWER** — POWER / USB-PD | (-45, -40) | 55×32 | — |
 | **TEC** — TEC DRV8873×4 | (40, -40) | 60×32 | Switching zone; short loops; far from AFE |
 
-### Placement principles (from project notes)
+### Placement principles (from Muon3 notes)
 
 1. **RF at board edge** — nRF9151 + U.FL LTE/GNSS with **≥15 mm antenna keepout** (openEMS / Nordic).
 2. **AFE mid-board, connector edge** — four OPA858 banks face panel connectors; short SiPM/bias path.
@@ -44,37 +45,27 @@ TIA keepout centers (mm): CH0(-2,35), CH1(12,35), CH2(26,35), CH3(40,35)
 
 | Region | Recommendation |
 |--------|----------------|
-| AFE bank | **Shield can or stitched GND fence** over OPA858+comparators (note box on PCB); stitch vias ≤1 mm pitch on fence |
+| AFE bank | **Shield can or stitched GND fence** over OPA858+comparators; stitch vias ≤1 mm pitch |
 | RF | Optional shield over nRF9151; mandatory copper keepout for antennas |
-| HV | Plastic/Kapton barrier or fence if enclosure nearby; never U.FL for bias |
-| TEC / PD | No shield required; physical separation + local ground stitching around H-bridges |
+| HV | Fence / creepage for ~70 V; never U.FL for bias |
+| TEC / PD | Separation + local ground stitching around H-bridges |
 | Cable entry | Hybrid connectors along AFE edge; shields to chassis/GND at entry only |
-
-## Signal / power routing priorities (for later autoroute)
-
-| Net class | Width / rules | Path |
-|-----------|---------------|------|
-| SiPM anode (AFE in) | short, guarded, no vias if possible | J_PANEL → TIA |
-| HV cathode | 100 V spacing, thick for IR only if multi-mA | LT3482 filter → J_PANEL bias |
-| CMP → FPGA | 50 Ω class microstrip (openEMS HS trace) | AFE → iCE40 |
-| TEC power | wide pours, away from AFE | DRV8873 → J_PANEL |
-| RF | 50 Ω coplanar to U.FL | nRF9151 only |
 
 ## How to regenerate
 
 ```bash
 cd pcb/tscircuit
 bun install
-bun run render_placement.ts
+bun run render
 ```
 
 Outputs:
-- `out/hcal_placement.circuit.json`
-- `out/hcal_placement_pcb.svg`
-- `figures/tscircuit/hcal_placement_pcb.svg`
+- `out/muon3_placement.circuit.json`
+- `out/muon3_placement_pcb.svg`
+- `figures/tscircuit/muon3_placement_pcb.svg`
 
 ## Relation to KiCad
 
-This is a **placement / shielding plan**, not a full schematic dump. Port zone
+This is a **Muon3 placement / shielding plan**, not a full schematic dump. Port zone
 coordinates into `muon3.kicad_pcb` before dense routing. Full netlist remains
 in hierarchical KiCad sheets (`afe`, `power_usb_pd`, `digital_radio`, `thermal`).

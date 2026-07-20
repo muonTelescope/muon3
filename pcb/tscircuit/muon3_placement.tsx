@@ -1,8 +1,9 @@
 /**
- * HCal-tile workstation — optimal placement & shielding sketch (tscircuit)
+ * Muon3 — optimal placement & shielding sketch (tscircuit)
  *
+ * Matches the Muon3 KiCad project (muon3.kicad_pcb / hierarchical sheets).
  * Encodes DESIGN_RULES.md + openEMS RF notes + AFE/HV isolation for a
- * four-channel station reading decommissioned sPHENIX Inner HCal tiles
+ * four-channel Muon3 station reading decommissioned sPHENIX Inner HCal tiles
  * (Hamamatsu S12572-33-015P, LT3482 ~70 V bias).
  *
  * Coordinate system: board center (0,0), mm. Top view, top copper.
@@ -117,12 +118,12 @@ function zoneRect(z: Zone) {
   }
 }
 
-export function buildHcalPlacementCircuit(): Circuit {
+export function buildMuon3PlacementCircuit(): Circuit {
   const circuit = new Circuit()
   const board = new Board({
     width: `${BOARD_W}mm`,
     height: `${BOARD_H}mm`,
-    title: "HCal-tile workstation placement & shielding",
+    title: "Muon3 placement & shielding",
   })
   circuit.add(board)
 
@@ -422,7 +423,7 @@ export function buildHcalPlacementCircuit(): Circuit {
   // Title block
   board.add(
     new SilkscreenText({
-      text: "HCAL-TILE WORKSTATION 160x120  |  S12572 + LT3482  |  tscircuit placement",
+      text: "MUON3 160x120  |  S12572 + LT3482  |  tscircuit placement",
       pcbX: "0mm",
       pcbY: "58mm",
       fontSize: "1.8mm",
@@ -432,4 +433,6 @@ export function buildHcalPlacementCircuit(): Circuit {
   return circuit
 }
 
-export default buildHcalPlacementCircuit
+/** @deprecated alias — use buildMuon3PlacementCircuit */
+export const buildHcalPlacementCircuit = buildMuon3PlacementCircuit
+export default buildMuon3PlacementCircuit

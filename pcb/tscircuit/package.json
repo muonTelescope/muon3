@@ -1,5 +1,5 @@
 {
-  "name": "muon3-hcal-tscircuit",
+  "name": "muon3-tscircuit",
   "private": true,
   "type": "module",
   "scripts": {

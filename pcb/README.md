@@ -30,8 +30,8 @@ Open `muon3.kicad_pro` in KiCad 9 or later. The root schematic contains five she
 - `PART_SELECTION.md` — reasoning and availability policy for every major block.
 - `parts/` — per-component research folders with downloaded data sheets and selection notes.
 - `DESIGN_RULES.md` — electrical, layout and release constraints.
-- `PLACEMENT_SHIELDING.md` — **optimal placement zones & shielding** from tscircuit.
-- `tscircuit/` — tscircuit board sketch (`bun run render` → `figures/tscircuit/`).
+- `MUON3_PLACEMENT_SHIELDING.md` — **optimal placement zones & shielding** (tscircuit).
+- `tscircuit/` — Muon3 tscircuit placement (`bun run render` → `figures/tscircuit/muon3_placement_*`).
 - `components/` — project-local symbol/footprint source area, matching `mppcInterface` organization.
 - `fp-lib-table`, `sym-lib-table` — project-local + JLCPCB library tables.
 - `components/JLCPCB-Kicad-Library/` — full JLCPCB footprints and symbols (copied from reference for assembly compatibility).
@@ -79,9 +79,9 @@ full record. In summary:
 - Put charge-injection and optical-test hooks in the schematic even if fitted as DNP.
 - Keep SiPM bias off exposed coax shells; use keyed touch-safe connectors for bias and TEC power.
 - Reserve RF keepout and antenna placement before dense digital or power placement begins.
-- Follow `PLACEMENT_SHIELDING.md` / tscircuit zone map before routing:
+- Follow `MUON3_PLACEMENT_SHIELDING.md` / tscircuit zone map before routing:
 
-![tscircuit placement](../figures/tscircuit/hcal_placement_pcb.png)
+![Muon3 tscircuit placement](../figures/tscircuit/muon3_placement_pcb.png)
 
 ## Simulations
 
