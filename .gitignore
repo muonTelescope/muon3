@@ -1,83 +1,76 @@
+
 .DS_Store
-**/.DS_Store
-
-
-# Simulation generated artifacts
+.rclone.conf
 .venv/
-**/__pycache__/
+*.asc
+*.aux
+*.bbl
+*.bin
+*.blg
+*.d
+*.elf
+*.fdb_latexmk
+*.fls
+*.json
+*.log
+*.o
+*.out
 *.pyc
-sim/circuit/results/
-sim/circuit/plots/
-sim/geant4/build/
-sim/geant4/*.csv
-sim/geant4/plots/
-sim/plots/
+*.root
+*.synctex.gz
+*.tar.gz
+*.tgz
+*.toc
+**/__pycache__/
+**/.build/
+**/.DS_Store
+**/*.FCBak
+**/build*/
+# Additional build artifacts
+# Firmware/gateware build artifacts
+# Google Drive / documentation credentials (never commit)
+# Large data / build
+# LaTeX temp files (keep the main PDF)
+# Muon3Vision build
+# OS
+# Python cache etc already covered
+# rclone config if using local (prefer not committing)
+# Regenerable CAD intermediates (STEP/FCStd are kept)
+# Simulation generated artifacts
+cad/sphenix_hcal/step/*.FCStd
+cad/sphenix_hcal/stl/
+cmake_install.cmake
+CMakeCache.txt
+CMakeFiles/
+docs-images/
+figures/drive/
+firmware/build/
+gateware/build/
+geant4-data/
+Makefile
+Muon3Vision/.build/
+Muon3Vision/Package.resolved
+pcb/tscircuit/bun.lock
+pcb/tscircuit/node_modules/
+rclone.conf
+scripts/*.token
+scripts/*token*.json
+scripts/client_secret*.json
 sim/*.png
-sim/thermal_step.png
-sim/tot_model.png
+sim/additional/drive/
+sim/circuit/plots/
+sim/circuit/results/
+sim/geant4/*.csv
+sim/geant4/build_clean/
+sim/geant4/build*/
+sim/geant4/build/
+sim/geant4/build2/
+sim/geant4/build3/
+sim/geant4/plots/
+sim/geant4/testbuild/
+sim/plots/
 sim/power_budget_modes.png
 sim/reports/figures/*.png
 sim/reports/Muon3_Simulation_Report.pdf
-
-# Large data / build
-*.root
-geant4-data/
-*.tar.gz
-*.tgz
-
-# OS
-.DS_Store
-
-# Firmware/gateware build artifacts
-firmware/build/
-gateware/build/
-*.bin
-*.asc
-*.json
-*.elf
-
-sim/geant4/build2/
-sim/geant4/build3/
-sim/geant4/testbuild/
-sim/geant4/build_clean/
-# Additional build artifacts
-sim/geant4/build*/
-**/build*/
-**/.build/
-CMakeCache.txt
-CMakeFiles/
-cmake_install.cmake
-Makefile
-*.o
-*.d
-# LaTeX temp files (keep the main PDF)
-*.aux
-*.bbl
-*.blg
-*.log
-*.out
-*.toc
-*.fdb_latexmk
-*.fls
-*.synctex.gz
-# Muon3Vision build
-Muon3Vision/.build/
-Muon3Vision/Package.resolved
-# Python cache etc already covered
-
-# Google Drive / documentation credentials (never commit)
-scripts/client_secret*.json
-scripts/*token*.json
-scripts/*.token
-docs-images/
-figures/drive/
-sim/additional/drive/
-# rclone config if using local (prefer not committing)
-.rclone.conf
-rclone.conf
-
-
-# Regenerable CAD intermediates (STEP/FCStd are kept)
-cad/sphenix_hcal/stl/
-cad/sphenix_hcal/step/*.FCStd
-**/*.FCBak
+sim/thermal_step.png
+sim/tot_model.png
