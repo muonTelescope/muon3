@@ -66,6 +66,17 @@ Outputs:
 
 ## Relation to KiCad
 
-This is a **Muon3 placement / shielding plan**, not a full schematic dump. Port zone
-coordinates into `muon3.kicad_pcb` before dense routing. Full netlist remains
-in hierarchical KiCad sheets (`afe`, `power_usb_pd`, `digital_radio`, `thermal`).
+This is a **Muon3 placement / shielding plan**, not a full schematic dump.
+Full netlist remains in hierarchical KiCad sheets (`afe`, `power_usb_pd`,
+`digital_radio`, `thermal`).
+
+### Bridge commands (tscircuit ↔ KiCad)
+
+```bash
+cd pcb/tscircuit
+bun run export:kicad   # → out/kicad/muon3_tscircuit_placement.kicad_pro + placement_positions.csv
+bun run sync:zones     # stamp zones/Edge.Cuts into ../muon3.kicad_pcb
+bun run autoroute      # capacity-autorouter demo → out/kicad/muon3_autoroute_demo.*
+```
+
+See `pcb/tscircuit/KICAD_BRIDGE.md` for coordinate transforms and workflow.

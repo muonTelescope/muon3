@@ -197,9 +197,12 @@ baseline, not a fabrication release. The directory contains:
 - a new KiCad project scaffold for `muon3`;
 - a purchasing-oriented BOM and part-selection notes;
 - per-component research folders with downloaded data sheets;
-- live JLCPCB confirmation notes for several critical parts; and
+- live JLCPCB confirmation notes for several critical parts;
 - the current [schematic-freeze check](pcb/SCHEMATIC_FREEZE_CHECK.md) and
-  [freeze questions](pcb/freeze_questions.md).
+  [freeze questions](pcb/freeze_questions.md); and
+- a **tscircuit placement + capacity-autorouter ↔ KiCad bridge**
+  ([pcb/tscircuit/KICAD_BRIDGE.md](pcb/tscircuit/KICAD_BRIDGE.md)): zone map, keepouts,
+  `bun run export:kicad` / `sync:zones` / `autoroute`.
 
 The most important live-confirmed prototype choices are:
 
@@ -297,7 +300,7 @@ for the evidence, subsystem findings, questions, and recommended work order.
 .
 ├── README.md
 ├── .gitmodules
-├── pcb/                        # active clean-sheet Muon3 PCB workspace
+├── pcb/                        # active clean-sheet Muon3 PCB workspace (+ tscircuit/KiCad bridge)
 ├── gateware/                   # iCE40UP5K gateware (modern Yosys + nextpnr-ice40)
 ├── firmware/                   # nRF9151 firmware (modern Zephyr + NCS)
 └── reference_documentation/

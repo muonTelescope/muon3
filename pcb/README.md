@@ -31,7 +31,12 @@ Open `muon3.kicad_pro` in KiCad 9 or later. The root schematic contains five she
 - `parts/` — per-component research folders with downloaded data sheets and selection notes.
 - `DESIGN_RULES.md` — electrical, layout and release constraints.
 - `MUON3_PLACEMENT_SHIELDING.md` — **optimal placement zones & shielding** (tscircuit).
-- `tscircuit/` — Muon3 tscircuit placement (`bun run render` → `figures/tscircuit/muon3_placement_*`).
+- `tscircuit/` — Muon3 tscircuit placement, **capacity autorouter**, and **KiCad bridge**:
+  - `bun run render` → SVG + circuit-json
+  - `bun run export:kicad` → `out/kicad/muon3_tscircuit_placement.kicad_*` + `placement_positions.csv`
+  - `bun run sync:zones` → stamp zones/Edge.Cuts into `muon3.kicad_pcb`
+  - `bun run autoroute` → demo nets through `@tscircuit/capacity-autorouter` → KiCad
+  - Full guide: [`tscircuit/KICAD_BRIDGE.md`](tscircuit/KICAD_BRIDGE.md)
 - `components/` — project-local symbol/footprint source area, matching `mppcInterface` organization.
 - `fp-lib-table`, `sym-lib-table` — project-local + JLCPCB library tables.
 - `components/JLCPCB-Kicad-Library/` — full JLCPCB footprints and symbols (copied from reference for assembly compatibility).
@@ -79,9 +84,19 @@ full record. In summary:
 - Put charge-injection and optical-test hooks in the schematic even if fitted as DNP.
 - Keep SiPM bias off exposed coax shells; use keyed touch-safe connectors for bias and TEC power.
 - Reserve RF keepout and antenna placement before dense digital or power placement begins.
-- Follow `MUON3_PLACEMENT_SHIELDING.md` / tscircuit zone map before routing:
+- Follow `MUON3_PLACEMENT_SHIELDING.md` / tscircuit zone map before routing.
+- Prefer the automated bridge over hand-copying coordinates:
+
+```bash
+cd pcb/tscircuit && bun install && bun run bridge   # render + export:kicad + sync:zones
+# optional draft routing exercise:
+bun run autoroute   # open out/kicad/muon3_autoroute_demo.kicad_pro in KiCad
+```
 
 ![Muon3 tscircuit placement](../figures/tscircuit/muon3_placement_pcb.png)
+
+See [`tscircuit/KICAD_BRIDGE.md`](tscircuit/KICAD_BRIDGE.md) for coordinate
+transforms, autorouter limits, and how to use placement CSVs in KiCad.
 
 ## Simulations
 

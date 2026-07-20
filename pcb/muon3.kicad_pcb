@@ -18,6 +18,8 @@
 		(27 "Margin" user)
 		(31 "F.CrtYd" user "f.courtyard")
 		(29 "B.CrtYd" user "b.courtyard")
+		(12 "Dwgs.User" user "User drawings")
+		(13 "Cmts.User" user "User comments")
 		(35 "F.Fab" user)
 		(33 "B.Fab" user)
 	)
@@ -76,138 +78,401 @@
 		)
 	)
 	(property "PROJECT_STAGE" "P0 ARCHITECTURE - NOT FOR FABRICATION")
-	(gr_rect
-		(start 23 23)
-		(end 57 54)
-		(stroke
-			(width 0.3)
-			(type dash)
+	(embedded_fonts no)
+
+	(gr_text "#TSCIRCUIT_PLACEMENT_BEGIN"
+		(at 15 15 0)
+		(layer "Dwgs.User")
+		(uuid "3842f753-676d-4746-afb9-ac390a87724a")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
 		)
-		(fill no)
-		(layer "F.SilkS")
-		(uuid "bd44fded-df7e-4ef3-8bf6-fa391b8fe1bc")
 	)
-	(gr_rect
-		(start 23 58)
-		(end 57 107)
-		(stroke
-			(width 0.3)
-			(type dash)
+
+	(gr_text "Muon3 tscircuit zones 160x120mm — regen: bun run sync:zones"
+		(at 20 12 0)
+		(layer "Dwgs.User")
+		(uuid "8952a028-7f85-4344-abf5-ac798f320f53")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
 		)
-		(fill no)
-		(layer "F.SilkS")
-		(uuid "54201539-b02a-463a-aeb5-559698512aa2")
 	)
-	(gr_rect
-		(start 60 23)
-		(end 92 54)
-		(stroke
-			(width 0.3)
-			(type dash)
-		)
-		(fill no)
-		(layer "F.SilkS")
-		(uuid "5853117b-5c00-4a6d-b09c-c219d4e29a95")
-	)
-	(gr_rect
-		(start 60 58)
-		(end 137 107)
-		(stroke
-			(width 0.3)
-			(type dash)
-		)
-		(fill no)
-		(layer "F.SilkS")
-		(uuid "814eaa39-966c-465d-a6f0-60fab14b95ef")
-	)
-	(gr_rect
-		(start 95 23)
-		(end 137 54)
-		(stroke
-			(width 0.3)
-			(type dash)
-		)
-		(fill no)
-		(layer "F.SilkS")
-		(uuid "510b0fd3-0d16-4dc4-bd4e-fc41aa1b109e")
-	)
+
 	(gr_rect
 		(start 20 20)
-		(end 140 110)
+		(end 180 140)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
 		(fill no)
 		(layer "Edge.Cuts")
-		(uuid "dce8a4ea-c7f1-442b-8fda-bddc952842ea")
+		(uuid "828b82d8-8b64-4257-8f43-e558992783f9")
 	)
-	(gr_text "AFE x4 - quiet/no pour at summing nodes"
-		(at 40 25 0)
+
+	(gr_rect
+		(start 21 24)
+		(end 49 66)
+		(stroke
+			(width 0.3)
+			(type dash)
+		)
+		(fill no)
 		(layer "F.SilkS")
-		(uuid "2eb32154-6979-411f-bd43-1247f3bcd18d")
-		(effects
-			(font
-				(size 1.1 1.1)
-				(thickness 0.18)
-			)
-		)
+		(uuid "7f014aaf-ed3c-4014-94b1-c33212510743")
 	)
-	(gr_text "USB-C PD + rails + HV quarantine"
-		(at 40 60 0)
+
+	(gr_text "RF / nRF9151"
+		(at 35 27 0)
 		(layer "F.SilkS")
-		(uuid "21f8152d-e9e5-4dc0-b3cf-2d4a4e539844")
+		(uuid "9c658539-a3e3-4898-b5ee-2c240fd49756")
 		(effects
 			(font
-				(size 1.1 1.1)
-				(thickness 0.18)
+				(size 1.3 1.3)
+				(thickness 0.195)
 			)
 		)
 	)
-	(gr_text "FPGA + DAC + timing"
-		(at 76 25 0)
+
+	(gr_text "RF shield can optional; antenna keepout 15 mm"
+		(at 35 63.5 0)
+		(layer "Dwgs.User")
+		(uuid "1100c520-7864-4a86-9c3f-12ddc5c9a71f")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+
+	(gr_rect
+		(start 50 32.5)
+		(end 86 87.5)
+		(stroke
+			(width 0.3)
+			(type dash)
+		)
+		(fill no)
 		(layer "F.SilkS")
-		(uuid "f96a7e92-bbe6-415e-a959-4cbeda8fc3ea")
-		(effects
-			(font
-				(size 1.1 1.1)
-				(thickness 0.18)
-			)
-		)
+		(uuid "71d6724a-e6b0-4fa6-a23c-208f262bb475")
 	)
-	(gr_text "4x Peltier bridges + panel connectors"
-		(at 98.5 60 0)
+
+	(gr_text "DIGITAL iCE40+RP2040"
+		(at 68 35.5 0)
 		(layer "F.SilkS")
-		(uuid "0886cd0d-8621-40f4-82c0-cb46a2f02812")
+		(uuid "9bc0c0d1-08e7-4515-8029-4c4b3bdb6dc6")
 		(effects
 			(font
-				(size 1.1 1.1)
-				(thickness 0.18)
+				(size 1.3 1.3)
+				(thickness 0.195)
 			)
 		)
 	)
-	(gr_text "nRF9151 + SIM + RF keepouts"
-		(at 116 25 0)
+
+	(gr_rect
+		(start 90.5 30)
+		(end 145.5 100)
+		(stroke
+			(width 0.3)
+			(type dash)
+		)
+		(fill no)
 		(layer "F.SilkS")
-		(uuid "cf65b184-ab95-481b-862b-c744d26de269")
+		(uuid "794eca7f-ac94-47dd-a026-839da318e397")
+	)
+
+	(gr_text "AFE CH0–CH3 OPA858+TLV3601"
+		(at 118 33 0)
+		(layer "F.SilkS")
+		(uuid "19b7f3ee-49c1-437e-83d7-2d984ded4380")
 		(effects
 			(font
-				(size 1.1 1.1)
-				(thickness 0.18)
+				(size 1.3 1.3)
+				(thickness 0.195)
 			)
 		)
 	)
-	(gr_text "MUON3 P0 ARCHITECTURE - NOT FOR FABRICATION"
-		(at 80 104 0)
-		(layer "B.SilkS")
-		(uuid "5cc9d9b4-1a40-4860-ad67-4ee8bc1ac436")
+
+	(gr_text "AFE shield fence / can over TIA banks"
+		(at 118 97.5 0)
+		(layer "Dwgs.User")
+		(uuid "d1d4cfaa-6518-494c-9594-ecd12da5b7ba")
 		(effects
 			(font
-				(size 1.4 1.4)
-				(thickness 0.25)
+				(size 1 1)
+				(thickness 0.15)
 			)
-			(justify mirror)
 		)
 	)
-	(embedded_fonts no)
+
+	(gr_rect
+		(start 144 30)
+		(end 172 70)
+		(stroke
+			(width 0.3)
+			(type dash)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "6e897a91-b591-404a-a083-82c5fb7a1217")
+	)
+
+	(gr_text "HV LT3482 ~70 V S12572"
+		(at 158 33 0)
+		(layer "F.SilkS")
+		(uuid "9e6fd57c-64ab-4761-ab77-38ab4b65ce93")
+		(effects
+			(font
+				(size 1.3 1.3)
+				(thickness 0.195)
+			)
+		)
+	)
+
+	(gr_text "HV keepout; no pour under boost SW node"
+		(at 158 67.5 0)
+		(layer "Dwgs.User")
+		(uuid "bf5a5484-4922-4c6f-a6c4-411781627dbb")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+
+	(gr_rect
+		(start 27.5 104)
+		(end 82.5 136)
+		(stroke
+			(width 0.3)
+			(type dash)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "8f30ed4f-7174-484d-8aba-7a6c2c1e9f9e")
+	)
+
+	(gr_text "POWER / USB-PD"
+		(at 55 107 0)
+		(layer "F.SilkS")
+		(uuid "e0da2114-26af-4b25-866a-9598b888a83d")
+		(effects
+			(font
+				(size 1.3 1.3)
+				(thickness 0.195)
+			)
+		)
+	)
+
+	(gr_rect
+		(start 110 104)
+		(end 170 136)
+		(stroke
+			(width 0.3)
+			(type dash)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "d7b8521a-6b50-45f1-9b3a-2e8080e16a17")
+	)
+
+	(gr_text "TEC DRV8873×4"
+		(at 140 107 0)
+		(layer "F.SilkS")
+		(uuid "47428fc0-f39b-40f1-96cb-0094318fd8e0")
+		(effects
+			(font
+				(size 1.3 1.3)
+				(thickness 0.195)
+			)
+		)
+	)
+
+	(gr_text "Switching zone; short loops; far from AFE"
+		(at 140 133.5 0)
+		(layer "Dwgs.User")
+		(uuid "c0f2dd4c-7fc5-40d1-96b9-9564f11f027e")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+
+	(gr_rect
+		(start 95 42)
+		(end 101 48)
+		(stroke
+			(width 0.2)
+			(type dash)
+		)
+		(fill no)
+		(layer "Cmts.User")
+		(uuid "7497c3fd-b80a-45b4-b8e4-aee0db5df8c0")
+	)
+
+	(gr_text "TIA CH0 NO POUR"
+		(at 98 40 0)
+		(layer "Cmts.User")
+		(uuid "3cb8cb8e-4238-41e0-a1c5-a127d83c1c2a")
+		(effects
+			(font
+				(size 0.9 0.9)
+				(thickness 0.15)
+			)
+		)
+	)
+
+	(gr_rect
+		(start 109 42)
+		(end 115 48)
+		(stroke
+			(width 0.2)
+			(type dash)
+		)
+		(fill no)
+		(layer "Cmts.User")
+		(uuid "f6c0b4e2-60ae-441d-bf61-beeb525d7834")
+	)
+
+	(gr_text "TIA CH1 NO POUR"
+		(at 112 40 0)
+		(layer "Cmts.User")
+		(uuid "a0e48d11-c9b2-4cb7-989d-0d5f33c886a9")
+		(effects
+			(font
+				(size 0.9 0.9)
+				(thickness 0.15)
+			)
+		)
+	)
+
+	(gr_rect
+		(start 123 42)
+		(end 129 48)
+		(stroke
+			(width 0.2)
+			(type dash)
+		)
+		(fill no)
+		(layer "Cmts.User")
+		(uuid "96a5ce25-fea5-4402-bb37-14ffc8530df0")
+	)
+
+	(gr_text "TIA CH2 NO POUR"
+		(at 126 40 0)
+		(layer "Cmts.User")
+		(uuid "222a9228-dcd1-4866-b9ee-d3f12e38b0a4")
+		(effects
+			(font
+				(size 0.9 0.9)
+				(thickness 0.15)
+			)
+		)
+	)
+
+	(gr_rect
+		(start 137 42)
+		(end 143 48)
+		(stroke
+			(width 0.2)
+			(type dash)
+		)
+		(fill no)
+		(layer "Cmts.User")
+		(uuid "ee2a9ec2-916d-48b3-b818-3c2525a891a0")
+	)
+
+	(gr_text "TIA CH3 NO POUR"
+		(at 140 40 0)
+		(layer "Cmts.User")
+		(uuid "3df2a3c7-eb64-4b56-9104-89c21244b9dc")
+		(effects
+			(font
+				(size 0.9 0.9)
+				(thickness 0.15)
+			)
+		)
+	)
+
+	(gr_circle
+		(center 28 30)
+		(end 43 30)
+		(stroke
+			(width 0.25)
+			(type dash)
+		)
+		(fill no)
+		(layer "Cmts.User")
+		(uuid "6910a562-e0e6-4df2-9c9e-25fba7f80ae3")
+	)
+
+	(gr_text "ANT KEEPOUT 15mm"
+		(at 28 13 0)
+		(layer "Cmts.User")
+		(uuid "5fda1265-1e6c-408b-8ffd-0126592e5e54")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+
+	(gr_rect
+		(start 152 37)
+		(end 164 47)
+		(stroke
+			(width 0.25)
+			(type dash)
+		)
+		(fill no)
+		(layer "Cmts.User")
+		(uuid "e290343c-8c5a-480d-b998-55106814376b")
+	)
+
+	(gr_text "HV SW NODE KEEPOUT"
+		(at 158 35 0)
+		(layer "Cmts.User")
+		(uuid "272a3863-cadf-47a7-92d1-929b903e44b2")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+
+	(gr_text "MUON3 160x120 | tscircuit zones | S12572 + LT3482 | NOT FOR FAB"
+		(at 100 22 0)
+		(layer "F.SilkS")
+		(uuid "c94f6ad1-5b22-40de-8e19-6bc30b1609f5")
+		(effects
+			(font
+				(size 1.5 1.5)
+				(thickness 0.22499999999999998)
+			)
+		)
+	)
+
+	(gr_text "#TSCIRCUIT_PLACEMENT_END"
+		(at 15 145 0)
+		(layer "Dwgs.User")
+		(uuid "306372d1-6742-4e02-927a-29de49119336")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
 )

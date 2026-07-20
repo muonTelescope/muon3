@@ -4,12 +4,21 @@
   "type": "module",
   "scripts": {
     "render": "bun run render_placement.ts",
-    "placement": "bun run render_placement.ts"
+    "placement": "bun run render_placement.ts",
+    "export:kicad": "bun run export_to_kicad.ts",
+    "sync:zones": "bun run sync_zones_to_kicad.ts",
+    "autoroute": "bun run run_autoroute.ts",
+    "import:kicad": "bun run import_kicad_snapshot.ts",
+    "bridge": "bun run render && bun run export:kicad && bun run sync:zones"
   },
   "dependencies": {
+    "@tscircuit/capacity-autorouter": "^0.0.701",
     "@tscircuit/core": "^0.0.1468",
+    "circuit-json-to-kicad": "^0.0.166",
     "circuit-json-to-tscircuit": "^0.0.44",
     "circuit-to-svg": "^0.0.391",
+    "kicad-to-circuit-json": "^0.0.116",
+    "polygon-clipping": "^0.15.7",
     "tscircuit": "^0.0.2113"
   },
   "devDependencies": {
