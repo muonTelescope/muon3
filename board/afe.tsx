@@ -50,6 +50,8 @@ export const AfeChannel = ({ index: i, x, cy }: ChannelProps) => {
         connections={{ IN_NEG: n("INA"), IN_POS: "net.VBOTF", OUT: n("AOUT"), FB: n("FB"), VS_POS: "net.VANA", VS_NEG: "net.GND", PD: "net.VANA", EP: "net.GND" }}
       />
       <capacitor name={`C_TIA${i}`} capacitance="100nF" footprint="0402" {...p(3.5, 9)} connections={{ pin1: "net.VANA", pin2: "net.GND" }} />
+      {/* OPA858 local bulk (datasheet: 0.1uF + 2.2uF on VS+) */}
+      <capacitor name={`C_TIAB${i}`} capacitance="2.2uF" footprint="0603" {...p(6, 7)} connections={{ pin1: "net.VANA", pin2: "net.GND" }} />
       <resistor name={`Rf${i}`} resistance="15k" footprint="0402" {...p(-3, 5.5)} connections={{ pin1: n("FB"), pin2: n("INA") }} />
       <capacitor name={`Cf${i}`} capacitance="1.5pF" footprint="0402" {...p(1, 5.5)} connections={{ pin1: n("FB"), pin2: n("INA") }} />
       {/* No-pour keepout: cut top + L2 reference plane under IN−/OUT/FB */}

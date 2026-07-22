@@ -21,6 +21,7 @@ import { Floorplan } from "./floorplan"
 import { PowerInput } from "./power"
 import { AfeChannel } from "./afe"
 import { HvBias } from "./hv"
+import { Rails } from "./rails"
 
 export { BOARD_W, BOARD_H }
 
@@ -32,6 +33,9 @@ export default () => (
     {AFE_CHANNEL_X.map((x, i) => (
       <AfeChannel key={i} index={i} x={x} cy={AFE_CY} />
     ))}
+
+    {/* Power-rail bulk reservoirs (DIGITAL zone distribution point) */}
+    <Rails />
 
     {/* USB-C PD input seed (POWER zone, bottom-left) */}
     <PowerInput />
