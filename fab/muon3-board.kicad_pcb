@@ -97,11 +97,12 @@
   (net 59 "CC2")
   (net 60 "V12")
   (net 61 "HV_EN")
-  (net 62 "HV_BIAS")
+  (net 62 "HV_APD")
   (net 63 "HV_MON")
-  (net 64 "VBOTF")
-  (net 65 "AOUT0")
-  (net 66 "FB0")
+  (net 64 "HV_BIAS")
+  (net 65 "VBOTF")
+  (net 66 "AOUT0")
+  (net 67 "FB0")
   (footprint
     "tscircuit:pin_header_pinrow6_nopinlabels_female"
     (layer F.Cu)
@@ -240,8 +241,8 @@
   (footprint
     "tscircuit:diode_sod123"
     (layer F.Cu)
-    (uuid 3da95aa0-5311-18a1-6878-d6a27de094a3)
-    (at 64 52 0)
+    (uuid 6ade6480-3ab1-5d9f-1fbe-e0427a2f1e23)
+    (at 64 52.5 0)
     (property "Reference" "D_CLH0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -339,10 +340,111 @@
     )
   )
   (footprint
+    "tscircuit:diode_sod123"
+    (layer F.Cu)
+    (uuid 523b0b80-0835-3261-62a5-704242ea51dd)
+    (at 76 52.5 0)
+    (property "Reference" "D_CLL0"
+      (at 0 -3 0)
+      (layer F.SilkS)
+      (hide yes)
+      (uuid 05e1f700-00bd-7761-075c-e5c20dfc5423)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Value" "D"
+      (at 0 3 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 010c8140-2c17-481f-593b-117e79a12523)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Datasheet" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 7407d5c0-7aa7-4421-7eb9-4d7e7819df1d)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Description" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 4f149660-7297-401f-69e6-162246636c63)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Supplier Part Number" "C2128"
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 4ab2ebca-3e4a-69ea-31e1-e80a2579662a)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (fp_text
+      reference
+      "D_CLL0"
+      (at 0 -0.7049999999999983 0)
+      (layer F.SilkS)
+      (effects
+        (font
+          (size 0.3333333333333333 0.3333333333333333)
+        )
+      )
+    )
+    (fp_rect
+      (start -2.35 -1.15)
+      (end 2.35 1.15)
+      (layer F.CrtYd)
+      (stroke
+        (width 0.05)
+        (type default)
+      )
+      (fill no)
+    )
+    (pad "1" smd rect
+      (at -1.6499999999999986 0 0)
+      (size 0.9 1.2)
+      (layers F.Cu F.Paste F.Mask)
+      (net 13 "GND")
+      (uuid 2ab97400-273a-d6bf-792f-217e34dc93c3)
+    )
+    (pad "2" smd rect
+      (at 1.6499999999999986 0 0)
+      (size 0.9 1.2)
+      (layers F.Cu F.Paste F.Mask)
+      (net 46 "INA0")
+      (uuid 0267aacc-6e90-73d4-2077-6d8c5080b114)
+    )
+  )
+  (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 3177fca0-1c10-3e9f-06a8-809e0ebf3d63)
-    (at 70 52 0)
+    (uuid 4aacb5a0-5ae3-0c7f-0072-ce9e59fd6f43)
+    (at 66.5 57 0)
     (property "Reference" "Rser0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -443,119 +545,18 @@
       (fill no)
     )
     (pad "1" smd rect
-      (at -0.5100000000000016 0 0)
+      (at -0.509999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 1 "SIG0")
-      (uuid 38043040-7607-8501-2413-3a422de1107d)
+      (uuid 6299dfc2-2c6e-019e-448a-1d024a7dc45e)
     )
     (pad "2" smd rect
-      (at 0.5100000000000016 0 0)
+      (at 0.509999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 46 "INA0")
-      (uuid 0e02c468-7efa-e308-100c-fe5860eb2048)
-    )
-  )
-  (footprint
-    "tscircuit:diode_sod123"
-    (layer F.Cu)
-    (uuid 30c80d40-1b60-4f3f-05f8-913e0f6f2cc3)
-    (at 76 52 0)
-    (property "Reference" "D_CLL0"
-      (at 0 -3 0)
-      (layer F.SilkS)
-      (hide yes)
-      (uuid 05e1f700-00bd-7761-075c-e5c20dfc5423)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Value" "D"
-      (at 0 3 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 010c8140-2c17-481f-593b-117e79a12523)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Datasheet" ""
-      (at 0 0 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 7407d5c0-7aa7-4421-7eb9-4d7e7819df1d)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Description" ""
-      (at 0 0 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 4f149660-7297-401f-69e6-162246636c63)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Supplier Part Number" "C2128"
-      (at 0 0 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 4ab2ebca-3e4a-69ea-31e1-e80a2579662a)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (fp_text
-      reference
-      "D_CLL0"
-      (at 0 -0.7049999999999983 0)
-      (layer F.SilkS)
-      (effects
-        (font
-          (size 0.3333333333333333 0.3333333333333333)
-        )
-      )
-    )
-    (fp_rect
-      (start -2.35 -1.15)
-      (end 2.35 1.15)
-      (layer F.CrtYd)
-      (stroke
-        (width 0.05)
-        (type default)
-      )
-      (fill no)
-    )
-    (pad "1" smd rect
-      (at -1.6499999999999986 0 0)
-      (size 0.9 1.2)
-      (layers F.Cu F.Paste F.Mask)
-      (net 13 "GND")
-      (uuid 0a1b2aa0-47d9-201f-6632-9522143e4a63)
-    )
-    (pad "2" smd rect
-      (at 1.6499999999999986 0 0)
-      (size 0.9 1.2)
-      (layers F.Cu F.Paste F.Mask)
-      (net 46 "INA0")
-      (uuid 6898c1ca-085f-5cd6-7957-7b7615b065ea)
+      (uuid 0b933a60-4aa6-5301-5f20-1f9e08e6923d)
     )
   )
   (footprint
@@ -888,7 +889,7 @@
       (at -0.9499600000000008 -0.7500619999999998 0)
       (size 0.5210048 0.2500122)
       (layers F.Cu F.Paste F.Mask)
-      (net 66 "FB0")
+      (net 67 "FB0")
       (uuid 00276360-5e20-a0c1-4397-5b1e1ab0a903)
     )
     (pad "2" smd rect
@@ -908,7 +909,7 @@
       (at -0.9499600000000008 0.7500619999999998 0)
       (size 0.5210048 0.2500122)
       (layers F.Cu F.Paste F.Mask)
-      (net 64 "VBOTF")
+      (net 65 "VBOTF")
       (uuid 2195ff82-141c-7342-06a2-e70206d6a53e)
     )
     (pad "5" smd rect
@@ -922,7 +923,7 @@
       (at 0.9499600000000008 0.24993599999999816 0)
       (size 0.5210048 0.2500122)
       (layers F.Cu F.Paste F.Mask)
-      (net 65 "AOUT0")
+      (net 66 "AOUT0")
       (uuid 4b6f99da-58e9-261a-6662-b25a73dc3e9a)
     )
     (pad "7" smd rect
@@ -958,8 +959,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 062afc60-0f3c-c1a1-24a4-7fa23a0c3da3)
-    (at 76 57 0)
+    (uuid 18894f20-41e6-eec1-63a8-d35e0938957d)
+    (at 73.5 57 0)
     (property "Reference" "C_TIA0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -1086,8 +1087,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 0990abc0-50df-9221-54b0-2ffe05c00de3)
-    (at 65 61.5 0)
+    (uuid 2abd0f60-2fb3-2e81-75dc-939e1b6c55bd)
+    (at 67 60.5 0)
     (property "Reference" "Rf0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -1191,7 +1192,7 @@
       (at -0.509999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
-      (net 66 "FB0")
+      (net 67 "FB0")
       (uuid 30069ac8-5f01-4698-11f6-d8087d110958)
     )
     (pad "2" smd rect
@@ -1205,8 +1206,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 313e7c00-2931-c1e1-7c5e-003e21edc25d)
-    (at 75 61.5 0)
+    (uuid 6dd7ffa0-37b7-c27f-22b8-7b627d28b943)
+    (at 71 60.5 0)
     (property "Reference" "Cf0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -1319,7 +1320,7 @@
       (at -0.5100000000000016 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
-      (net 66 "FB0")
+      (net 67 "FB0")
       (uuid 24e460e0-2d0f-e9df-7f04-349e2f0780a3)
     )
     (pad "2" smd rect
@@ -1333,8 +1334,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 15a41400-003c-55ff-152b-68022a932603)
-    (at 63 66 0)
+    (uuid 728c2be0-780c-161f-62a4-581e4d3c9a1d)
+    (at 63 65 0)
     (property "Reference" "R_VB0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -1445,15 +1446,15 @@
       (at 0.509999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
-      (net 64 "VBOTF")
+      (net 65 "VBOTF")
       (uuid 098fb400-5fc9-4161-49fd-313e0c3c5c23)
     )
   )
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 4fbbeec0-0ab4-4f21-6524-8d02406b351d)
-    (at 67.5 66 0)
+    (uuid 47e65ac0-1289-e321-6cfa-21023895a11d)
+    (at 66.5 65 0)
     (property "Reference" "C_VB0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -1526,7 +1527,7 @@
       )
     )
     (fp_line
-      (start 0.5100000000000016 -0.7199999999999989)
+      (start 0.509999999999998 -0.7199999999999989)
       (end -0.9799999999999969 -0.7199999999999989)
       (stroke
         (width 0.1)
@@ -1545,7 +1546,7 @@
     )
     (fp_line
       (start -0.9799999999999969 0.7199999999999989)
-      (end 0.5100000000000016 0.7199999999999989)
+      (end 0.509999999999998 0.7199999999999989)
       (stroke
         (width 0.1)
         (type default)
@@ -1566,22 +1567,22 @@
       (at -0.509999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
-      (net 64 "VBOTF")
+      (net 65 "VBOTF")
       (uuid 028caa32-6e6b-746e-209c-6cf2505bb1ae)
     )
     (pad "2" smd rect
-      (at 0.5100000000000016 0 0)
+      (at 0.509999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 13 "GND")
-      (uuid 42ab2376-4c5c-bdea-249b-60b66a6c80aa)
+      (uuid 40fd16e0-68c9-5bbf-128f-ce5e43a9bf03)
     )
   )
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 4739633a-5056-9ec6-1819-5f3a7f76a2c6)
-    (at 61 71 0)
+    (uuid 51747cc6-5ddc-fea6-6a45-808676ae0266)
+    (at 62 71.5 0)
     (property "Reference" "C_CL0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -1708,8 +1709,8 @@
   (footprint
     "tscircuit:TLV3601DCKR"
     (layer F.Cu)
-    (uuid 161f48b4-7e8f-46b4-1900-bb4c4f6f42b4)
-    (at 65 71 0)
+    (uuid 3e352040-31cc-9e60-2564-1c8018fb9aa0)
+    (at 65 70.5 0)
     (property "Reference" "U_CMPL0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -2292,7 +2293,7 @@
       (at 1.1000739999999993 -0.6499859999999984 0)
       (size 0.850011 0.350012)
       (layers F.Cu F.Paste F.Mask)
-      (net 65 "AOUT0")
+      (net 66 "AOUT0")
       (uuid 61e47e00-039c-79df-5aab-8a42470c719d)
     )
     (pad "4" smd rect
@@ -2321,8 +2322,8 @@
   (footprint
     "tscircuit:TLV3601DCKR"
     (layer F.Cu)
-    (uuid 27bc6638-6fd3-9bc8-0763-9dc8610c6038)
-    (at 75 71 0)
+    (uuid 0328dc3c-093f-a5a4-15a8-27842210a964)
+    (at 75 70.5 0)
     (property "Reference" "U_CMPH0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -2905,7 +2906,7 @@
       (at 1.1000739999999993 -0.6499859999999984 0)
       (size 0.850011 0.350012)
       (layers F.Cu F.Paste F.Mask)
-      (net 65 "AOUT0")
+      (net 66 "AOUT0")
       (uuid 534fdda0-4e68-1e3f-0fdf-e5e26e27ea03)
     )
     (pad "4" smd rect
@@ -2934,8 +2935,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 095db44e-5f12-49b2-387d-b84e2ff245b2)
-    (at 79 71 0)
+    (uuid 6b82cabe-5f1a-48de-52b1-c6fe4649451e)
+    (at 78 71.5 0)
     (property "Reference" "C_CH0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -3062,8 +3063,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 6373cd38-04fc-30c8-6d6c-2ec82a23d338)
-    (at 63 76 0)
+    (uuid 1eb476c6-78db-8b3a-106b-8d3a580470c6)
+    (at 63 75 0)
     (property "Reference" "R_THL0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -3181,8 +3182,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 57724474-63da-c654-7043-48347cabca14)
-    (at 67.5 76 0)
+    (uuid 683944cc-5bd0-c2ec-4f68-410c42ffbf2c)
+    (at 66.5 75 0)
     (property "Reference" "C_THL0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -3255,7 +3256,7 @@
       )
     )
     (fp_line
-      (start 0.5100000000000016 -0.7199999999999989)
+      (start 0.509999999999998 -0.7199999999999989)
       (end -0.9799999999999969 -0.7199999999999989)
       (stroke
         (width 0.1)
@@ -3274,7 +3275,7 @@
     )
     (fp_line
       (start -0.9799999999999969 0.7199999999999989)
-      (end 0.5100000000000016 0.7199999999999989)
+      (end 0.509999999999998 0.7199999999999989)
       (stroke
         (width 0.1)
         (type default)
@@ -3299,18 +3300,18 @@
       (uuid 79175980-2723-0ec1-2ad1-3bfe7cc586bd)
     )
     (pad "2" smd rect
-      (at 0.5100000000000016 0 0)
+      (at 0.509999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 13 "GND")
-      (uuid 5b770d00-0982-c241-4871-887e659a2cc3)
+      (uuid 4e8b0e3c-226d-1064-6c9a-d0fc045d4da4)
     )
   )
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 299f66fe-1d36-e51e-10ce-633e0465e15e)
-    (at 72.5 76 0)
+    (uuid 37a55d42-2b3c-db62-1ed4-5982126bd7a2)
+    (at 73.5 75 0)
     (property "Reference" "R_THH0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -3428,8 +3429,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 7af66848-1c99-99b8-4bd6-64484bb99db8)
-    (at 77 76 0)
+    (uuid 02e153ba-658e-aa46-3201-57ba366ea646)
+    (at 77 75 0)
     (property "Reference" "C_THH0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -3556,8 +3557,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 2fae3e3e-38c1-bfc2-5ece-423e09a1bbc2)
-    (at 64 81 0)
+    (uuid 7e10226c-15a0-246c-52cf-d99444c0286c)
+    (at 64 79 0)
     (property "Reference" "Rgl0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -3675,8 +3676,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 60c858c4-07a7-a53c-7017-a33c27785ec4)
-    (at 68 81 0)
+    (uuid 7213fac2-7e7c-7ca2-751b-017e68b27f9e)
+    (at 67.5 79 0)
     (property "Reference" "Cgl0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -3803,8 +3804,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 34b2230a-33bd-daf6-63d2-270a049dd6f6)
-    (at 72 81 0)
+    (uuid 17027fc6-0a99-fde6-01ce-83fa0e3705da)
+    (at 72.5 79 0)
     (property "Reference" "Rgh0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -3922,8 +3923,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 65cc3d90-02a3-c070-6b13-be702c7c4390)
-    (at 76 81 0)
+    (uuid 4bd1de42-4bbe-23be-1cb1-da427ade27be)
+    (at 76 79 0)
     (property "Reference" "Cgh0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -4050,8 +4051,8 @@
   (footprint
     "tscircuit:pin_header_pinrow4_nopinlabels"
     (layer F.Cu)
-    (uuid 53d39488-43bc-6d78-24b3-908872dc7178)
-    (at 70 86 0)
+    (uuid 25b39f7e-42bc-5e82-54d3-a37e139c5a82)
+    (at 70 83 0)
     (property "Reference" "J_FPGA0"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -4154,7 +4155,7 @@
       (size 1.5 1.5)
       (drill 1)
       (layers *.Cu *.Mask)
-      (net 65 "AOUT0")
+      (net 66 "AOUT0")
       (uuid 767e9624-21a3-9924-3337-63dc77ed9f24)
     )
     (pad "4" thru_hole circle
@@ -4304,8 +4305,8 @@
   (footprint
     "tscircuit:diode_sod123"
     (layer F.Cu)
-    (uuid 1da89f02-4ac7-5efe-4cc8-a3021ba75afe)
-    (at 87 52 0)
+    (uuid 7eee3f8c-74a9-3e94-6840-bcb45bd83ad4)
+    (at 87 52.5 0)
     (property "Reference" "D_CLH1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -4403,10 +4404,111 @@
     )
   )
   (footprint
+    "tscircuit:diode_sod123"
+    (layer F.Cu)
+    (uuid 6ba0168c-7808-986c-7b8e-e5b46f2663d4)
+    (at 99 52.5 0)
+    (property "Reference" "D_CLL1"
+      (at 0 -3 0)
+      (layer F.SilkS)
+      (hide yes)
+      (uuid 77db7020-7e7a-de81-7ae5-b31e744644bd)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Value" "D"
+      (at 0 3 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 0bd2cfe0-2150-f97f-4e74-c2de7b988c3d)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Datasheet" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 0e3ac320-079b-54bf-00fb-e65e05a38803)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Description" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 2adc1500-0759-6b41-1c29-3e7e3fabe83d)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Supplier Part Number" "C2128"
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 2dd38308-216b-0128-1502-7f480899fd68)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (fp_text
+      reference
+      "D_CLL1"
+      (at 0 -0.7049999999999983 0)
+      (layer F.SilkS)
+      (effects
+        (font
+          (size 0.3333333333333333 0.3333333333333333)
+        )
+      )
+    )
+    (fp_rect
+      (start -2.35 -1.15)
+      (end 2.35 1.15)
+      (layer F.CrtYd)
+      (stroke
+        (width 0.05)
+        (type default)
+      )
+      (fill no)
+    )
+    (pad "1" smd rect
+      (at -1.65 0 0)
+      (size 0.9 1.2)
+      (layers F.Cu F.Paste F.Mask)
+      (net 13 "GND")
+      (uuid 6ad95d74-0871-5b54-59f6-a6cc43a15714)
+    )
+    (pad "2" smd rect
+      (at 1.65 0 0)
+      (size 0.9 1.2)
+      (layers F.Cu F.Paste F.Mask)
+      (net 18 "INA1")
+      (uuid 3d4c11c0-7534-b461-27b5-7a8225c9bf5d)
+    )
+  )
+  (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 22f5cb8a-749a-3676-0c2a-38765c45c58a)
-    (at 93 52 0)
+    (uuid 3b3aaafa-47a3-2cda-540b-aeba6074309a)
+    (at 89.5 57 0)
     (property "Reference" "Rser1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -4511,115 +4613,14 @@
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 14 "SIG1")
-      (uuid 242e8e44-10c3-9b84-02a7-573c161249fc)
+      (uuid 664f953a-79ba-87fa-72da-85465f6f9286)
     )
     (pad "2" smd rect
       (at 0.5099999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 18 "INA1")
-      (uuid 6a1c2d40-1827-e281-39cc-683e743f4d03)
-    )
-  )
-  (footprint
-    "tscircuit:diode_sod123"
-    (layer F.Cu)
-    (uuid 25a4f580-42cb-0880-54c4-f98013ab0480)
-    (at 99 52 0)
-    (property "Reference" "D_CLL1"
-      (at 0 -3 0)
-      (layer F.SilkS)
-      (hide yes)
-      (uuid 77db7020-7e7a-de81-7ae5-b31e744644bd)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Value" "D"
-      (at 0 3 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 0bd2cfe0-2150-f97f-4e74-c2de7b988c3d)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Datasheet" ""
-      (at 0 0 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 0e3ac320-079b-54bf-00fb-e65e05a38803)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Description" ""
-      (at 0 0 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 2adc1500-0759-6b41-1c29-3e7e3fabe83d)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Supplier Part Number" "C2128"
-      (at 0 0 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 2dd38308-216b-0128-1502-7f480899fd68)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (fp_text
-      reference
-      "D_CLL1"
-      (at 0 -0.7049999999999983 0)
-      (layer F.SilkS)
-      (effects
-        (font
-          (size 0.3333333333333333 0.3333333333333333)
-        )
-      )
-    )
-    (fp_rect
-      (start -2.35 -1.15)
-      (end 2.35 1.15)
-      (layer F.CrtYd)
-      (stroke
-        (width 0.05)
-        (type default)
-      )
-      (fill no)
-    )
-    (pad "1" smd rect
-      (at -1.65 0 0)
-      (size 0.9 1.2)
-      (layers F.Cu F.Paste F.Mask)
-      (net 13 "GND")
-      (uuid 49547fb2-1913-826e-7b7b-848e221c7952)
-    )
-    (pad "2" smd rect
-      (at 1.65 0 0)
-      (size 0.9 1.2)
-      (layers F.Cu F.Paste F.Mask)
-      (net 18 "INA1")
-      (uuid 056985e0-4815-b3ff-6a6b-12221cebd843)
+      (uuid 6da6dd60-4064-d7e1-118f-72de6383bd9d)
     )
   )
   (footprint
@@ -4972,7 +4973,7 @@
       (at -0.9499599999999999 0.7500619999999998 0)
       (size 0.5210048 0.2500122)
       (layers F.Cu F.Paste F.Mask)
-      (net 64 "VBOTF")
+      (net 65 "VBOTF")
       (uuid 18adf240-459a-11e1-5c1d-e9fe022a1a23)
     )
     (pad "5" smd rect
@@ -5022,8 +5023,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 4b601b8e-4c2f-e672-1c40-178e7b4fea72)
-    (at 99 57 0)
+    (uuid 1aab8fba-0e43-0dda-01da-8bfa0a8df5e6)
+    (at 96.5 57 0)
     (property "Reference" "C_TIA1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -5096,8 +5097,8 @@
       )
     )
     (fp_line
-      (start 0.51 -0.7199999999999989)
-      (end -0.98 -0.7199999999999989)
+      (start 0.5099999999999998 -0.7199999999999989)
+      (end -0.9800000000000004 -0.7199999999999989)
       (stroke
         (width 0.1)
         (type default)
@@ -5105,8 +5106,8 @@
       (layer F.SilkS)
     )
     (fp_line
-      (start -0.98 -0.7199999999999989)
-      (end -0.98 0.7199999999999989)
+      (start -0.9800000000000004 -0.7199999999999989)
+      (end -0.9800000000000004 0.7199999999999989)
       (stroke
         (width 0.1)
         (type default)
@@ -5114,8 +5115,8 @@
       (layer F.SilkS)
     )
     (fp_line
-      (start -0.98 0.7199999999999989)
-      (end 0.51 0.7199999999999989)
+      (start -0.9800000000000004 0.7199999999999989)
+      (end 0.5099999999999998 0.7199999999999989)
       (stroke
         (width 0.1)
         (type default)
@@ -5133,25 +5134,25 @@
       (fill no)
     )
     (pad "1" smd rect
-      (at -0.51 0 0)
+      (at -0.5099999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 57 "VANA")
-      (uuid 4f41f34e-4e56-0a92-1411-f78e7679f9ae)
+      (uuid 7b4bdc36-7149-310a-5dde-3e4a4a734b8a)
     )
     (pad "2" smd rect
-      (at 0.51 0 0)
+      (at 0.5099999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 13 "GND")
-      (uuid 6e0473a0-447c-5281-0902-e75e5682213d)
+      (uuid 1d2cf2a0-6f21-3d5f-3eea-77e21309d2dd)
     )
   )
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 7af66870-6e8d-e690-6225-64b055bce2d0)
-    (at 88 61.5 0)
+    (uuid 6c51daa0-78ba-5c80-7add-21a06e749fc0)
+    (at 90 60.5 0)
     (property "Reference" "Rf1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -5269,8 +5270,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 47eef382-3b86-71a2-2f1d-efc222b56de2)
-    (at 98 61.5 0)
+    (uuid 411e0f44-4d86-9124-59ef-1304665794e4)
+    (at 94 60.5 0)
     (property "Reference" "Cf1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -5343,8 +5344,8 @@
       )
     )
     (fp_line
-      (start 0.51 -0.7199999999999989)
-      (end -0.98 -0.7199999999999989)
+      (start 0.5099999999999998 -0.7199999999999989)
+      (end -0.9800000000000004 -0.7199999999999989)
       (stroke
         (width 0.1)
         (type default)
@@ -5352,8 +5353,8 @@
       (layer F.SilkS)
     )
     (fp_line
-      (start -0.98 -0.7199999999999989)
-      (end -0.98 0.7199999999999989)
+      (start -0.9800000000000004 -0.7199999999999989)
+      (end -0.9800000000000004 0.7199999999999989)
       (stroke
         (width 0.1)
         (type default)
@@ -5361,8 +5362,8 @@
       (layer F.SilkS)
     )
     (fp_line
-      (start -0.98 0.7199999999999989)
-      (end 0.51 0.7199999999999989)
+      (start -0.9800000000000004 0.7199999999999989)
+      (end 0.5099999999999998 0.7199999999999989)
       (stroke
         (width 0.1)
         (type default)
@@ -5387,18 +5388,18 @@
       (uuid 135ef378-000b-ff48-1376-f20826e1e4c8)
     )
     (pad "2" smd rect
-      (at 0.51 0 0)
+      (at 0.5099999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 18 "INA1")
-      (uuid 6fb3d440-42cc-f1e1-0ab2-47fe583181dd)
+      (uuid 7fb2e700-2e58-ce41-239b-7c7e758fc73d)
     )
   )
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 67dfeebe-2fb0-1342-38bf-eabe5ed01742)
-    (at 86 66 0)
+    (uuid 15f7cd44-5278-30bc-4517-d14423582cbc)
+    (at 86 65 0)
     (property "Reference" "R_VB1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -5509,15 +5510,15 @@
       (at 0.5099999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
-      (net 64 "VBOTF")
+      (net 65 "VBOTF")
       (uuid 5775f1a0-5695-c3a1-04a1-78e24d52d1dd)
     )
   )
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 44232800-37ba-a620-2b52-24401ee9a260)
-    (at 90.5 66 0)
+    (uuid 4d193896-40b0-b6b6-3448-34d627dfb2f6)
+    (at 89.5 65 0)
     (property "Reference" "C_VB1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -5630,7 +5631,7 @@
       (at -0.5099999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
-      (net 64 "VBOTF")
+      (net 65 "VBOTF")
       (uuid 019d5384-1508-4644-2873-39043bde2bc4)
     )
     (pad "2" smd rect
@@ -5644,8 +5645,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 4318127a-5477-ef86-13f8-0e7a7c680c7a)
-    (at 84 71 0)
+    (uuid 46090bfa-39a0-8a1a-2d38-083a20cf865a)
+    (at 85 71.5 0)
     (property "Reference" "C_CL1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -5755,11 +5756,11 @@
       (fill no)
     )
     (pad "1" smd rect
-      (at -0.5100000000000016 0 0)
+      (at -0.5099999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 4 "VDIG")
-      (uuid 70f1bbf4-7ba3-514c-6838-5e8c54cd6bcc)
+      (uuid 73e488fe-6079-963e-4d0e-a37e39a3b0be)
     )
     (pad "2" smd rect
       (at 0.5099999999999998 0 0)
@@ -5772,8 +5773,8 @@
   (footprint
     "tscircuit:TLV3601DCKR"
     (layer F.Cu)
-    (uuid 11fdf7f4-7a6d-f5f4-1d22-0c0c4b4df1f4)
-    (at 88 71 0)
+    (uuid 2a4d5700-36b5-d8e0-431e-5ac04f86dca0)
+    (at 88 70.5 0)
     (property "Reference" "U_CMPL1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -6385,8 +6386,8 @@
   (footprint
     "tscircuit:TLV3601DCKR"
     (layer F.Cu)
-    (uuid 239b1578-73f4-ec88-0b84-ee885ceb0f78)
-    (at 98 71 0)
+    (uuid 65599b04-71c2-1ce4-7e2a-9ec4756cdf5c)
+    (at 98 70.5 0)
     (property "Reference" "U_CMPH1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -6998,8 +6999,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 048d03a0-55e3-3a41-4fac-87de0ac3b603)
-    (at 102 71 0)
+    (uuid 27b74220-58f0-781f-2667-cda25a3fec9d)
+    (at 101 71.5 0)
     (property "Reference" "C_CH1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -7072,7 +7073,7 @@
       )
     )
     (fp_line
-      (start 0.5099999999999998 -0.7199999999999989)
+      (start 0.51 -0.7199999999999989)
       (end -0.98 -0.7199999999999989)
       (stroke
         (width 0.1)
@@ -7091,7 +7092,7 @@
     )
     (fp_line
       (start -0.98 0.7199999999999989)
-      (end 0.5099999999999998 0.7199999999999989)
+      (end 0.51 0.7199999999999989)
       (stroke
         (width 0.1)
         (type default)
@@ -7116,18 +7117,18 @@
       (uuid 1b4f1248-7db7-1468-1fe0-e978428718a8)
     )
     (pad "2" smd rect
-      (at 0.5099999999999998 0 0)
+      (at 0.51 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 13 "GND")
-      (uuid 71bad940-1fc6-8e81-322d-bc3e7bddf903)
+      (uuid 208db980-2cf1-805f-7a70-ba3e38100be3)
     )
   )
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 67951df8-00da-e008-694a-de082e4523f8)
-    (at 86 76 0)
+    (uuid 1a932606-7cfc-dbfa-148c-ddfa53e32006)
+    (at 86 75 0)
     (property "Reference" "R_THL1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -7245,8 +7246,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 093f430a-15a7-c4ea-2210-46ca2e78c8aa)
-    (at 90.5 76 0)
+    (uuid 00493274-0cb1-b454-191a-36342582b814)
+    (at 89.5 75 0)
     (property "Reference" "C_THL1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -7373,8 +7374,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 3ee31042-4b4b-9222-57b4-1402641c95e2)
-    (at 95.5 76 0)
+    (uuid 30dd19fe-3d45-9bde-49ae-1dbe56169f9e)
+    (at 96.5 75 0)
     (property "Reference" "R_THH1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -7447,8 +7448,8 @@
       )
     )
     (fp_line
-      (start -0.15364100000000036 -0.379999999999999)
-      (end 0.15364100000000036 -0.379999999999999)
+      (start -0.15364099999999992 -0.379999999999999)
+      (end 0.15364099999999992 -0.379999999999999)
       (stroke
         (width 0.12)
         (type default)
@@ -7456,8 +7457,8 @@
       (layer F.SilkS)
     )
     (fp_line
-      (start -0.15364100000000036 0.379999999999999)
-      (end 0.15364100000000036 0.379999999999999)
+      (start -0.15364099999999992 0.379999999999999)
+      (end 0.15364099999999992 0.379999999999999)
       (stroke
         (width 0.12)
         (type default)
@@ -7492,8 +7493,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 108322a0-6af3-6081-3a9c-619e1fd3dc43)
-    (at 100 76 0)
+    (uuid 4da2e6c0-57ec-db5f-0283-62825cf3a063)
+    (at 100 75 0)
     (property "Reference" "C_THH1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -7620,8 +7621,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 5fd86a54-0897-93ac-7107-91ac26887054)
-    (at 87 81 0)
+    (uuid 51c5b17e-45ca-5082-22a5-ad7e74ea5482)
+    (at 87 79 0)
     (property "Reference" "Rgl1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -7739,8 +7740,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 07b95944-60b6-a4bc-36d9-5d443196a0bc)
-    (at 91 81 0)
+    (uuid 1bdc2a42-2844-ac22-34ad-2e024115afe2)
+    (at 90.5 79 0)
     (property "Reference" "Cgl1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -7867,8 +7868,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 38d373ca-2f9c-8a36-67f3-77ca007c8636)
-    (at 95 81 0)
+    (uuid 517ff77a-5de8-795a-6a50-fb3a76b97d1a)
+    (at 95.5 79 0)
     (property "Reference" "Rgh1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -7986,8 +7987,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 69ed8e50-017d-9050-66f2-6db0309d9450)
-    (at 99 81 0)
+    (uuid 47b08d82-4fdf-747e-1890-89827eff787e)
+    (at 99 79 0)
     (property "Reference" "Cgh1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -8114,8 +8115,8 @@
   (footprint
     "tscircuit:pin_header_pinrow4_nopinlabels"
     (layer F.Cu)
-    (uuid 4fb243c8-47dd-be38-2092-3fc876fdc238)
-    (at 93 86 0)
+    (uuid 29d4f03e-3e9b-0dc2-58f4-f43e0f7b09c2)
+    (at 93 83 0)
     (property "Reference" "J_FPGA1"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -8368,8 +8369,8 @@
   (footprint
     "tscircuit:diode_sod123"
     (layer F.Cu)
-    (uuid 3e366860-1c39-d581-76aa-13622ee5aebd)
-    (at 110 52 0)
+    (uuid 32d567c0-4c82-de01-3424-dc3e4b336983)
+    (at 110 52.5 0)
     (property "Reference" "D_CLH2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -8467,10 +8468,111 @@
     )
   )
   (footprint
+    "tscircuit:diode_sod123"
+    (layer F.Cu)
+    (uuid 1ab51300-64a3-32c1-1c04-877e6353be43)
+    (at 122 52.5 0)
+    (property "Reference" "D_CLL2"
+      (at 0 -3 0)
+      (layer F.SilkS)
+      (hide yes)
+      (uuid 0a6728c0-03c7-ba5f-02d7-b40209772263)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Value" "D"
+      (at 0 3 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 16991e80-168a-aadf-43ae-743e70d23d9d)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Datasheet" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 6f82a400-7622-1261-7cc1-80c27c9f10dd)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Description" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 5b333fa0-7eb5-e95f-5dc7-6ce23a44c323)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Supplier Part Number" "C2128"
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 10f41a46-048b-9866-07dc-e97a14456b5a)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (fp_text
+      reference
+      "D_CLL2"
+      (at 0 -0.7049999999999983 0)
+      (layer F.SilkS)
+      (effects
+        (font
+          (size 0.3333333333333333 0.3333333333333333)
+        )
+      )
+    )
+    (fp_rect
+      (start -2.35 -1.15)
+      (end 2.35 1.15)
+      (layer F.CrtYd)
+      (stroke
+        (width 0.05)
+        (type default)
+      )
+      (fill no)
+    )
+    (pad "1" smd rect
+      (at -1.6499999999999986 0 0)
+      (size 0.9 1.2)
+      (layers F.Cu F.Paste F.Mask)
+      (net 13 "GND")
+      (uuid 3f46b8f8-52b1-abb8-661c-9e7879879138)
+    )
+    (pad "2" smd rect
+      (at 1.6499999999999986 0 0)
+      (size 0.9 1.2)
+      (layers F.Cu F.Paste F.Mask)
+      (net 32 "INA2")
+      (uuid 2aef4ac0-7ce3-957f-3128-1fc220cc2afd)
+    )
+  )
+  (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 57569080-4e39-319f-0c37-0c4266a74a23)
-    (at 116 52 0)
+    (uuid 45d15ee0-3986-e6e1-4720-d35e38377263)
+    (at 112.5 57 0)
     (property "Reference" "Rser2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -8575,115 +8677,14 @@
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 28 "SIG2")
-      (uuid 05d874ba-1943-677a-2cae-5a3a40194cfa)
+      (uuid 6fa967c8-5c3e-7508-48d3-824835688f88)
     )
     (pad "2" smd rect
-      (at 0.5100000000000016 0 0)
+      (at 0.5099999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 32 "INA2")
-      (uuid 72531100-205e-c641-3195-847e7c7630c3)
-    )
-  )
-  (footprint
-    "tscircuit:diode_sod123"
-    (layer F.Cu)
-    (uuid 5015a400-557a-1e1f-04f6-1fc25f665da3)
-    (at 122 52 0)
-    (property "Reference" "D_CLL2"
-      (at 0 -3 0)
-      (layer F.SilkS)
-      (hide yes)
-      (uuid 0a6728c0-03c7-ba5f-02d7-b40209772263)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Value" "D"
-      (at 0 3 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 16991e80-168a-aadf-43ae-743e70d23d9d)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Datasheet" ""
-      (at 0 0 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 6f82a400-7622-1261-7cc1-80c27c9f10dd)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Description" ""
-      (at 0 0 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 5b333fa0-7eb5-e95f-5dc7-6ce23a44c323)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Supplier Part Number" "C2128"
-      (at 0 0 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 10f41a46-048b-9866-07dc-e97a14456b5a)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (fp_text
-      reference
-      "D_CLL2"
-      (at 0 -0.7049999999999983 0)
-      (layer F.SilkS)
-      (effects
-        (font
-          (size 0.3333333333333333 0.3333333333333333)
-        )
-      )
-    )
-    (fp_rect
-      (start -2.35 -1.15)
-      (end 2.35 1.15)
-      (layer F.CrtYd)
-      (stroke
-        (width 0.05)
-        (type default)
-      )
-      (fill no)
-    )
-    (pad "1" smd rect
-      (at -1.6499999999999986 0 0)
-      (size 0.9 1.2)
-      (layers F.Cu F.Paste F.Mask)
-      (net 13 "GND")
-      (uuid 363b238a-22d0-30ca-0f65-3e0a0405b4b6)
-    )
-    (pad "2" smd rect
-      (at 1.6499999999999986 0 0)
-      (size 0.9 1.2)
-      (layers F.Cu F.Paste F.Mask)
-      (net 32 "INA2")
-      (uuid 02b25560-54a6-a01f-5965-15220770ca63)
+      (uuid 362c9000-77df-2541-25ea-da822c09703d)
     )
   )
   (footprint
@@ -9036,7 +9037,7 @@
       (at -0.9499600000000008 0.7500619999999998 0)
       (size 0.5210048 0.2500122)
       (layers F.Cu F.Paste F.Mask)
-      (net 64 "VBOTF")
+      (net 65 "VBOTF")
       (uuid 3bfc8e40-65bb-6d9f-0773-697e56d49aa3)
     )
     (pad "5" smd rect
@@ -9086,8 +9087,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 26d7ea40-7eb7-d7df-2447-99fe3628a3e3)
-    (at 122 57 0)
+    (uuid 012f1ba0-7e29-2a21-027e-901e7cd9b5a3)
+    (at 119.5 57 0)
     (property "Reference" "C_TIA2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -9214,8 +9215,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 535d8b20-2d4a-2f1f-520e-16a22e99a39d)
-    (at 111 61.5 0)
+    (uuid 67f9dbc0-175e-6a01-6949-503e160ef583)
+    (at 113 60.5 0)
     (property "Reference" "Rf2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -9333,8 +9334,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 77d818e0-0780-2ce1-7927-8d5e0630b863)
-    (at 121 61.5 0)
+    (uuid 30381de0-4f20-27e1-3187-925e4dd0b363)
+    (at 117 60.5 0)
     (property "Reference" "Cf2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -9461,8 +9462,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 58c25800-4ccd-6a1f-0da2-d3c2681311a3)
-    (at 109 66 0)
+    (uuid 6a1de3e0-0fad-a5ff-4ac2-97e25acd2a3d)
+    (at 109 65 0)
     (property "Reference" "R_VB2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -9573,15 +9574,15 @@
       (at 0.5099999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
-      (net 64 "VBOTF")
+      (net 65 "VBOTF")
       (uuid 1ffba440-71ef-eeff-3c1b-c64215d8847d)
     )
   )
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 79bd9060-06ea-29df-786e-1be208399e5d)
-    (at 113.5 66 0)
+    (uuid 7c51cc60-0455-eddf-7b02-57e205a5625d)
+    (at 112.5 65 0)
     (property "Reference" "C_VB2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -9694,7 +9695,7 @@
       (at -0.5099999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
-      (net 64 "VBOTF")
+      (net 65 "VBOTF")
       (uuid 2ba45682-3f0f-4942-527a-3c0265e52ec2)
     )
     (pad "2" smd rect
@@ -9708,8 +9709,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 61d64cc0-43b9-755f-16b6-c88271270663)
-    (at 107 71 0)
+    (uuid 59545800-2603-edc1-5aa3-cc7e24b47943)
+    (at 108 71.5 0)
     (property "Reference" "C_CL2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -9836,8 +9837,8 @@
   (footprint
     "tscircuit:TLV3601DCKR"
     (layer F.Cu)
-    (uuid 7e1a1000-23a9-d21f-36c6-6bc26ec9565d)
-    (at 111 71 0)
+    (uuid 211bbdc0-5f8b-fc7f-1fcc-494260db70fd)
+    (at 111 70.5 0)
     (property "Reference" "U_CMPL2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -10449,8 +10450,8 @@
   (footprint
     "tscircuit:TLV3601DCKR"
     (layer F.Cu)
-    (uuid 2c03e400-798b-de1f-1f1b-a03e3b549da3)
-    (at 121 71 0)
+    (uuid 55e619c0-2ac1-a07f-5496-a5422c1114fd)
+    (at 121 70.5 0)
     (property "Reference" "U_CMPH2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -11062,8 +11063,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 171e9360-4351-aa81-623e-179e07cdd9bd)
-    (at 125 71 0)
+    (uuid 4555c520-3a02-80a1-46a5-399e38b30c23)
+    (at 124 71.5 0)
     (property "Reference" "C_CH2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -11190,8 +11191,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 28455380-7d4a-6e9f-22da-30be37960d23)
-    (at 109 76 0)
+    (uuid 656517a0-402a-aa7f-1a45-936274b5d143)
+    (at 109 75 0)
     (property "Reference" "R_THL2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -11309,8 +11310,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 53624ae0-2d45-6f5f-5212-d6622e94e3dd)
-    (at 113.5 76 0)
+    (uuid 55f686e0-2ab1-335f-54a7-12622c00a7dd)
+    (at 112.5 75 0)
     (property "Reference" "C_THL2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -11437,8 +11438,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 0330fae0-7c27-4ae1-0480-6f5e7ad7d663)
-    (at 118.5 76 0)
+    (uuid 1d46c620-6211-7fa1-1e96-3a9e60c20b23)
+    (at 119.5 75 0)
     (property "Reference" "R_THH2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -11556,8 +11557,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 020e6d20-5861-d0c1-4d2d-f15e0d424c83)
-    (at 123 76 0)
+    (uuid 3b115700-6a7e-6b1f-100e-2d3e4a6210a3)
+    (at 123 75 0)
     (property "Reference" "C_THH2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -11684,8 +11685,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 708fdb80-34ff-e69f-2570-57427fe09523)
-    (at 110 81 0)
+    (uuid 119585a0-48da-b841-5cb5-09de0244cbfd)
+    (at 110 79 0)
     (property "Reference" "Rgl2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -11803,8 +11804,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 2d6d6420-7822-5dff-1db2-201e3cbe1dc3)
-    (at 114 81 0)
+    (uuid 45042cc0-3a54-1901-4653-a13e3904a483)
+    (at 113.5 79 0)
     (property "Reference" "Cgl2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -11931,8 +11932,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 15b51340-44bb-2aa1-60d4-977e0664599d)
-    (at 118 81 0)
+    (uuid 64688d80-1c3f-2cbf-6319-19021d8ea13d)
+    (at 118.5 79 0)
     (property "Reference" "Rgh2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -12050,8 +12051,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 0a5a9000-64ca-cde1-40c4-f43e19ab49a3)
-    (at 122 81 0)
+    (uuid 77cad120-1d5a-933f-3d15-aaa2687a177d)
+    (at 122 79 0)
     (property "Reference" "Cgh2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -12178,8 +12179,8 @@
   (footprint
     "tscircuit:pin_header_pinrow4_nopinlabels"
     (layer F.Cu)
-    (uuid 090607e0-516a-3601-5425-8c1e064ab1c3)
-    (at 116 86 0)
+    (uuid 51a6bb80-08c9-8261-6339-c042425601dd)
+    (at 116 83 0)
     (property "Reference" "J_FPGA2"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -12432,8 +12433,8 @@
   (footprint
     "tscircuit:diode_sod123"
     (layer F.Cu)
-    (uuid 5f642d80-04f3-ef9f-557c-4e42501373dd)
-    (at 133 52 0)
+    (uuid 5918ab20-263f-9aa1-5a68-1f9e24f02623)
+    (at 133 52.5 0)
     (property "Reference" "D_CLH3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -12531,10 +12532,111 @@
     )
   )
   (footprint
+    "tscircuit:diode_sod123"
+    (layer F.Cu)
+    (uuid 40f85660-3e5f-ef61-4247-cade3d107ae3)
+    (at 145 52.5 0)
+    (property "Reference" "D_CLL3"
+      (at 0 -3 0)
+      (layer F.SilkS)
+      (hide yes)
+      (uuid 73563e60-79f5-acc1-7f6a-e4de78cb767d)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Value" "D"
+      (at 0 3 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 215f6d20-0bc4-5c3f-38e8-259e660beefd)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Datasheet" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 12bff4e0-0c20-867f-0581-181e011e5643)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Description" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 1ebd6bc0-04c5-3dff-2847-e7be4bca917d)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Supplier Part Number" "C2128"
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 0beb4e7c-1853-d05c-24bc-523c3124d41c)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (fp_text
+      reference
+      "D_CLL3"
+      (at 0 -0.7049999999999983 0)
+      (layer F.SilkS)
+      (effects
+        (font
+          (size 0.3333333333333333 0.3333333333333333)
+        )
+      )
+    )
+    (fp_rect
+      (start -2.35 -1.15)
+      (end 2.35 1.15)
+      (layer F.CrtYd)
+      (stroke
+        (width 0.05)
+        (type default)
+      )
+      (fill no)
+    )
+    (pad "1" smd rect
+      (at -1.6499999999999986 0 0)
+      (size 0.9 1.2)
+      (layers F.Cu F.Paste F.Mask)
+      (net 13 "GND")
+      (uuid 3a595ab4-26ee-67f4-1383-753400188274)
+    )
+    (pad "2" smd rect
+      (at 1.6499999999999986 0 0)
+      (size 0.9 1.2)
+      (layers F.Cu F.Paste F.Mask)
+      (net 47 "INA3")
+      (uuid 598b2380-0796-d8c1-4a5d-71fe63ae4343)
+    )
+  )
+  (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 3628cb60-6f66-f6bf-14f6-b8de45798503)
-    (at 139 52 0)
+    (uuid 6c14a240-1343-a381-6d64-16be11f42f03)
+    (at 135.5 57 0)
     (property "Reference" "Rser3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -12639,115 +12741,14 @@
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 42 "SIG3")
-      (uuid 146dcbc0-3d86-7eff-7085-36421e90eb83)
+      (uuid 3caac120-1549-899f-673d-d45e46cde0e3)
     )
     (pad "2" smd rect
       (at 0.509999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 47 "INA3")
-      (uuid 53ed5328-1d0a-cb78-71fd-15e80104f748)
-    )
-  )
-  (footprint
-    "tscircuit:diode_sod123"
-    (layer F.Cu)
-    (uuid 2ee7dee0-76a7-e33f-1c37-a55e3e389883)
-    (at 145 52 0)
-    (property "Reference" "D_CLL3"
-      (at 0 -3 0)
-      (layer F.SilkS)
-      (hide yes)
-      (uuid 73563e60-79f5-acc1-7f6a-e4de78cb767d)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Value" "D"
-      (at 0 3 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 215f6d20-0bc4-5c3f-38e8-259e660beefd)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Datasheet" ""
-      (at 0 0 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 12bff4e0-0c20-867f-0581-181e011e5643)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Description" ""
-      (at 0 0 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 1ebd6bc0-04c5-3dff-2847-e7be4bca917d)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (property "Supplier Part Number" "C2128"
-      (at 0 0 0)
-      (layer F.Fab)
-      (hide yes)
-      (uuid 0beb4e7c-1853-d05c-24bc-523c3124d41c)
-      (effects
-        (font
-          (size 1.27 1.27)
-          (thickness 0.15)
-        )
-      )
-    )
-    (fp_text
-      reference
-      "D_CLL3"
-      (at 0 -0.7049999999999983 0)
-      (layer F.SilkS)
-      (effects
-        (font
-          (size 0.3333333333333333 0.3333333333333333)
-        )
-      )
-    )
-    (fp_rect
-      (start -2.35 -1.15)
-      (end 2.35 1.15)
-      (layer F.CrtYd)
-      (stroke
-        (width 0.05)
-        (type default)
-      )
-      (fill no)
-    )
-    (pad "1" smd rect
-      (at -1.6499999999999986 0 0)
-      (size 0.9 1.2)
-      (layers F.Cu F.Paste F.Mask)
-      (net 13 "GND")
-      (uuid 5024c8ca-638f-bb8a-76fa-ae4a759a5ef6)
-    )
-    (pad "2" smd rect
-      (at 1.6499999999999986 0 0)
-      (size 0.9 1.2)
-      (layers F.Cu F.Paste F.Mask)
-      (net 47 "INA3")
-      (uuid 7e37e720-2fd3-ce21-2220-7c9e7414c75d)
+      (uuid 14219b96-7ae6-45ca-09ee-272a6709f776)
     )
   )
   (footprint
@@ -13100,7 +13101,7 @@
       (at -0.9499599999999973 0.7500619999999998 0)
       (size 0.5210048 0.2500122)
       (layers F.Cu F.Paste F.Mask)
-      (net 64 "VBOTF")
+      (net 65 "VBOTF")
       (uuid 0f941d60-4eb3-e6c1-5304-151e0b43ef03)
     )
     (pad "5" smd rect
@@ -13150,8 +13151,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 14465a80-6eb6-9861-36d9-29be23971423)
-    (at 145 57 0)
+    (uuid 1b356f00-6422-d6c1-1c84-e37e62d36243)
+    (at 142.5 57 0)
     (property "Reference" "C_TIA3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -13278,8 +13279,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 19af7c20-65a8-c9a1-1afe-f09e64595523)
-    (at 134 61.5 0)
+    (uuid 2af91d00-55ae-9d3f-29a9-a88256fe11bd)
+    (at 136 60.5 0)
     (property "Reference" "Rf3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -13397,8 +13398,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 1b1adfe0-658c-da5f-19cb-6b6266dc4edd)
-    (at 144 61.5 0)
+    (uuid 4a3e7140-3519-d481-4b8d-e5be33ca6003)
+    (at 140 60.5 0)
     (property "Reference" "Cf3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -13525,8 +13526,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 569d1d20-03d3-20c1-5e43-5ea2474c637d)
-    (at 132 66 0)
+    (uuid 197d5900-40f2-e4e1-649c-dd3e0a2c9f5d)
+    (at 132 65 0)
     (property "Reference" "R_VB3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -13637,15 +13638,15 @@
       (at 0.509999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
-      (net 64 "VBOTF")
+      (net 65 "VBOTF")
       (uuid 1c6c454c-729b-9c14-01a3-7d746f54a12c)
     )
   )
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 0cb08920-73f7-311f-0b61-14a27546a59d)
-    (at 136.5 66 0)
+    (uuid 0f44c520-7162-f51f-0df5-50a272b2699d)
+    (at 135.5 65 0)
     (property "Reference" "C_VB3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -13758,7 +13759,7 @@
       (at -0.509999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
-      (net 64 "VBOTF")
+      (net 65 "VBOTF")
       (uuid 2e188160-23db-c95f-75d0-141e383ba123)
     )
     (pad "2" smd rect
@@ -13772,8 +13773,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 4d892860-0ce7-1581-6757-53623e386ebd)
-    (at 130 71 0)
+    (uuid 735aab60-0bfd-9a61-74aa-1fde0aae25e3)
+    (at 131 71.5 0)
     (property "Reference" "C_CL3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -13900,8 +13901,8 @@
   (footprint
     "tscircuit:TLV3601DCKR"
     (layer F.Cu)
-    (uuid 60b82ae0-44d7-973f-1598-a6a27008e483)
-    (at 134 71 0)
+    (uuid 052785a0-7a30-c021-0676-fa1e78e14ba3)
+    (at 134 70.5 0)
     (property "Reference" "U_CMPL3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -14513,8 +14514,8 @@
   (footprint
     "tscircuit:TLV3601DCKR"
     (layer F.Cu)
-    (uuid 0ad61ee0-6546-5cc1-4049-655e1a26d883)
-    (at 144 71 0)
+    (uuid 2fa2d660-5104-e3df-2e53-61e25254585d)
+    (at 144 70.5 0)
     (property "Reference" "U_CMPH3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -15126,8 +15127,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 384c5880-2223-e561-7c94-234228fb9edd)
-    (at 148 71 0)
+    (uuid 6b990880-13bf-3d41-6ce8-7cfe126fc8c3)
+    (at 147 71.5 0)
     (property "Reference" "C_CH3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -15254,8 +15255,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 78e5de60-2ca9-e3bf-2dc6-5a2277c967fd)
-    (at 132 76 0)
+    (uuid 49fa5d80-1075-e061-6ae6-1e423aa9a3dd)
+    (at 132 75 0)
     (property "Reference" "R_THL3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -15373,8 +15374,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 19aabc60-65ad-8961-1afa-30de645e14e3)
-    (at 136.5 76 0)
+    (uuid 17168060-6841-c561-1865-f4de66f250e3)
+    (at 135.5 75 0)
     (property "Reference" "C_THL3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -15501,8 +15502,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 1d374e40-6220-f781-1e86-c2be60d18303)
-    (at 141.5 76 0)
+    (uuid 374d1980-480b-2c41-389c-8dfe46bbb7c3)
+    (at 142.5 75 0)
     (property "Reference" "R_THH3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -15620,8 +15621,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 149ffce0-45d0-4101-5fbf-811e054f433d)
-    (at 146 76 0)
+    (uuid 287fc740-7d0f-fadf-229f-bcfe37d080e3)
+    (at 146 75 0)
     (property "Reference" "C_THH3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -15748,8 +15749,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 5dfe4bc0-4791-765f-12de-c7826d4f0563)
-    (at 133 81 0)
+    (uuid 24271560-3649-2881-6f46-999e14d65bbd)
+    (at 133 79 0)
     (property "Reference" "Rgl3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -15867,8 +15868,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 1adbd460-754c-1241-3043-afde2a2c8e03)
-    (at 137 81 0)
+    (uuid 4deecc00-32b8-ee3f-4c9f-5782340862bd)
+    (at 136.5 79 0)
     (property "Reference" "Cgl3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -15995,8 +15996,8 @@
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 3aeb77a0-6aa4-4a7f-1034-0c9e4a3c3143)
-    (at 141 81 0)
+    (uuid 4a623a20-3645-801f-4912-c5a23794f49d)
+    (at 141.5 79 0)
     (property "Reference" "Rgh3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -16114,8 +16115,8 @@
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 16d33520-439d-08c1-61f2-b95e07827b7d)
-    (at 145 81 0)
+    (uuid 670769c0-3e88-585f-1be7-e58276582363)
+    (at 145 79 0)
     (property "Reference" "Cgh3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -16242,8 +16243,8 @@
   (footprint
     "tscircuit:pin_header_pinrow4_nopinlabels"
     (layer F.Cu)
-    (uuid 2a33cd00-303c-70e1-7553-513e1ae3135d)
-    (at 139 86 0)
+    (uuid 72d480a0-1864-42bf-420b-fb226383c6fd)
+    (at 139 83 0)
     (property "Reference" "J_FPGA3"
       (at 0 -3 0)
       (layer F.SilkS)
@@ -17055,7 +17056,7 @@
       (size 0.2800096 0.7999984)
       (layers F.Cu F.Paste F.Mask)
       (roundrect_rratio 0.5)
-      (net 62 "HV_BIAS")
+      (net 62 "HV_APD")
       (uuid 6b327798-2a15-0888-40a3-775854a408c8)
     )
     (pad "3" smd roundrect
@@ -17178,9 +17179,128 @@
     )
   )
   (footprint
+    "tscircuit:resistor_res0402"
+    (layer F.Cu)
+    (uuid 697b9f00-3c14-231f-1e5c-1ac278cc58a3)
+    (at 161 70 0)
+    (property "Reference" "R_APD"
+      (at 0 -3 0)
+      (layer F.SilkS)
+      (hide yes)
+      (uuid 5316a530-4a9d-e3b0-4225-223039ac60b0)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Value" "20Ω"
+      (at 0 3 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 38e51c84-6db8-f23c-1457-00fc450af044)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Datasheet" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 4f929884-4719-d704-3ea1-158436285404)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Description" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 2fd3312e-02de-7132-3590-13926841b5f2)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Supplier Part Number" "C25089, C2906910, C138031"
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 29429760-312d-a681-7462-1b9e19f1ddbd)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (fp_text
+      reference
+      "R_APD"
+      (at 0 -1.2199999999999989 0)
+      (layer F.SilkS)
+      (effects
+        (font
+          (size 0.26666666666666666 0.26666666666666666)
+        )
+      )
+    )
+    (fp_line
+      (start -0.15364100000000036 -0.379999999999999)
+      (end 0.15364100000000036 -0.379999999999999)
+      (stroke
+        (width 0.12)
+        (type default)
+      )
+      (layer F.SilkS)
+    )
+    (fp_line
+      (start -0.15364100000000036 0.379999999999999)
+      (end 0.15364100000000036 0.379999999999999)
+      (stroke
+        (width 0.12)
+        (type default)
+      )
+      (layer F.SilkS)
+    )
+    (fp_rect
+      (start -0.93 -0.47)
+      (end 0.93 0.47)
+      (layer F.CrtYd)
+      (stroke
+        (width 0.05)
+        (type default)
+      )
+      (fill no)
+    )
+    (pad "1" smd rect
+      (at -0.509999999999998 0 0)
+      (size 0.54 0.64)
+      (layers F.Cu F.Paste F.Mask)
+      (net 62 "HV_APD")
+      (uuid 3b6106c0-72aa-ae81-20b6-63c2313de6fd)
+    )
+    (pad "2" smd rect
+      (at 0.509999999999998 0 0)
+      (size 0.54 0.64)
+      (layers F.Cu F.Paste F.Mask)
+      (net 64 "HV_BIAS")
+      (uuid 500a1750-3efd-ca10-31fa-54905d0d8cd0)
+    )
+  )
+  (footprint
     "tscircuit:capacitor_0805"
     (layer F.Cu)
-    (uuid 18f51280-7365-5061-322a-71be2845cc23)
+    (uuid 2473baa0-7ee3-f881-26ab-c99e33c47443)
     (at 161 63 0)
     (property "Reference" "C_HVIN1"
       (at 0 -3 0)
@@ -17295,20 +17415,20 @@
       (size 1.025 1.4)
       (layers F.Cu F.Paste F.Mask)
       (net 60 "V12")
-      (uuid 21be4502-0e53-5242-0517-a07e1882933e)
+      (uuid 68bfde7c-7c2a-d13c-706a-3c045cff4944)
     )
     (pad "2" smd rect
       (at 0.9125000000000014 0 0)
       (size 1.025 1.4)
       (layers F.Cu F.Paste F.Mask)
       (net 13 "GND")
-      (uuid 48aa1720-6561-9e21-136d-53623e86f75d)
+      (uuid 206d21c0-7261-6c7f-3baa-48c2164a01fd)
     )
   )
   (footprint
     "tscircuit:capacitor_0402"
     (layer F.Cu)
-    (uuid 3cecf980-1d83-4461-77f3-82422d9c3fdd)
+    (uuid 316e5160-2901-ec81-7c8d-d59e221d97bd)
     (at 171 63 0)
     (property "Reference" "C_HVIN2"
       (at 0 -3 0)
@@ -17423,20 +17543,20 @@
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 60 "V12")
-      (uuid 2944b008-3caf-a2c8-501a-958863858848)
+      (uuid 4c3d2c7a-38d2-39ba-2567-46fa11fc543a)
     )
     (pad "2" smd rect
       (at 0.5100000000000051 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 13 "GND")
-      (uuid 6758f180-46b2-c3c1-0b41-86fe5d35d1bd)
+      (uuid 3f1bfc20-6eef-b921-1cfb-6e6234f8dc5d)
     )
   )
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 7af7b840-2087-7a5f-39e8-c3826ba6fe9d)
+    (uuid 5cb5cbd6-691e-4db6-7586-cf967e10ae8a)
     (at 166 60 0)
     (property "Reference" "R_HVEN"
       (at 0 -3 0)
@@ -17542,20 +17662,20 @@
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 60 "V12")
-      (uuid 4c3d2c7a-38d2-39ba-2567-46fa11fc543a)
+      (uuid 73515680-32bb-445f-2738-20c27ed47a1d)
     )
     (pad "2" smd rect
       (at 0.5100000000000051 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 61 "HV_EN")
-      (uuid 3f1bfc20-6eef-b921-1cfb-6e6234f8dc5d)
+      (uuid 391d6bb8-4c88-5e78-5ff3-5138735e43f8)
     )
   )
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 485ed062-54c7-5242-612f-d4226d985602)
+    (uuid 485acda0-3bf2-4bc0-2f89-c9e023214800)
     (at 163 74 0)
     (property "Reference" "R_HVMON1"
       (at 0 -3 0)
@@ -17660,21 +17780,21 @@
       (at -0.509999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
-      (net 62 "HV_BIAS")
-      (uuid 154d9602-01e2-a342-1188-4f7e24f3423e)
+      (net 64 "HV_BIAS")
+      (uuid 5242dec0-65ad-d180-7918-c440737c4900)
     )
     (pad "2" smd rect
       (at 0.509999999999998 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 63 "HV_MON")
-      (uuid 7b9145a0-299c-fae1-2857-4fde7a4b9a9d)
+      (uuid 38cfdbc0-753b-d981-2347-8ec22eacbbfd)
     )
   )
   (footprint
     "tscircuit:resistor_res0402"
     (layer F.Cu)
-    (uuid 006867ac-0c00-1a34-1868-9c1424d11df4)
+    (uuid 6eddfa52-7b46-7c32-7851-01ee6be8800e)
     (at 169 74 0)
     (property "Reference" "R_HVMON2"
       (at 0 -3 0)
@@ -17780,14 +17900,14 @@
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 63 "HV_MON")
-      (uuid 49bf5720-1034-0e01-6a27-73223be527bd)
+      (uuid 06d004c0-5323-6061-52e9-3a7e070a2aa3)
     )
     (pad "2" smd rect
       (at 0.5100000000000051 0 0)
       (size 0.54 0.64)
       (layers F.Cu F.Paste F.Mask)
       (net 13 "GND")
-      (uuid 5f521f86-4be7-2cc6-387c-3a0625114746)
+      (uuid 083e553c-1ba9-47fc-2f14-3abc427f2d7c)
     )
   )
   (footprint
@@ -17800,7 +17920,7 @@
       (size 3.2 3.2)
       (drill 3.2)
       (layers *.Cu *.Mask)
-      (uuid 98ac21da-fad3-4eb7-8c4d-cc060ae84b15)
+      (uuid ed54dee7-1785-42af-a316-61fdb738cdeb)
     )
   )
   (footprint
@@ -17813,7 +17933,7 @@
       (size 3.2 3.2)
       (drill 3.2)
       (layers *.Cu *.Mask)
-      (uuid c109d338-d446-4a46-8ff7-85d10f15692b)
+      (uuid 1c29379c-d25f-4ef3-94fc-1efe5bae8dee)
     )
   )
   (footprint
@@ -17826,7 +17946,7 @@
       (size 3.2 3.2)
       (drill 3.2)
       (layers *.Cu *.Mask)
-      (uuid 15124560-5bb8-4541-8244-5b4253819bb4)
+      (uuid 4bad9f2f-fbfb-4fb6-bb44-29f69237d14b)
     )
   )
   (footprint
@@ -17839,7 +17959,7 @@
       (size 3.2 3.2)
       (drill 3.2)
       (layers *.Cu *.Mask)
-      (uuid e7ce9e51-c2e0-45a8-8f3a-1496821e9f11)
+      (uuid 0fbf5e57-0fa8-4a4f-8708-d43f2fd3b9f1)
     )
   )
   (gr_line
@@ -18011,7 +18131,7 @@
   )
   (gr_text
     "+"
-    (at 62.425 52 0)
+    (at 62.425 52.5 0)
     (layer F.Fab)
     (uuid 59c44560-7d46-ef1f-5f36-67223bb3bd63)
     (effects
@@ -18022,7 +18142,7 @@
   )
   (gr_text
     "-"
-    (at 65.575 52 0)
+    (at 65.575 52.5 0)
     (layer F.Fab)
     (uuid 4a954cc0-6e17-f67f-6e65-5fc24ae2b603)
     (effects
@@ -18033,7 +18153,7 @@
   )
   (gr_text
     "+"
-    (at 74.425 52 0)
+    (at 74.425 52.5 0)
     (layer F.Fab)
     (uuid 3b665420-5ee8-fddf-7d94-58625a11aea3)
     (effects
@@ -18044,7 +18164,7 @@
   )
   (gr_text
     "-"
-    (at 77.575 52 0)
+    (at 77.575 52.5 0)
     (layer F.Fab)
     (uuid 2c375b80-4fba-053f-733c-aefe6940a743)
     (effects
@@ -18055,7 +18175,7 @@
   )
   (gr_text
     "+"
-    (at 85.425 52 0)
+    (at 85.425 52.5 0)
     (layer F.Fab)
     (uuid 1d0862e0-408b-0c9f-640d-b65e786f9fe3)
     (effects
@@ -18066,7 +18186,7 @@
   )
   (gr_text
     "-"
-    (at 88.575 52 0)
+    (at 88.575 52.5 0)
     (layer F.Fab)
     (uuid 4beb5c7a-00e7-31c6-4db9-c0066573b1ba)
     (effects
@@ -18077,7 +18197,7 @@
   )
   (gr_text
     "+"
-    (at 97.425 52 0)
+    (at 97.425 52.5 0)
     (layer F.Fab)
     (uuid 229b77f8-2a37-1648-7709-a4883c23cd38)
     (effects
@@ -18088,7 +18208,7 @@
   )
   (gr_text
     "-"
-    (at 100.575 52 0)
+    (at 100.575 52.5 0)
     (layer F.Fab)
     (uuid 06b46c8a-5386-faca-5fa6-76f612d3e8b6)
     (effects
@@ -18099,7 +18219,7 @@
   )
   (gr_text
     "+"
-    (at 108.425 52 0)
+    (at 108.425 52.5 0)
     (layer F.Fab)
     (uuid 3004510c-7cd6-df4c-3656-9274167bfbcc)
     (effects
@@ -18110,7 +18230,7 @@
   )
   (gr_text
     "-"
-    (at 111.575 52 0)
+    (at 111.575 52.5 0)
     (layer F.Fab)
     (uuid 5954358e-59d9-3c32-0d06-adf23fcbe04e)
     (effects
@@ -18121,7 +18241,7 @@
   )
   (gr_text
     "+"
-    (at 120.425 52 0)
+    (at 120.425 52.5 0)
     (layer F.Fab)
     (uuid 7d5be5f0-3089-57b0-1c49-3690691bc4d0)
     (effects
@@ -18132,7 +18252,7 @@
   )
   (gr_text
     "-"
-    (at 123.575 52 0)
+    (at 123.575 52.5 0)
     (layer F.Fab)
     (uuid 540c016e-0739-732e-4599-1b126d9456ae)
     (effects
@@ -18143,7 +18263,7 @@
   )
   (gr_text
     "+"
-    (at 131.425 52 0)
+    (at 131.425 52.5 0)
     (layer F.Fab)
     (uuid 2abc1cec-2216-7154-6ee8-ff944444722c)
     (effects
@@ -18154,7 +18274,7 @@
   )
   (gr_text
     "-"
-    (at 134.575 52 0)
+    (at 134.575 52.5 0)
     (layer F.Fab)
     (uuid 016c386a-4b66-55d6-67c7-1bea1af48daa)
     (effects
@@ -18165,7 +18285,7 @@
   )
   (gr_text
     "+"
-    (at 143.425 52 0)
+    (at 143.425 52.5 0)
     (layer F.Fab)
     (uuid 27e3ac18-74b6-3a58-3e77-37680e5b56d8)
     (effects
@@ -18176,7 +18296,7 @@
   )
   (gr_text
     "-"
-    (at 146.575 52 0)
+    (at 146.575 52.5 0)
     (layer F.Fab)
     (uuid 4b3eb0bc-0193-dd84-4e66-6bc464c705fc)
     (effects

@@ -6,6 +6,7 @@ Comment,Designator,Footprint,JLCPCB Part #
 simple_diode,"D_CLH0,D_CLH1,D_CLH2,D_CLH3,D_CLL0,D_CLL1,D_CLL2,D_CLL3",simple_diode,C2128
 simple_pin_header,"J_FPGA0,J_FPGA1,J_FPGA2,J_FPGA3",simple_pin_header,C2691448
 simple_pin_header,"J_PANEL0,J_PANEL1,J_PANEL2,J_PANEL3",simple_pin_header,C2832269
+20Ω,R_APD,simple_resistor,C25089
 5.1kΩ,"R_CC1,R_CC2",simple_resistor,C25905
 100kΩ,R_HVEN,simple_resistor,C25741
 2MΩ,R_HVMON1,simple_resistor,C11512

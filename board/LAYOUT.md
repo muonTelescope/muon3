@@ -87,6 +87,29 @@ share a corridor.
 - **AFE**: shield-can fence over the TIA banks, 1 mm GND stitch pitch.
 - Four **M3 mounting holes** at the corners.
 
+## Datasheet-driven placement (RF / noise / high-speed)
+
+Applied to the placed AFE + HV parts from the vendor layout guidance:
+
+- **OPA858 TIA** ([TI SLOS879](https://www.ti.com/lit/ds/symlink/opa858.pdf)):
+  feedback on the **FB pin** (min. feedback-track parasitics); the 10 Ω series
+  R placed **directly at the IN− pin** to damp bond-wire/stray-C resonance; VS
+  decoupling tight to VS_POS; and a **no-pour keepout under IN−/OUT/FB** on top
+  + the L2 reference plane to strip summing-node parasitic capacitance.
+- **Off-board SiPM**: the datasheet ideal (photodiode adjacent to the amp) is
+  unreachable — the SiPM is on the HCal tile via a 50 cm hybrid cable (fixed,
+  modeled in `sim/circuit/cable_50cm.cir`) — so the on-board connector→TIA path
+  is minimized instead (panel connector on the top edge, straight down to IN−).
+- **TLV3601 comparators**: VCC decoupling tightened to the pin.
+- **LT3482 HV** ([ADI 3482fa](https://www.analog.com/media/en/technical-documentation/data-sheets/3482fa.pdf)):
+  **20 Ω in series with APD at the pin** (mandatory — prevents the APD pin
+  ringing below ground and damaging the part on a short); input decoupling
+  close; SW-node keepout when the boost network is placed.
+- **RF (nRF9151)** — planned when the module is placed: no matching network
+  (50 Ω U.FL edge-launch direct to ANT, single shared LTE+GNSS antenna), RF
+  trace referenced to L2 with a GND keepout under it, and the antenna keepout
+  as a copper-free cylinder through all layers.
+
 ## Status & known limitations
 
 - **Placement done** for AFE ×4 (real parts), power seed, HV anchor, and the

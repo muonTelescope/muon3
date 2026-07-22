@@ -27,10 +27,13 @@ export const HvBias = ({ x, y }: Props) => (
         GND1: "net.GND",
         GND2: "net.GND",
         EP: "net.GND",
-        APD: "net.HV_BIAS",
+        APD: "net.HV_APD",
         MON: "net.HV_MON",
       }}
     />
+    {/* LT3482 datasheet: 20 Ω in series with APD, right at the pin — prevents
+        the APD pin ringing below ground and damaging the part on a short. */}
+    <resistor name="R_APD" resistance="20" footprint="0402" pcbX={`${x - 5}mm`} pcbY={`${y - 2}mm`} connections={{ pin1: "net.HV_APD", pin2: "net.HV_BIAS" }} />
     {/* VIN decoupling */}
     <capacitor name="C_HVIN1" capacitance="10uF" footprint="0805" supplierPartNumbers={{ jlcpcb: ["C15850"] }} pcbX={`${x - 5}mm`} pcbY={`${y + 5}mm`} connections={{ pin1: "net.V12", pin2: "net.GND" }} />
     <capacitor name="C_HVIN2" capacitance="100nF" footprint="0402" supplierPartNumbers={{ jlcpcb: ["C1525"] }} pcbX={`${x + 5}mm`} pcbY={`${y + 5}mm`} connections={{ pin1: "net.V12", pin2: "net.GND" }} />
