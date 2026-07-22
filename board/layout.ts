@@ -41,7 +41,7 @@ export const ZONES: Zone[] = [
   { name: "RF", label: "RF nRF9151 + GNSS", cx: -66, cy: 33, w: 24, h: 46, shield: "antenna keepout 12 mm; Nordic ref geometry" },
   { name: "AFE", label: "AFE x4  S12572", cx: 8, cy: 34, w: 92, h: 48, shield: "AFE shield fence over TIA banks; GND stitch 1 mm" },
   { name: "HV", label: "HV LT3482 ~70V", cx: 67, cy: 30, w: 20, h: 40, shield: "no pour under SW node; 0.6 mm creepage @70V" },
-  { name: "DIGITAL", label: "DIGITAL iCE40+RP2040+DAC/ADC", cx: -22, cy: -6, w: 96, h: 28 },
+  { name: "DIGITAL", label: "DIGITAL iCE40+RP2040+DAC/ADC", cx: -22, cy: -10, w: 96, h: 40 },
   { name: "POWER", label: "POWER USB-C PD + rails", cx: -50, cy: -42, w: 56, h: 28 },
   { name: "TEC", label: "TEC DRV8873x4 + fans", cx: 40, cy: -42, w: 74, h: 28, shield: "switching zone; short loops; keep >=25 mm from AFE" },
 ]

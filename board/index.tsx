@@ -22,6 +22,7 @@ import { PowerInput } from "./power"
 import { AfeChannel } from "./afe"
 import { HvBias } from "./hv"
 import { Rails } from "./rails"
+import { Digital } from "./digital"
 
 export { BOARD_W, BOARD_H }
 
@@ -33,6 +34,9 @@ export default () => (
     {AFE_CHANNEL_X.map((x, i) => (
       <AfeChannel key={i} index={i} x={x} cy={AFE_CY} />
     ))}
+
+    {/* Digital core (iCE40 + RP2040 + flash + ADC + DAC + BME280) */}
+    <Digital />
 
     {/* Power-rail bulk reservoirs (DIGITAL zone distribution point) */}
     <Rails />
