@@ -51,9 +51,15 @@ tools/
 
 - Every fitted component carries a real **LCSC/JLCPCB part number**
   (`supplierPartNumbers={{ jlcpcb: ["C…"] }}`) so the BOM/CPL are orderable.
-- The tscircuit **parts engine** fetches the authoritative JLCPCB footprint at
-  build time; a generic `footprint="0402"` that differs slightly logs a
-  non-fatal copper-IoU warning (tighten by matching the exact JLC land later).
+- **ICs are vendored with exact JLC footprints + datasheet pin labels** via
+  `bunx tsci import <LCSC|MPN>`, which writes a self-contained component to
+  `imports/`. Instantiate it by importing the exported component, e.g.
+  `import { LT3482EUD_TRPBF } from "../imports/LT3482EUD_TRPBF"`. Vendored so
+  far: LT3482 (C515895), OPA858 (C970232), TLV3601 (C2974371).
+- Passives use a `footprint="0402"`/`"0805"` land pattern + LCSC number; the
+  parts engine logs a non-fatal copper-IoU warning if the generic land differs
+  slightly from the exact JLC part (tighten later). The parts engine does *not*
+  synthesize an IC footprint from an LCSC number alone — hence `tsci import`.
 - `routingDisabled` on the board for now — placement/nets are authored first;
   RF/AFE/HV routing follows [../pcb/DESIGN_RULES.md](../pcb/DESIGN_RULES.md)
   (autorouter draft only; sensitive nets hand-routed).
