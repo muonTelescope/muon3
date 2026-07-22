@@ -74,7 +74,7 @@ commit**. Subsystem progress:
 | Fabrication pipeline (build → gerbers/BOM/CPL) | ✅ working |
 | Power input (USB-C PD, rails) | 🚧 seed (VBUS/GND/CC nets + passives) |
 | Digital core (nRF9151 + iCE40 + RP2040 + flash) | ⏳ |
-| AFE ×4 (OPA858 + dual TLV3601) | ⏳ |
-| HV bias (LT3482 ~70 V) | ⏳ |
+| AFE ×4 (OPA858 + dual TLV3601) | ✅ channel 0 fully wired (real OPA858/TLV3601, verified netlist); clone ch1–3 |
+| HV bias (LT3482 ~70 V) | 🚧 part vendored; boost network (L/D/FB divider) needs LT3482 datasheet app circuit |
 | TEC drivers (DRV8873 ×4) + fans | ⏳ |
 | Connectors / sensors (U.FL, SIM, panels, BME280) | ⏳ |

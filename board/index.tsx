@@ -15,6 +15,7 @@
  * every commit.
  */
 import { PowerInput } from "./power"
+import { AfeChannel } from "./afe"
 
 export const BOARD_W = 160
 export const BOARD_H = 120
@@ -22,5 +23,8 @@ export const BOARD_H = 120
 export default () => (
   <board width={`${BOARD_W}mm`} height={`${BOARD_H}mm`} routingDisabled>
     <PowerInput />
+    {/* AFE channel 0 — exemplar, fully wired (S12572 + OPA858 + dual TLV3601).
+        Channels 1–3 clone this once ch0 is bench-validated. */}
+    <AfeChannel index={0} x={-2} y={15} />
   </board>
 )

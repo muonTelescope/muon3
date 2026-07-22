@@ -1,4 +1,15 @@
 Comment,Designator,Footprint,JLCPCB Part #
+100nF,"C_CH0,C_CL0,C_THH0,C_THL0,C_TIA0,C_VB0,C_VBUS2",simple_capacitor,C1525
 10uF,C_VBUS1,simple_capacitor,C15850
-100nF,C_VBUS2,simple_capacitor,C1525
+1.5pF,Cf0,simple_capacitor,C1552
+6pF,"Cgh0,Cgl0",simple_capacitor,C1575
+simple_diode,"D_CLH0,D_CLL0",simple_diode,C2128
+simple_pin_header,J_FPGA0,simple_pin_header,C2691448
+simple_pin_header,J_PANEL0,simple_pin_header,C2832269
 5.1kΩ,"R_CC1,R_CC2",simple_resistor,C25905
+1kΩ,"R_THH0,R_THL0,R_VB0",simple_resistor,C11702
+15kΩ,Rf0,simple_resistor,C25756
+33Ω,"Rgh0,Rgl0",simple_resistor,C25105
+10Ω,Rser0,simple_resistor,C25077
+simple_chip,"U_CMPH0,U_CMPL0",simple_chip,C2974371
+simple_chip,U_TIA0,simple_chip,C970232
