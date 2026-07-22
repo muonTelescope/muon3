@@ -90,14 +90,21 @@ commit**. Subsystem progress:
 See **[LAYOUT.md](LAYOUT.md)** for the 4-layer floorplan design (stackup, zone
 rationale, power paths, and trace widths).
 
+**Board fully populated: 230 placements, 49 BOM line items, DRC-clean.**
+
 | Subsystem | Status |
 | --- | --- |
 | Fabrication pipeline (build → BOM/CPL/SVG/KiCad; gerbers via KiCad on 4-layer) | ✅ working |
 | Floorplan (4-layer zones, keepouts, mounting holes) | ✅ [layout.ts](layout.ts) + [floorplan.tsx](floorplan.tsx) |
-| AFE ×4 (OPA858 + dual TLV3601) | ✅ all 4 channels placed + wired (real parts, verified netlist) |
-| Power input (USB-C PD, rails) | 🚧 seed in POWER zone (VBUS/GND/CC + passives) |
-| HV bias (LT3482 ~70 V) | 🚧 anchor placed in HV zone; boost network (L/D/FB divider) next |
-| Digital core (nRF9151 + iCE40 + RP2040 + flash) | ⏳ zone reserved |
-| TEC drivers (DRV8873 ×4) + fans | ⏳ zone reserved |
+| AFE ×4 (OPA858 + dual TLV3601) | ✅ placed + wired, datasheet-tuned, verified netlist |
+| RF/cellular (nRF9151 + U.FL) | ✅ placed: supplies, DEC0, reset/enable, ANT→U.FL |
+| Digital core (iCE40 + RP2040 + flash + ADC + DAC + BME280) | ✅ placed: power + decoupling + config (DAC BGA flagged) |
+| Power (USB-C + CH224K + TPS62933 buck) | ✅ placed: PD path + buck network |
+| TEC drivers (DRV8873 ×4) + fans | ✅ placed: VM/charge-pump/IPROPI + fan FETs |
+| HV bias (LT3482 ~70 V) | 🚧 anchor + APD 20 Ω + HV_MON; boost network (L/D/FB) next |
+
+Deferred (next passes): inter-IC **signal buses** (SPI/I²C/QSPI/GPIO/PPS),
+the DAC80508 BGA ball-map wiring, the LT3482 boost network, VANA/V1V2/VCORE
+regulators, the SIM connector, and PCB **routing**.
 | TEC drivers (DRV8873 ×4) + fans | ⏳ |
 | Connectors / sensors (U.FL, SIM, panels, BME280) | ⏳ |

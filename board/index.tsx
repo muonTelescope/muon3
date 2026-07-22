@@ -24,6 +24,7 @@ import { HvBias } from "./hv"
 import { Rails } from "./rails"
 import { Digital } from "./digital"
 import { TecDrivers } from "./tec"
+import { RfCellular } from "./rf"
 
 export { BOARD_W, BOARD_H }
 
@@ -47,6 +48,9 @@ export default () => (
 
     {/* TEC drivers + fan switches (TEC zone, bottom-right) */}
     <TecDrivers />
+
+    {/* RF / cellular (RF zone, left edge) */}
+    <RfCellular />
 
     {/* HV bias anchor (HV zone, right edge) */}
     <HvBias x={66} y={32} />
