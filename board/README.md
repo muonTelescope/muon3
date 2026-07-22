@@ -19,7 +19,18 @@ superseded by this project.
 bun install          # from the repo root
 bun run build        # eval + DRC → dist/board/index/circuit.json
 bun run fab          # full fabrication build → fab/
+bun run dev          # interactive preview at localhost:3020 (schematic/PCB/3D)
 ```
+
+## Visual review
+
+Three ways to see the board and give feedback:
+
+- **Interactive:** `bun run dev` → open http://localhost:3020 for tscircuit's
+  live schematic / PCB / 3D runframe (hot-reloads as you edit).
+- **Static:** `bun run fab` writes `fab/pcb.svg` and `fab/schematic.svg`
+  (open directly, or `rsvg-convert fab/pcb.svg -o pcb.png`).
+- **3D:** `bun run snapshot` renders schematic/PCB/3D snapshot images.
 
 `bun run fab` writes to `fab/`:
 

@@ -6,6 +6,8 @@
   "scripts": {
     "build": "tsci build board/index.tsx",
     "check": "tsci build board/index.tsx",
+    "dev": "tsci dev board/index.tsx",
+    "snapshot": "tsci snapshot board/index.tsx --3d",
     "fab:csv": "bun run tools/make_bom_pnp.ts",
     "fab": "bun run tools/fab.ts"
   },
