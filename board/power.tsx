@@ -10,7 +10,7 @@
  * Real footprints + nets + LCSC part numbers (JLCPCB Standard PCBA).
  */
 export const PowerInput = () => (
-  <group name="PWR">
+  <group name="PWR" pcbX="0mm" pcbY="0mm">
     {/* UFP CC advertisement: 5.1k from each CC line to GND */}
     <resistor
       name="R_CC1"

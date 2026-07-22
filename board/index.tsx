@@ -4,27 +4,39 @@
  * Source of truth for the four-channel cosmic-ray telescope controller.
  * Built to JLCPCB fabrication outputs via `bun run fab`.
  *
- * Board target: 160 x 120 mm, 4-layer, JLCPCB Standard PCBA.
- * Detector path: decommissioned sPHENIX HCal tiles -> Hamamatsu S12572-33-015P
- * SiPM, LT3482 ~70 V bias (see pcb/SCHEMATIC_FREEZE_CHECK.md).
+ * 160 x 120 mm, 4-layer, JLCPCB Standard PCBA. Detector: decommissioned
+ * sPHENIX HCal tiles -> Hamamatsu S12572-33-015P SiPM, LT3482 ~70 V bias.
  *
- * STATUS: incremental build. This entrypoint currently instantiates the
- * subsystems that are already authored as real board-as-code (real
- * footprints + nets + LCSC part numbers). Remaining subsystems are added
- * module-by-module; the board must stay DRC-clean and fab-buildable at
- * every commit.
+ * Floorplan (board/layout.ts, rationale in board/LAYOUT.md): quiet upper
+ * half (RF | AFE x4 | HV) over a noisy lower half (USB-C PD | TEC), split
+ * so AFE summing nodes stay >= 25 mm from PD/TEC switching, over a
+ * continuous L2 ground plane. Panel connectors on the top edge.
+ *
+ * STATUS: floorplan + AFE x4 + power seed + HV anchor placed. Digital,
+ * TEC, DAC/ADC, and the LT3482 boost network are added incrementally,
+ * each DRC-clean and fab-buildable.
  */
+import { BOARD_W, BOARD_H, LAYERS, AFE_CY, AFE_CHANNEL_X } from "./layout"
+import { Floorplan } from "./floorplan"
 import { PowerInput } from "./power"
 import { AfeChannel } from "./afe"
+import { HvBias } from "./hv"
 
-export const BOARD_W = 160
-export const BOARD_H = 120
+export { BOARD_W, BOARD_H }
 
 export default () => (
-  <board width={`${BOARD_W}mm`} height={`${BOARD_H}mm`} routingDisabled>
+  <board width={`${BOARD_W}mm`} height={`${BOARD_H}mm`} layers={LAYERS} routingDisabled>
+    <Floorplan />
+
+    {/* AFE x4 — vertical strips tiled across the AFE zone */}
+    {AFE_CHANNEL_X.map((x, i) => (
+      <AfeChannel key={i} index={i} x={x} cy={AFE_CY} />
+    ))}
+
+    {/* USB-C PD input seed (POWER zone, bottom-left) */}
     <PowerInput />
-    {/* AFE channel 0 — exemplar, fully wired (S12572 + OPA858 + dual TLV3601).
-        Channels 1–3 clone this once ch0 is bench-validated. */}
-    <AfeChannel index={0} x={-2} y={15} />
+
+    {/* HV bias anchor (HV zone, right edge) */}
+    <HvBias x={66} y={32} />
   </board>
 )

@@ -52,11 +52,18 @@ dir are regenerated (git-ignored).
 board/
   index.tsx     top-level <board> composing the subsystems
   power.tsx     USB-C PD input + rails            (in progress)
-  ...           digital, afe, hv, thermal, connectors (added incrementally)
+  afe.tsx       AFE channel (OPA858 + dual TLV3601)
+  imports/      vendored exact JLC parts (tsci import): footprint + pin map
+  ...           digital, hv, thermal, connectors (added incrementally)
 tools/
   fab.ts        one-command fabrication build (bun run fab)
   make_bom_pnp.ts  circuit-json → JLCPCB BOM + CPL CSVs
 ```
+
+> **`dev` runs scoped to `board/`** (the `dev` script does `cd board` first).
+> Running the dev server from the repo root makes tscircuit walk the entire
+> huge repo for its file-watch reset and time out (~5 s) → crash. Keeping the
+> project dir small (`board/`, with `imports/` inside it) fixes that.
 
 ## Parts policy
 
@@ -65,7 +72,7 @@ tools/
 - **ICs are vendored with exact JLC footprints + datasheet pin labels** via
   `bunx tsci import <LCSC|MPN>`, which writes a self-contained component to
   `imports/`. Instantiate it by importing the exported component, e.g.
-  `import { LT3482EUD_TRPBF } from "../imports/LT3482EUD_TRPBF"`. Vendored so
+  `import { LT3482EUD_TRPBF } from "./imports/LT3482EUD_TRPBF"`. Vendored so
   far: LT3482 (C515895), OPA858 (C970232), TLV3601 (C2974371).
 - Passives use a `footprint="0402"`/`"0805"` land pattern + LCSC number; the
   parts engine logs a non-fatal copper-IoU warning if the generic land differs
@@ -80,12 +87,17 @@ tools/
 Incremental. The board must stay **DRC-clean and fab-buildable at every
 commit**. Subsystem progress:
 
+See **[LAYOUT.md](LAYOUT.md)** for the 4-layer floorplan design (stackup, zone
+rationale, power paths, and trace widths).
+
 | Subsystem | Status |
 | --- | --- |
-| Fabrication pipeline (build → gerbers/BOM/CPL) | ✅ working |
-| Power input (USB-C PD, rails) | 🚧 seed (VBUS/GND/CC nets + passives) |
-| Digital core (nRF9151 + iCE40 + RP2040 + flash) | ⏳ |
-| AFE ×4 (OPA858 + dual TLV3601) | ✅ channel 0 fully wired (real OPA858/TLV3601, verified netlist); clone ch1–3 |
-| HV bias (LT3482 ~70 V) | 🚧 part vendored; boost network (L/D/FB divider) needs LT3482 datasheet app circuit |
+| Fabrication pipeline (build → BOM/CPL/SVG/KiCad; gerbers via KiCad on 4-layer) | ✅ working |
+| Floorplan (4-layer zones, keepouts, mounting holes) | ✅ [layout.ts](layout.ts) + [floorplan.tsx](floorplan.tsx) |
+| AFE ×4 (OPA858 + dual TLV3601) | ✅ all 4 channels placed + wired (real parts, verified netlist) |
+| Power input (USB-C PD, rails) | 🚧 seed in POWER zone (VBUS/GND/CC + passives) |
+| HV bias (LT3482 ~70 V) | 🚧 anchor placed in HV zone; boost network (L/D/FB divider) next |
+| Digital core (nRF9151 + iCE40 + RP2040 + flash) | ⏳ zone reserved |
+| TEC drivers (DRV8873 ×4) + fans | ⏳ zone reserved |
 | TEC drivers (DRV8873 ×4) + fans | ⏳ |
 | Connectors / sensors (U.FL, SIM, panels, BME280) | ⏳ |

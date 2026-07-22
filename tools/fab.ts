@@ -3,15 +3,15 @@
  *
  *   bun run fab
  *
- * Produces (in fab/):
- *   muon3-gerbers.zip   Gerbers + drill + JLCPCB bom.csv + pick_and_place.csv
- *   pcb.svg             PCB render
- *   schematic.svg       Schematic render
- *   muon3-board.kicad_pcb  KiCad export (cross-check / hand-routing)
- *   bom.csv, pnp.csv    Flattened JLCPCB BOM + CPL for review
+ * Produces (in fab/): gerbers zip, pcb.svg, schematic.svg, kicad_pcb, and
+ * flattened bom.csv / pnp.csv.
  *
- * NOTE: `tsci export -o` resolves relative to the ENTRY FILE's directory
- * (board/), so output paths are written as ../fab/... to land at repo root.
+ * Each step is isolated: a failing export does not abort the rest (e.g.
+ * tscircuit's gerber exporter currently rejects 4-layer boards —
+ * "Inner layer inner1 only supports copper gerbers" — so on a 4-layer
+ * board the gerbers step is skipped and 4-layer fab data comes from the
+ * KiCad export instead). `tsci export -o` resolves relative to the ENTRY
+ * FILE's dir (board/), so outputs are written ../fab/... -> repo-root fab/.
  */
 import { $ } from "bun"
 import fs from "node:fs"
@@ -19,16 +19,21 @@ import fs from "node:fs"
 fs.mkdirSync("fab", { recursive: true })
 const entry = "board/index.tsx"
 
+async function step(name: string, run: () => Promise<unknown>) {
+  try {
+    await run()
+    console.log(`  ✓ ${name}`)
+  } catch (e: any) {
+    console.log(`  ✗ ${name} — skipped: ${String(e?.stderr ?? e?.message ?? e).split("\n").slice(-3).join(" ").slice(0, 160)}`)
+  }
+}
+
 console.log("• build (eval + DRC) …")
-await $`bunx tsci build ${entry}`
-console.log("• gerbers …")
-await $`bunx tsci export ${entry} -f gerbers -o ../fab/muon3-gerbers.zip`
-console.log("• pcb svg …")
-await $`bunx tsci export ${entry} -f pcb-svg -o ../fab/pcb.svg`
-console.log("• schematic svg …")
-await $`bunx tsci export ${entry} -f schematic-svg -o ../fab/schematic.svg`
-console.log("• kicad_pcb …")
-await $`bunx tsci export ${entry} -f kicad_pcb -o ../fab/muon3-board.kicad_pcb`
-console.log("• bom/pnp csv …")
-await $`bun run tools/make_bom_pnp.ts`
+await step("build", () => $`bunx tsci build ${entry}`.quiet())
+console.log("• exports …")
+await step("gerbers (2-layer only)", () => $`bunx tsci export ${entry} -f gerbers -o ../fab/muon3-gerbers.zip`.quiet())
+await step("pcb.svg", () => $`bunx tsci export ${entry} -f pcb-svg -o ../fab/pcb.svg`.quiet())
+await step("schematic.svg", () => $`bunx tsci export ${entry} -f schematic-svg -o ../fab/schematic.svg`.quiet())
+await step("kicad_pcb (4-layer fab source)", () => $`bunx tsci export ${entry} -f kicad_pcb -o ../fab/muon3-board.kicad_pcb`.quiet())
+await step("bom/pnp csv", () => $`bun run tools/make_bom_pnp.ts`)
 console.log("Done → fab/")
