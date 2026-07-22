@@ -23,6 +23,7 @@ import { AfeChannel } from "./afe"
 import { HvBias } from "./hv"
 import { Rails } from "./rails"
 import { Digital } from "./digital"
+import { TecDrivers } from "./tec"
 
 export { BOARD_W, BOARD_H }
 
@@ -43,6 +44,9 @@ export default () => (
 
     {/* USB-C PD input seed (POWER zone, bottom-left) */}
     <PowerInput />
+
+    {/* TEC drivers + fan switches (TEC zone, bottom-right) */}
+    <TecDrivers />
 
     {/* HV bias anchor (HV zone, right edge) */}
     <HvBias x={66} y={32} />
