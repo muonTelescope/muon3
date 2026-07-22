@@ -1,0 +1,19 @@
+{
+  "name": "muon3-board",
+  "private": true,
+  "type": "module",
+  "description": "Muon3 four-channel cosmic-ray telescope controller — full board-as-code (tscircuit), built to JLCPCB fabrication outputs.",
+  "scripts": {
+    "build": "tsci build board/index.tsx",
+    "check": "tsci build board/index.tsx",
+    "fab:csv": "bun run tools/make_bom_pnp.ts",
+    "fab": "bun run tools/fab.ts"
+  },
+  "dependencies": {
+    "@types/react": "^19.2.17",
+    "tscircuit": "^0.0.2128"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  }
+}

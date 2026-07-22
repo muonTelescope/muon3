@@ -1,0 +1,5 @@
+Designator,Mid X,Mid Y,Layer,Rotation
+C_VBUS1,-60.0000mm,-48.0000mm,Top,0.00
+C_VBUS2,-57.0000mm,-48.0000mm,Top,0.00
+R_CC1,-63.0000mm,-44.0000mm,Top,0.00
+R_CC2,-63.0000mm,-46.0000mm,Top,0.00

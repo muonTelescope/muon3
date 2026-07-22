@@ -1,0 +1,559 @@
+(kicad_pcb
+  (version 20241229)
+  (generator circuit-json-to-kicad)
+  (generator_version 0.0.1)
+  (general
+    (thickness 1.6)
+  )
+  (paper
+    A4
+  )
+  (layers
+    (0 "F.Cu" signal)
+    (31 "B.Cu" signal)
+    (32 "B.Adhes" user)
+    (33 "F.Adhes" user)
+    (34 "B.Paste" user)
+    (35 "F.Paste" user)
+    (36 "B.SilkS" user)
+    (37 "F.SilkS" user)
+    (38 "B.Mask" user)
+    (39 "F.Mask" user)
+    (40 "Dwgs.User" user)
+    (41 "Cmts.User" user)
+    (42 "Eco1.User" user)
+    (43 "Eco2.User" user)
+    (44 "Edge.Cuts" user)
+    (45 "Margin" user)
+    (46 "B.CrtYd" user)
+    (47 "F.CrtYd" user)
+    (48 "B.Fab" user)
+    (49 "F.Fab" user)
+  )
+  (setup
+    (pad_to_mask_clearance 0)
+  )
+  (net 0 "")
+  (net 1 "VBUS")
+  (net 2 "GND")
+  (net 3 "CC1")
+  (net 4 "CC2")
+  (footprint
+    "tscircuit:resistor_res0402"
+    (layer F.Cu)
+    (uuid 50e94e00-46a6-b400-21c9-4a0075c6b800)
+    (at 37 144 0)
+    (property "Reference" "R_CC1"
+      (at 0 -3 0)
+      (layer F.SilkS)
+      (hide yes)
+      (uuid 536bdd88-5be4-9f08-645d-60886cd62208)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Value" "5.1kΩ"
+      (at 0 3 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 63c6c93c-42d7-4584-168a-abbc6fec9cfc)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Datasheet" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 56efea34-5f68-abb4-67e1-6d34705a2eb4)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Description" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 58f53ee6-2643-9c86-0c6e-05da3f1fa83a)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Supplier Part Number" "C25905"
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 28c87d20-7cc7-44ff-2257-071e381936c3)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (fp_text
+      reference
+      "R_CC1"
+      (at 0 -1.2199999999999989 0)
+      (layer F.SilkS)
+      (effects
+        (font
+          (size 0.26666666666666666 0.26666666666666666)
+        )
+      )
+    )
+    (fp_line
+      (start -0.15364100000000036 -0.38000000000000256)
+      (end 0.15364100000000036 -0.38000000000000256)
+      (stroke
+        (width 0.12)
+        (type default)
+      )
+      (layer F.SilkS)
+    )
+    (fp_line
+      (start -0.15364100000000036 0.38000000000000256)
+      (end 0.15364100000000036 0.38000000000000256)
+      (stroke
+        (width 0.12)
+        (type default)
+      )
+      (layer F.SilkS)
+    )
+    (fp_rect
+      (start -0.93 -0.47)
+      (end 0.93 0.47)
+      (layer F.CrtYd)
+      (stroke
+        (width 0.05)
+        (type default)
+      )
+      (fill no)
+    )
+    (pad "1" smd rect
+      (at -0.509999999999998 0 0)
+      (size 0.54 0.64)
+      (layers F.Cu F.Paste F.Mask)
+      (net 3 "CC1")
+      (uuid 6ad2db44-0625-435c-771d-61fc17ea7f64)
+    )
+    (pad "2" smd rect
+      (at 0.509999999999998 0 0)
+      (size 0.54 0.64)
+      (layers F.Cu F.Paste F.Mask)
+      (net 2 "GND")
+      (uuid 4e249d00-5ba1-d59f-0568-483e50d14523)
+    )
+  )
+  (footprint
+    "tscircuit:resistor_res0402"
+    (layer F.Cu)
+    (uuid 0b97e3c2-7407-e1c2-2388-203e44e7ddc2)
+    (at 37 146 0)
+    (property "Reference" "R_CC2"
+      (at 0 -3 0)
+      (layer F.SilkS)
+      (hide yes)
+      (uuid 57226236-4ea9-a0b6-4630-df363db81db6)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Value" "5.1kΩ"
+      (at 0 3 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 0df5b2fe-6757-a43e-3f46-6a821a1b86be)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Datasheet" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 539e558a-4b25-940a-42ac-d28a3a34110a)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Description" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 675b1d98-65f3-4008-3341-9da8008ffb48)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Supplier Part Number" "C25905"
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 6b3a2900-3a55-991f-201a-a4c27a8ae2a3)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (fp_text
+      reference
+      "R_CC2"
+      (at 0 -1.2199999999999989 0)
+      (layer F.SilkS)
+      (effects
+        (font
+          (size 0.26666666666666666 0.26666666666666666)
+        )
+      )
+    )
+    (fp_line
+      (start -0.15364100000000036 -0.38000000000000256)
+      (end 0.15364100000000036 -0.38000000000000256)
+      (stroke
+        (width 0.12)
+        (type default)
+      )
+      (layer F.SilkS)
+    )
+    (fp_line
+      (start -0.15364100000000036 0.38000000000000256)
+      (end 0.15364100000000036 0.38000000000000256)
+      (stroke
+        (width 0.12)
+        (type default)
+      )
+      (layer F.SilkS)
+    )
+    (fp_rect
+      (start -0.93 -0.47)
+      (end 0.93 0.47)
+      (layer F.CrtYd)
+      (stroke
+        (width 0.05)
+        (type default)
+      )
+      (fill no)
+    )
+    (pad "1" smd rect
+      (at -0.509999999999998 0 0)
+      (size 0.54 0.64)
+      (layers F.Cu F.Paste F.Mask)
+      (net 4 "CC2")
+      (uuid 2efc0dbe-600b-d3a2-10ec-4afe7e1b9662)
+    )
+    (pad "2" smd rect
+      (at 0.509999999999998 0 0)
+      (size 0.54 0.64)
+      (layers F.Cu F.Paste F.Mask)
+      (net 2 "GND")
+      (uuid 7a6e0020-2434-72bf-3205-1aa277c157fd)
+    )
+  )
+  (footprint
+    "tscircuit:capacitor_0805"
+    (layer F.Cu)
+    (uuid 60ab7e4c-07c4-7fb4-7034-7db4275b844c)
+    (at 40 148 0)
+    (property "Reference" "C_VBUS1"
+      (at 0 -3 0)
+      (layer F.SilkS)
+      (hide yes)
+      (uuid 2246b416-106a-ee4a-431c-90aa75ce330a)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Value" "10uF"
+      (at 0 3 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 028d8c36-79e2-eed6-0ec7-ae8a688db416)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Datasheet" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 0d7d3cbe-402e-df1e-72e0-817e5a6ddc22)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Description" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 504a5b8c-62e3-1634-1610-87f436c2064c)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Supplier Part Number" "C15850"
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 3ecbc0c0-41db-f97f-3d7c-4c42432b6dfd)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (fp_text
+      reference
+      "C_VBUS1"
+      (at 0 -1.6000000000000014 0)
+      (layer F.SilkS)
+      (effects
+        (font
+          (size 0.26666666666666666 0.26666666666666666)
+        )
+      )
+    )
+    (fp_line
+      (start 0.9125000000000014 -1.1000000000000014)
+      (end -1.625 -1.1000000000000014)
+      (stroke
+        (width 0.1)
+        (type default)
+      )
+      (layer F.SilkS)
+    )
+    (fp_line
+      (start -1.625 -1.1000000000000014)
+      (end -1.625 1.1000000000000014)
+      (stroke
+        (width 0.1)
+        (type default)
+      )
+      (layer F.SilkS)
+    )
+    (fp_line
+      (start -1.625 1.1000000000000014)
+      (end 0.9125000000000014 1.1000000000000014)
+      (stroke
+        (width 0.1)
+        (type default)
+      )
+      (layer F.SilkS)
+    )
+    (fp_rect
+      (start -1.68 -0.95)
+      (end 1.68 0.95)
+      (layer F.CrtYd)
+      (stroke
+        (width 0.05)
+        (type default)
+      )
+      (fill no)
+    )
+    (pad "1" smd rect
+      (at -0.9125000000000014 0 0)
+      (size 1.025 1.4)
+      (layers F.Cu F.Paste F.Mask)
+      (net 1 "VBUS")
+      (uuid 27acf420-79a1-3edf-346a-76621d89d45d)
+    )
+    (pad "2" smd rect
+      (at 0.9125000000000014 0 0)
+      (size 1.025 1.4)
+      (layers F.Cu F.Paste F.Mask)
+      (net 2 "GND")
+      (uuid 413d8f52-2fba-8f4e-5f4d-521211aacc8e)
+    )
+  )
+  (footprint
+    "tscircuit:capacitor_0402"
+    (layer F.Cu)
+    (uuid 668a9f88-01e5-5e78-6a55-5c782d3aa588)
+    (at 43 148 0)
+    (property "Reference" "C_VBUS2"
+      (at 0 -3 0)
+      (layer F.SilkS)
+      (hide yes)
+      (uuid 7ed2afe8-4e7b-adb8-1bca-0b5816e79708)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Value" "100nF"
+      (at 0 3 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 457206b4-4338-96ac-341c-cbf4548dd16c)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Datasheet" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 51695f44-1eb7-bce4-13f9-e57c46ab87dc)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Description" ""
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 378643b6-154c-4a8a-621e-d8ca510e98f6)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (property "Supplier Part Number" "C1525"
+      (at 0 0 0)
+      (layer F.Fab)
+      (hide yes)
+      (uuid 68e527a0-1673-1e21-6a34-9c1e1523a9a3)
+      (effects
+        (font
+          (size 1.27 1.27)
+          (thickness 0.15)
+        )
+      )
+    )
+    (fp_text
+      reference
+      "C_VBUS2"
+      (at 0 -1.2199999999999989 0)
+      (layer F.SilkS)
+      (effects
+        (font
+          (size 0.26666666666666666 0.26666666666666666)
+        )
+      )
+    )
+    (fp_line
+      (start 0.509999999999998 -0.7199999999999989)
+      (end -0.9799999999999969 -0.7199999999999989)
+      (stroke
+        (width 0.1)
+        (type default)
+      )
+      (layer F.SilkS)
+    )
+    (fp_line
+      (start -0.9799999999999969 -0.7199999999999989)
+      (end -0.9799999999999969 0.7199999999999989)
+      (stroke
+        (width 0.1)
+        (type default)
+      )
+      (layer F.SilkS)
+    )
+    (fp_line
+      (start -0.9799999999999969 0.7199999999999989)
+      (end 0.509999999999998 0.7199999999999989)
+      (stroke
+        (width 0.1)
+        (type default)
+      )
+      (layer F.SilkS)
+    )
+    (fp_rect
+      (start -0.93 -0.47)
+      (end 0.93 0.47)
+      (layer F.CrtYd)
+      (stroke
+        (width 0.05)
+        (type default)
+      )
+      (fill no)
+    )
+    (pad "1" smd rect
+      (at -0.509999999999998 0 0)
+      (size 0.54 0.64)
+      (layers F.Cu F.Paste F.Mask)
+      (net 1 "VBUS")
+      (uuid 6299dfc2-2c6e-019e-448a-1d024a7dc45e)
+    )
+    (pad "2" smd rect
+      (at 0.509999999999998 0 0)
+      (size 0.54 0.64)
+      (layers F.Cu F.Paste F.Mask)
+      (net 2 "GND")
+      (uuid 0b933a60-4aa6-5301-5f20-1f9e08e6923d)
+    )
+  )
+  (gr_line
+    (start 20 160)
+    (end 180 160)
+    (width 0.1)
+    (layer Edge.Cuts)
+  )
+  (gr_line
+    (start 180 160)
+    (end 180 40)
+    (width 0.1)
+    (layer Edge.Cuts)
+  )
+  (gr_line
+    (start 180 40)
+    (end 20 40)
+    (width 0.1)
+    (layer Edge.Cuts)
+  )
+  (gr_line
+    (start 20 40)
+    (end 20 160)
+    (width 0.1)
+    (layer Edge.Cuts)
+  )
+)

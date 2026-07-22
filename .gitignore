@@ -74,3 +74,14 @@ sim/reports/figures/*.png
 sim/reports/Muon3_Simulation_Report.pdf
 sim/thermal_step.png
 sim/tot_model.png
+
+# --- tscircuit board-as-code (repo root) ---
+/node_modules/
+/dist/
+/fab/muon3-gerbers/
+board/**/circuit.json
+# Keep manifests despite the blanket *.json ignore above
+!/package.json
+!/tsconfig.json
+!/tscircuit.config.json
+# bun.lock is not *.json, so it is tracked for reproducibility

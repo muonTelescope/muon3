@@ -1,0 +1,4 @@
+Comment,Designator,Footprint,JLCPCB Part #
+10uF,C_VBUS1,simple_capacitor,C15850
+100nF,C_VBUS2,simple_capacitor,C1525
+5.1kΩ,"R_CC1,R_CC2",simple_resistor,C25905
