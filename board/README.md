@@ -90,21 +90,32 @@ commit**. Subsystem progress:
 See **[LAYOUT.md](LAYOUT.md)** for the 4-layer floorplan design (stackup, zone
 rationale, power paths, and trace widths).
 
-**Board fully populated: 230 placements, 49 BOM line items, DRC-clean.**
+**Board fully populated: 265 placements, DRC-clean.**
 
 | Subsystem | Status |
 | --- | --- |
 | Fabrication pipeline (build → BOM/CPL/SVG/KiCad; gerbers via KiCad on 4-layer) | ✅ working |
 | Floorplan (4-layer zones, keepouts, mounting holes) | ✅ [layout.ts](layout.ts) + [floorplan.tsx](floorplan.tsx) |
-| AFE ×4 (OPA858 + dual TLV3601) | ✅ placed + wired, datasheet-tuned, verified netlist |
-| RF/cellular (nRF9151 + U.FL) | ✅ placed: supplies, DEC0, reset/enable, ANT→U.FL |
-| Digital core (iCE40 + RP2040 + flash + ADC + 2× DAC + BME280) | ✅ placed: power + decoupling + config; DAC = DAC80508MRTER WQFN-16 (C2679529, non-BGA, wired) |
+| AFE ×4 (OPA858 + dual TLV3601) | ✅ placed + wired, datasheet-tuned; per-channel `TP_AO` analog probe |
+| RF/cellular (nRF9151 + U.FL) | ✅ placed: supplies, DEC0, reset/enable, ANT→U.FL, SWD + PPS |
+| Digital core (iCE40 + RP2040 + flash + ADC + 2× DAC + BME280) | ✅ placed + **inter-IC buses wired**: QSPI boot, SPI (DACs), I²C (BME280/ADC), iCE40 config, 8× comparator→FPGA, SWD, USB |
 | Power (USB-C + CH224K + TPS62933 buck) | ✅ placed: PD path + buck network |
-| TEC drivers (DRV8873 ×4) + fans | ✅ placed: VM/charge-pump/IPROPI + fan FETs |
+| TEC drivers (DRV8873 ×4) + fans | ✅ placed: VM/charge-pump/IPROPI + fan FETs; OA/OB/fan reach the panel hybrid |
+| Debug bay (test points, SWD/config/UART headers, boot/reset buttons, status LEDs) | ✅ [debug.tsx](debug.tsx) |
 | HV bias (LT3482 ~70 V) | 🚧 anchor + APD 20 Ω + HV_MON; boost network (L/D/FB) next |
 
-Deferred (next passes): inter-IC **signal buses** (SPI/I²C/QSPI/GPIO/PPS),
-the DAC80508 BGA ball-map wiring, the LT3482 boost network, VANA/V1V2/VCORE
-regulators, the SIM connector, and PCB **routing**.
-| TEC drivers (DRV8873 ×4) + fans | ⏳ |
-| Connectors / sensors (U.FL, SIM, panels, BME280) | ⏳ |
+**Debuggability / connectivity pass (this commit):**
+- **Panel hybrid connector** expanded 6→10-pin double-row (decision 6): one
+  locking connector per tile now carries SiPM signal+shield, HV bias, both
+  NTCs, the TEC H-bridge outputs, and the 12 V fan feed + return.
+- **Inter-IC buses wired**: RP2040↔flash QSPI boot; RP2040↔DAC SPI + I²C to
+  BME280/ADS7128; RP2040↔iCE40 config (SPI slave-load) + CDONE/CRESET; the 8
+  AFE comparator outputs → iCE40 counters; nRF9151 GNSS **PPS** → iCE40; RP2040
+  USB shared onto the USB-C data pair (flashable in place).
+- **Debug bay** (`debug.tsx`, free pocket between DIGITAL and HV): 14 labeled
+  test points (all rails + SPI/I²C/PPS + HV *monitor*), per-channel `TP_AO`
+  TIA-output probes, SWD headers (RP2040 + nRF9151), an iCE40 SPI-config header,
+  a stdio-UART header, RUN + BOOTSEL buttons, and power-good + heartbeat LEDs.
+
+Deferred (next passes): the LT3482 boost network, VANA/V1V2/VCORE regulators,
+the SIM connector, ADC analog-input channel mapping, and PCB **routing**.

@@ -148,6 +148,44 @@ span the board (as intended for L2/L3 planes).
 vertical channel flow); VDIG/V12/VANA/GND (planes/pours, length not critical).
 A further RF win would rotate the nRF so ANT faces the board edge.
 
+## Debug access, test points & connectivity
+
+A dedicated **debug bay** ([debug.tsx](debug.tsx)) fills the free pocket
+between the DIGITAL zone (x ≤ 26) and the HV zone (x ≥ 57), under the AFE
+strips. Everything a bring-up needs sits in one accessible cluster, on the
+top copper:
+
+- **Test points** (1.2 mm circular pads, silk-labelled): every power rail
+  (VANA/VDIG/V12/VCORE/V1V2 + two GND), the SPI/I²C buses, and the GNSS PPS.
+  `TP_HVMON` taps the **divided** HV monitor — never the raw ~70 V node.
+  Per-channel `TP_AO` probes sit next to each AFE channel on the TIA output
+  (the single most useful analog debug node), not centralised, to avoid a long
+  stub off a fast summing-adjacent net.
+- **Programming / debug headers**: SWD for the RP2040 and the nRF9151, an iCE40
+  SPI-config header (`J_CFG`, also the RP2040's config path so the FPGA loads
+  two ways), and a stdio-UART header. Vertical (`pcbOrientation`) to column
+  cleanly; `J_CFG`/`J_PANEL` use `doubleRow` to stay short.
+- **Buttons**: RP2040 RUN (reset) + BOOTSEL. The iCE40 CRESET is reachable via
+  `J_CFG` pin 6 and RP2040 GPIO14, so it needs no dedicated button.
+- **Status LEDs**: 3V3 power-good + an RP2040 heartbeat.
+
+**Connectivity closed this pass.** The previously-deferred inter-IC buses are
+now wired: RP2040↔flash **QSPI boot**; RP2040↔DAC **SPI** + **I²C** to the
+BME280/ADS7128; RP2040↔iCE40 **config** (SPI slave-load) with CDONE/CRESET
+monitoring; the **8 AFE comparator outputs → iCE40** counters; the nRF9151
+GNSS **1 PPS → iCE40** timestamp; and RP2040 **USB** shared onto the USB-C
+data pair (single-cable power + flashing). The **panel connector** grew 6→10-pin
+double-row so one locking hybrid per tile carries SiPM signal+shield, HV bias,
+both NTCs, the DRV8873 H-bridge outputs (`OA`/`OB`), and the 12 V fan feed +
+low-side return — the TEC/fan nets are shared by index with `tec.tsx`.
+
+> **Note on the ratsnest number.** Weighted airwire *rose* (≈5.1 k → ≈13.7 k)
+> in this pass — expected, not a regression: those buses were unconnected
+> single-pad stubs before, so connecting them adds real airwires. The
+> board-spanning ones (comparator AFE→DIGITAL, QSPI/SPI across DIGITAL, fan
+> AFE→TEC) are inherent to the floorplan and already carry series-damping /
+> slow-net treatment; they are routing (not placement) work.
+
 ## Status & known limitations
 
 - **Placement done** for AFE ×4 (real parts), power seed, HV anchor, and the

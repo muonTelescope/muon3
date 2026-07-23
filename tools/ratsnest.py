@@ -24,6 +24,7 @@ els = raw if isinstance(raw, list) else raw.get("circuitJson", raw)
 ZONES = [
     ("RF", -78, -54, 10, 56), ("AFE", -38, 54, 10, 58), ("HV", 57, 77, 10, 50),
     ("DIGITAL", -70, 26, -30, 10), ("POWER", -80, -20, -57, -23), ("TEC", 3, 77, -57, -23),
+    ("DEBUG", 27, 57, -28, 10),
 ]
 def zone_of(x, y):
     for n, x0, x1, y0, y1 in ZONES:

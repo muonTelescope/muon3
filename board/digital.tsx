@@ -42,6 +42,19 @@ export const Digital = () => (
         USB_VDD: "net.VDIG", ADC_AVDD: "net.VDIG", VREG_IN: "net.VDIG",
         VREG_VOUT: "net.VCORE", DVDD1: "net.VCORE", DVDD2: "net.VCORE",
         GND: "net.GND", RUN: "net.RP_RUN", XIN: "net.RP_XIN", XOUT: "net.RP_XOUT",
+        // SWD debug + USB (shared with the USB-C data pair → flashable in-place)
+        SWCLK: "net.RP_SWCLK", SWD: "net.RP_SWD", USB_DP: "net.USB_DP", USB_DM: "net.USB_DM",
+        // QSPI boot bus → W25Q128
+        QSPI_SS: "net.FLASH_CS", QSPI_SCLK: "net.QSPI_SCLK",
+        QSPI_SD0: "net.QSPI_SD0", QSPI_SD1: "net.QSPI_SD1", QSPI_SD2: "net.QSPI_SD2", QSPI_SD3: "net.QSPI_SD3",
+        // Peripheral SPI (DAC setpoints) + I2C (BME280/ADC) + debug UART + heartbeat LED
+        GPIO18: "net.SPI_SCLK", GPIO19: "net.SPI_MOSI", GPIO16: "net.SPI_MISO",
+        GPIO17: "net.DAC1_CS", GPIO20: "net.DAC2_CS",
+        GPIO4: "net.I2C_SDA", GPIO5: "net.I2C_SCL",
+        GPIO0: "net.UART_TX", GPIO1: "net.UART_RX", GPIO25: "net.RP_LED",
+        // iCE40 configuration master (SPI slave-mode load) + status
+        GPIO10: "net.ICE_SCK", GPIO11: "net.ICE_SI", GPIO12: "net.ICE_SO", GPIO13: "net.ICE_SS",
+        GPIO14: "net.ICE_CRESET", GPIO15: "net.ICE_CDONE",
       }}
     />
     {dc("C_RP1", -62, DCY, "VDIG")} {dc("C_RP2", -59, DCY, "VDIG")} {dc("C_RP3", -56, DCY, "VDIG")}
@@ -57,6 +70,14 @@ export const Digital = () => (
         VCC1: "net.V1V2", VCC2: "net.V1V2", VCCPLL: "net.V1V2_PLL",
         VCCIO_0: "net.VDIG", VCCIO_2: "net.VDIG", SPI_Vccio1: "net.VDIG", VPP_2V5: "net.VDIG",
         EP: "net.GND", CDONE: "net.ICE_CDONE", creset_b: "net.ICE_CRESET",
+        // SPI config port (loaded by the RP2040 / J_CFG programming header)
+        IOB_35b_SPI_SS: "net.ICE_SS", IOB_34a_SPI_SCK: "net.ICE_SCK",
+        IOB_33b_SPI_SI: "net.ICE_SI", IOB_32a_SPI_SO: "net.ICE_SO",
+        // 8 comparator hits from the 4 AFE channels (low/high discriminators)
+        IOB_0a: "net.FPAL0", IOB_2a: "net.FPAH0", IOB_4a: "net.FPAL1", IOB_5b: "net.FPAH1",
+        IOB_6a: "net.FPAL2", IOB_8a: "net.FPAH2", IOB_9b: "net.FPAL3", IOB_13b: "net.FPAH3",
+        // GNSS 1 PPS timing reference from the nRF9151
+        IOB_16a: "net.PPS",
       }}
     />
     {dc("C_IC1", -46, DCY, "V1V2")} {dc("C_IC2", -43, DCY, "V1V2")} {dc("C_IC3", -40, DCY, "VDIG")}
@@ -65,15 +86,15 @@ export const Digital = () => (
     {pu("R_CDONE", -46, PUY, "VDIG", "ICE_CDONE")} {pu("R_CRESET", -43, PUY, "VDIG", "ICE_CRESET")}
 
     {/* ---- QSPI boot flash (RP2040) ---- */}
-    <W25Q128JVSIQ name="U_FLASH" {...at(-28, ICY)} connections={{ VCC: "net.VDIG", GND: "net.GND", CS: "net.FLASH_CS" }} />
+    <W25Q128JVSIQ name="U_FLASH" {...at(-28, ICY)} connections={{ VCC: "net.VDIG", GND: "net.GND", CS: "net.FLASH_CS", CLK: "net.QSPI_SCLK", DI: "net.QSPI_SD0", DO: "net.QSPI_SD1", IO2: "net.QSPI_SD2", IO3: "net.QSPI_SD3" }} />
     {dc("C_FL", -28, DCY, "VDIG")} {pu("R_FLCS", -25, DCY, "VDIG", "FLASH_CS")}
 
     {/* ---- BME280 environment (I2C) ---- */}
-    <BME280 name="U_BME280" {...at(-18, ICY)} connections={{ VDD: "net.VDIG", VDDIO: "net.VDIG", GND1: "net.GND", GND2: "net.GND", CSB: "net.VDIG" }} />
+    <BME280 name="U_BME280" {...at(-18, ICY)} connections={{ VDD: "net.VDIG", VDDIO: "net.VDIG", GND1: "net.GND", GND2: "net.GND", CSB: "net.VDIG", SCK: "net.I2C_SCL", SDI: "net.I2C_SDA", SDO: "net.GND" }} />
     {dc("C_BME", -18, DCY, "VDIG")}
 
     {/* ---- ADS7128 telemetry ADC (I2C, 8-ch) ---- */}
-    <ADS7128IRTER name="U_ADC" {...at(-9, ICY)} connections={{ AVDD: "net.VDIG", DVDD: "net.VDIG", GND: "net.GND", EP: "net.GND", DECAP: "net.ADC_DECAP", ADDR: "net.GND" }} />
+    <ADS7128IRTER name="U_ADC" {...at(-9, ICY)} connections={{ AVDD: "net.VDIG", DVDD: "net.VDIG", GND: "net.GND", EP: "net.GND", DECAP: "net.ADC_DECAP", ADDR: "net.GND", SCL: "net.I2C_SCL", SDA: "net.I2C_SDA" }} />
     {dc("C_ADC", -10, DCY, "VDIG")} {dc("C_ADCD", -7, DCY, "ADC_DECAP", "1uF")}
 
     {/* ---- 2x DAC80508 (16-bit, 8-ch, WQFN-16, C2679529) ---- */}

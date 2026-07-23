@@ -27,6 +27,8 @@ export const RfCellular = () => (
       connections={{
         VDD: "net.VDIG", VIO: "net.VDIG", VDD_GPIO: "net.VDIG", DEC0: "net.NRF_DEC0",
         ANT: "net.RF_ANT", nRESET: "net.NRF_RESET", ENABLE: "net.NRF_EN",
+        // SWD debug port (→ J_SWD_NRF) + GNSS 1 PPS to the iCE40 timestamp counter
+        SWDCLK: "net.NRF_SWDCLK", SWDIO: "net.NRF_SWDIO", MAGPIO0: "net.PPS",
         GND1: "net.GND", GND2: "net.GND", GND3: "net.GND", GND4: "net.GND", GND5: "net.GND",
         GND6: "net.GND", GND7: "net.GND", GND8: "net.GND", GND9: "net.GND", GND10: "net.GND",
         GND11: "net.GND", GND12: "net.GND", GND13: "net.GND", GND14: "net.GND", GND15: "net.GND",

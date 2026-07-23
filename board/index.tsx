@@ -25,6 +25,7 @@ import { Rails } from "./rails"
 import { Digital } from "./digital"
 import { TecDrivers } from "./tec"
 import { RfCellular } from "./rf"
+import { Debug } from "./debug"
 
 export { BOARD_W, BOARD_H }
 
@@ -54,5 +55,8 @@ export default () => (
 
     {/* HV bias anchor (HV zone, right edge) */}
     <HvBias x={66} y={32} />
+
+    {/* Debug bay: test points, SWD/config/UART headers, buttons, status LEDs */}
+    <Debug />
   </board>
 )

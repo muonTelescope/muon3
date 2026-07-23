@@ -29,13 +29,22 @@ export const AfeChannel = ({ index: i, x, cy }: ChannelProps) => {
   const p = (dx: number, dy: number) => ({ pcbX: `${x + dx}mm`, pcbY: `${cy + dy}mm` })
   return (
     <group name={`AFE${i}`} pcbX="0mm" pcbY="0mm">
-      {/* Panel hybrid connector (top edge): SiPM signal, HV bias, GND, NTCs */}
+      {/* Single hybrid locking connector (decision 6, top edge) carrying the
+          whole 50 cm cable for this tile: SiPM signal + shield, HV bias, the
+          two NTCs, the TEC H-bridge outputs (from TEC{i}), and the 12 V fan
+          feed + low-side return. TEC/fan nets (OA/OB/FANN) are shared with
+          the DRV8873 channel of the same index in tec.tsx. */}
       <pinheader
         name={`J_PANEL${i}`}
-        pinCount={6}
+        pinCount={10}
+        doubleRow
         gender="female"
         {...p(0, 20)}
-        connections={{ pin1: n("SIG"), pin2: n("HV"), pin3: "net.GND", pin4: n("NTC_C"), pin5: n("NTC_H"), pin6: "net.GND" }}
+        connections={{
+          pin1: n("SIG"), pin2: "net.GND", pin3: n("HV"), pin4: "net.GND",
+          pin5: n("NTC_C"), pin6: n("NTC_H"),
+          pin7: n("OA"), pin8: n("OB"), pin9: "net.V12", pin10: n("FANN"),
+        }}
       />
 
       {/* Rail clamp pulled tight to the summing node (short INA) */}
@@ -60,6 +69,9 @@ export const AfeChannel = ({ index: i, x, cy }: ChannelProps) => {
       {/* Bias reference RC (VBOT ~1.80 V from DAC) */}
       <resistor name={`R_VB${i}`} resistance="1k" footprint="0402" {...p(-7, 1)} connections={{ pin1: n("VBOT_DAC"), pin2: n("VBOTF") }} />
       <capacitor name={`C_VB${i}`} capacitance="100nF" footprint="0402" {...p(-3.5, 1)} connections={{ pin1: n("VBOTF"), pin2: "net.GND" }} />
+
+      {/* Analog test point on the TIA output (probe the raw pulse per channel) */}
+      <testpoint name={`TP_AO${i}`} {...p(9, -1)} footprintVariant="pad" padShape="circle" padDiameter="1.2mm" connections={{ pin1: n("AOUT") }} />
 
       {/* Dual comparators: signal on IN_POS, threshold on IN_NEG; VCC decoupling at the pin */}
       <capacitor name={`C_CL${i}`} capacitance="100nF" footprint="0402" {...p(-8, -5.5)} connections={{ pin1: "net.VDIG", pin2: "net.GND" }} />
