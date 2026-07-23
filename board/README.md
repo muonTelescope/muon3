@@ -98,7 +98,7 @@ rationale, power paths, and trace widths).
 | Floorplan (4-layer zones, keepouts, mounting holes) | ✅ [layout.ts](layout.ts) + [floorplan.tsx](floorplan.tsx) |
 | AFE ×4 (OPA858 + dual TLV3601) | ✅ placed + wired, datasheet-tuned, verified netlist |
 | RF/cellular (nRF9151 + U.FL) | ✅ placed: supplies, DEC0, reset/enable, ANT→U.FL |
-| Digital core (iCE40 + RP2040 + flash + ADC + DAC + BME280) | ✅ placed: power + decoupling + config (DAC BGA flagged) |
+| Digital core (iCE40 + RP2040 + flash + ADC + 2× DAC + BME280) | ✅ placed: power + decoupling + config; DAC = DAC80508MRTER WQFN-16 (C2679529, non-BGA, wired) |
 | Power (USB-C + CH224K + TPS62933 buck) | ✅ placed: PD path + buck network |
 | TEC drivers (DRV8873 ×4) + fans | ✅ placed: VM/charge-pump/IPROPI + fan FETs |
 | HV bias (LT3482 ~70 V) | 🚧 anchor + APD 20 Ω + HV_MON; boost network (L/D/FB) next |

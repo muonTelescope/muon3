@@ -8,16 +8,16 @@
  *
  * Placement pass: supplies + decoupling + config pull-ups wired. Inter-IC
  * signal buses (RP2040 QSPI↔flash, SPI/I2C to DAC/ADC/BME280/iCE40, GPIO,
- * PPS) are the routing/netlist pass. DAC80508 imported as a BGA with only
- * grid ball names (A1..D4) → placed but NOT powered until wired from the
- * datasheet ball map. RP2040 12 MHz crystal MPN still TBD (load caps placed).
+ * PPS) are the routing/netlist pass. Two DAC80508MRTER (16-bit, WQFN-16,
+ * C2679529 — non-BGA, low JLC stock ~11) are fully powered/decoupled with
+ * outputs on nets. RP2040 12 MHz crystal MPN still TBD (load caps placed).
  */
 import { ICE40UP5K_SG48I } from "./imports/ICE40UP5K_SG48I"
 import { RP2040 } from "./imports/RP2040"
 import { W25Q128JVSIQ } from "./imports/W25Q128JVSIQ"
 import { BME280 } from "./imports/BME280"
 import { ADS7128IRTER } from "./imports/ADS7128IRTER"
-import { DAC80508ZYZFR } from "./imports/DAC80508ZYZFR"
+import { DAC80508MRTER } from "./imports/DAC80508MRTER"
 
 const at = (x: number, y: number) => ({ pcbX: `${x}mm`, pcbY: `${y}mm` })
 const dc = (name: string, x: number, y: number, net: string, val = "100nF", fp = "0402") => (
@@ -76,9 +76,31 @@ export const Digital = () => (
     <ADS7128IRTER name="U_ADC" {...at(-9, ICY)} connections={{ AVDD: "net.VDIG", DVDD: "net.VDIG", GND: "net.GND", EP: "net.GND", DECAP: "net.ADC_DECAP", ADDR: "net.GND" }} />
     {dc("C_ADC", -10, DCY, "VDIG")} {dc("C_ADCD", -7, DCY, "ADC_DECAP", "1uF")}
 
-    {/* ---- DAC80508 (BGA) — placed only; ball map wiring is a datasheet pass ---- */}
-    <DAC80508ZYZFR name="U_DAC" {...at(3, ICY)} />
-    <fabricationnotetext text="U_DAC (BGA): wire VDD/GND/REF/SPI from datasheet ball map" pcbX="6mm" pcbY={`${DCY}mm`} fontSize="1mm" anchorAlignment="center" />
+    {/* ---- 2x DAC80508 (16-bit, 8-ch, WQFN-16, C2679529) ---- */}
+    {/* thresholds/bias/HV-trim/TEC-setpoints/cal (16 outputs). VDD on the
+        5 V analog rail; VIO on 3.3 V SPI logic; internal 2.5 V ref (REF cap). */}
+    <DAC80508MRTER
+      name="U_DAC1"
+      {...at(2, ICY)}
+      connections={{
+        VDD: "net.VANA", VIO: "net.VDIG", GND: "net.GND", EP: "net.GND", REF: "net.DAC1_REF",
+        CS: "net.DAC1_CS", SCLK: "net.SPI_SCLK", SDI: "net.SPI_MOSI",
+        OUT0: "net.DAC1_O0", OUT1: "net.DAC1_O1", pin4: "net.DAC1_O2", pin5: "net.DAC1_O3",
+        OUT4: "net.DAC1_O4", OUT5: "net.DAC1_O5", OUT6: "net.DAC1_O6", OUT7: "net.DAC1_O7",
+      }}
+    />
+    {dc("C_DAC1V", 2, DCY, "VANA")} {dc("C_DAC1IO", 4, DCY, "VDIG")} {dc("C_DAC1R", 0, DCY, "DAC1_REF", "1uF")}
+    <DAC80508MRTER
+      name="U_DAC2"
+      {...at(13, ICY)}
+      connections={{
+        VDD: "net.VANA", VIO: "net.VDIG", GND: "net.GND", EP: "net.GND", REF: "net.DAC2_REF",
+        CS: "net.DAC2_CS", SCLK: "net.SPI_SCLK", SDI: "net.SPI_MOSI",
+        OUT0: "net.DAC2_O0", OUT1: "net.DAC2_O1", pin4: "net.DAC2_O2", pin5: "net.DAC2_O3",
+        OUT4: "net.DAC2_O4", OUT5: "net.DAC2_O5", OUT6: "net.DAC2_O6", OUT7: "net.DAC2_O7",
+      }}
+    />
+    {dc("C_DAC2V", 13, DCY, "VANA")} {dc("C_DAC2IO", 15, DCY, "VDIG")} {dc("C_DAC2R", 11, DCY, "DAC2_REF", "1uF")}
 
     {/* Shared I2C pull-ups (BME280 + ADS7128) to 3.3 V */}
     {pu("R_SDA", -10, PUY, "VDIG", "I2C_SDA", "4.7k")}
