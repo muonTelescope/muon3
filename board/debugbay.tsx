@@ -1,6 +1,13 @@
 /**
  * Debug / test-access bay
  * -----------------------
+ * NB: this file is `debugbay.tsx`, NOT `debug.tsx`, on purpose. The browser
+ * evaluator behind `tsci dev` (@tscircuit/eval) collides a relative import of
+ * `./debug` with the ubiquitous `debug` npm package, so `import { Debug } from
+ * "./debug"` resolves to `undefined` and the whole board fails to render with
+ * "Element type is invalid … got undefined" — even though `tsci build` (real
+ * bun path resolution) is fine. Keep the name off `debug`.
+ *
  * Occupies the free pocket between DIGITAL (x <= 26) and HV (x >= 57), below
  * the AFE strips (y <= ~9). Everything a bring-up needs in one accessible
  * cluster:

@@ -25,7 +25,7 @@ import { Rails } from "./rails"
 import { Digital } from "./digital"
 import { TecDrivers } from "./tec"
 import { RfCellular } from "./rf"
-import { Debug } from "./debug"
+import { Debug } from "./debugbay"
 
 export { BOARD_W, BOARD_H }
 

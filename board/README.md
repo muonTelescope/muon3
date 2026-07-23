@@ -101,7 +101,7 @@ rationale, power paths, and trace widths).
 | Digital core (iCE40 + RP2040 + flash + ADC + 2× DAC + BME280) | ✅ placed + **inter-IC buses wired**: QSPI boot, SPI (DACs), I²C (BME280/ADC), iCE40 config, 8× comparator→FPGA, SWD, USB |
 | Power (USB-C + CH224K + TPS62933 buck) | ✅ placed: PD path + buck network |
 | TEC drivers (DRV8873 ×4) + fans | ✅ placed: VM/charge-pump/IPROPI + fan FETs; OA/OB/fan reach the panel hybrid |
-| Debug bay (test points, SWD/config/UART headers, boot/reset buttons, status LEDs) | ✅ [debug.tsx](debug.tsx) |
+| Debug bay (test points, SWD/config/UART headers, boot/reset buttons, status LEDs) | ✅ [debugbay.tsx](debugbay.tsx) |
 | HV bias (LT3482 ~70 V) | 🚧 anchor + APD 20 Ω + HV_MON; boost network (L/D/FB) next |
 
 **Debuggability / connectivity pass (this commit):**
@@ -112,7 +112,7 @@ rationale, power paths, and trace widths).
   BME280/ADS7128; RP2040↔iCE40 config (SPI slave-load) + CDONE/CRESET; the 8
   AFE comparator outputs → iCE40 counters; nRF9151 GNSS **PPS** → iCE40; RP2040
   USB shared onto the USB-C data pair (flashable in place).
-- **Debug bay** (`debug.tsx`, free pocket between DIGITAL and HV): 14 labeled
+- **Debug bay** (`debugbay.tsx`, free pocket between DIGITAL and HV): 14 labeled
   test points (all rails + SPI/I²C/PPS + HV *monitor*), per-channel `TP_AO`
   TIA-output probes, SWD headers (RP2040 + nRF9151), an iCE40 SPI-config header,
   a stdio-UART header, RUN + BOOTSEL buttons, and power-good + heartbeat LEDs.

@@ -150,7 +150,7 @@ A further RF win would rotate the nRF so ANT faces the board edge.
 
 ## Debug access, test points & connectivity
 
-A dedicated **debug bay** ([debug.tsx](debug.tsx)) fills the free pocket
+A dedicated **debug bay** ([debugbay.tsx](debugbay.tsx)) fills the free pocket
 between the DIGITAL zone (x ≤ 26) and the HV zone (x ≥ 57), under the AFE
 strips. Everything a bring-up needs sits in one accessible cluster, on the
 top copper:
