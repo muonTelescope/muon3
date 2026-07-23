@@ -110,6 +110,44 @@ Applied to the placed AFE + HV parts from the vendor layout guidance:
   trace referenced to L2 with a GND keepout under it, and the antenna keepout
   as a copper-free cylinder through all layers.
 
+## Topology / ratsnest check
+
+[../tools/ratsnest.py](../tools/ratsnest.py) builds the ratsnest (per-net MST
+over the pads), weights each net by a routing priority from the datasheets /
+DESIGN_RULES, and reports weighted airwire length + zone crossings. Run:
+`python3 tools/ratsnest.py`.
+
+**Priority weights → suggested layer** (higher = shorter/more-guarded):
+
+| w | class | layer |
+| --- | --- | --- |
+| 10 | RF 50 Ω (RF_ANT) | L1, L2 reference, GND keepout under trace |
+| 8 | AFE hi-Z / output (INA, AOUT, FB) | L1 short, no-pour keepout |
+| 6 | SiPM signal (SIG) | L1 short |
+| 5 | HV ~70 V | L1, ≥0.6 mm creepage |
+| 4 | clock / high-speed digital (SPI, QSPI, xtal, CS) | L1/L4 short, GND ref |
+| 3 | analog ref (VBOT, thresholds, DAC out), comparator out | L1/L3 guarded |
+| 2 | control / slow (I²C, PD, NTC, fan, reset) | any |
+| 1 | power (VANA/VDIG/V12/…) | L3 pour |
+| 0 | GND | L2 plane |
+
+**Verdict — macro-topology is sound:** **zero w≥4 nets cross a zone** — RF,
+AFE, HV, and high-speed digital all stay local; only the power rails and GND
+span the board (as intended for L2/L3 planes).
+
+**Optimizations applied this pass (weighted airwire 6642 → 5078, −24%):**
+- Per-channel bias/threshold nets (VBOTF, V*_DAC) instead of board-spanning
+  shared nets — removes 98/69 mm nets **and** fixes the freeze requirement for
+  independent per-channel thresholds.
+- Dropped the analog AOUT tap off the FPGA header (kept the comparator
+  outputs) — AOUT 37.5 → 23.5 mm.
+- U.FL moved directly below the nRF ANT pad — RF_ANT 25 → ~8 mm.
+- Clamp diodes pulled tight to the TIA input — shorter INA summing node.
+
+**Remaining (inherent / low priority):** AOUT ~23 mm (TIA → two comparators,
+vertical channel flow); VDIG/V12/VANA/GND (planes/pours, length not critical).
+A further RF win would rotate the nRF so ANT faces the board edge.
+
 ## Status & known limitations
 
 - **Placement done** for AFE ×4 (real parts), power seed, HV anchor, and the

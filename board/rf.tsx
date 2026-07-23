@@ -42,8 +42,10 @@ export const RfCellular = () => (
     <resistor name="R_NRST" resistance="10k" footprint="0402" {...at(-55, 28)} connections={{ pin1: "net.VDIG", pin2: "net.NRF_RESET" }} />
     <resistor name="R_NREN" resistance="100k" footprint="0402" {...at(-55, 24)} connections={{ pin1: "net.VDIG", pin2: "net.NRF_EN" }} />
 
-    {/* U.FL edge-launch: signal = RF_ANT, shell = GND (50 ohm, no matching) */}
-    <BWU_FL_IPEX1 name="J_ANT" {...at(-76, 45)} connections={{ pin1: "net.RF_ANT", pin2: "net.GND", pin3: "net.GND" }} />
+    {/* U.FL right below the nRF ANT pad (-61.75, 24.9) — short 50 ohm run,
+        in the isolated RF zone. Signal = RF_ANT, shell = GND (no matching).
+        Further ideal: rotate the nRF so ANT faces the board edge. */}
+    <BWU_FL_IPEX1 name="J_ANT" {...at(-64, 17)} connections={{ pin1: "net.RF_ANT", pin2: "net.GND", pin3: "net.GND" }} />
   </group>
 )
 

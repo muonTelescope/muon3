@@ -38,16 +38,16 @@ export const AfeChannel = ({ index: i, x, cy }: ChannelProps) => {
         connections={{ pin1: n("SIG"), pin2: n("HV"), pin3: "net.GND", pin4: n("NTC_C"), pin5: n("NTC_H"), pin6: "net.GND" }}
       />
 
-      {/* Rail clamp on the incoming line, above the TIA */}
-      <diode name={`D_CLH${i}`} footprint="sod123" supplierPartNumbers={{ jlcpcb: ["C2128"] }} {...p(-6, 13.5)} connections={{ anode: n("INA"), cathode: "net.VANA" }} />
-      <diode name={`D_CLL${i}`} footprint="sod123" supplierPartNumbers={{ jlcpcb: ["C2128"] }} {...p(6, 13.5)} connections={{ anode: "net.GND", cathode: n("INA") }} />
+      {/* Rail clamp pulled tight to the summing node (short INA) */}
+      <diode name={`D_CLH${i}`} footprint="sod123" supplierPartNumbers={{ jlcpcb: ["C2128"] }} {...p(-4.5, 11.5)} connections={{ anode: n("INA"), cathode: "net.VANA" }} />
+      <diode name={`D_CLL${i}`} footprint="sod123" supplierPartNumbers={{ jlcpcb: ["C2128"] }} {...p(4.5, 11.5)} connections={{ anode: "net.GND", cathode: n("INA") }} />
 
       {/* TIA cluster — series R at IN−, VS decoupling at VS_POS, feedback at FB */}
       <resistor name={`Rser${i}`} resistance="10" footprint="0402" {...p(-3.5, 9)} connections={{ pin1: n("SIG"), pin2: n("INA") }} />
       <OPA858IDSGR
         name={`U_TIA${i}`}
         {...p(0, 9)}
-        connections={{ IN_NEG: n("INA"), IN_POS: "net.VBOTF", OUT: n("AOUT"), FB: n("FB"), VS_POS: "net.VANA", VS_NEG: "net.GND", PD: "net.VANA", EP: "net.GND" }}
+        connections={{ IN_NEG: n("INA"), IN_POS: n("VBOTF"), OUT: n("AOUT"), FB: n("FB"), VS_POS: "net.VANA", VS_NEG: "net.GND", PD: "net.VANA", EP: "net.GND" }}
       />
       <capacitor name={`C_TIA${i}`} capacitance="100nF" footprint="0402" {...p(3.5, 9)} connections={{ pin1: "net.VANA", pin2: "net.GND" }} />
       {/* OPA858 local bulk (datasheet: 0.1uF + 2.2uF on VS+) */}
@@ -58,8 +58,8 @@ export const AfeChannel = ({ index: i, x, cy }: ChannelProps) => {
       <keepout shape="rect" {...p(0, 8)} width="9mm" height="6mm" layers={["top", "inner1"]} />
 
       {/* Bias reference RC (VBOT ~1.80 V from DAC) */}
-      <resistor name={`R_VB${i}`} resistance="1k" footprint="0402" {...p(-7, 1)} connections={{ pin1: "net.VBOT_DAC", pin2: "net.VBOTF" }} />
-      <capacitor name={`C_VB${i}`} capacitance="100nF" footprint="0402" {...p(-3.5, 1)} connections={{ pin1: "net.VBOTF", pin2: "net.GND" }} />
+      <resistor name={`R_VB${i}`} resistance="1k" footprint="0402" {...p(-7, 1)} connections={{ pin1: n("VBOT_DAC"), pin2: n("VBOTF") }} />
+      <capacitor name={`C_VB${i}`} capacitance="100nF" footprint="0402" {...p(-3.5, 1)} connections={{ pin1: n("VBOTF"), pin2: "net.GND" }} />
 
       {/* Dual comparators: signal on IN_POS, threshold on IN_NEG; VCC decoupling at the pin */}
       <capacitor name={`C_CL${i}`} capacitance="100nF" footprint="0402" {...p(-8, -5.5)} connections={{ pin1: "net.VDIG", pin2: "net.GND" }} />
@@ -68,9 +68,9 @@ export const AfeChannel = ({ index: i, x, cy }: ChannelProps) => {
       <capacitor name={`C_CH${i}`} capacitance="100nF" footprint="0402" {...p(8, -5.5)} connections={{ pin1: "net.VDIG", pin2: "net.GND" }} />
 
       {/* DAC threshold references, RC-filtered */}
-      <resistor name={`R_THL${i}`} resistance="1k" footprint="0402" {...p(-7, -9)} connections={{ pin1: "net.VTHL_DAC", pin2: n("VTHLF") }} />
+      <resistor name={`R_THL${i}`} resistance="1k" footprint="0402" {...p(-7, -9)} connections={{ pin1: n("VTHL_DAC"), pin2: n("VTHLF") }} />
       <capacitor name={`C_THL${i}`} capacitance="100nF" footprint="0402" {...p(-3.5, -9)} connections={{ pin1: n("VTHLF"), pin2: "net.GND" }} />
-      <resistor name={`R_THH${i}`} resistance="1k" footprint="0402" {...p(3.5, -9)} connections={{ pin1: "net.VTHH_DAC", pin2: n("VTHHF") }} />
+      <resistor name={`R_THH${i}`} resistance="1k" footprint="0402" {...p(3.5, -9)} connections={{ pin1: n("VTHH_DAC"), pin2: n("VTHHF") }} />
       <capacitor name={`C_THH${i}`} capacitance="100nF" footprint="0402" {...p(7, -9)} connections={{ pin1: n("VTHHF"), pin2: "net.GND" }} />
 
       {/* Comparator outputs → series damping → FPGA header */}
@@ -84,7 +84,7 @@ export const AfeChannel = ({ index: i, x, cy }: ChannelProps) => {
         pinCount={4}
         gender="male"
         {...p(0, -17)}
-        connections={{ pin1: n("FPAL"), pin2: n("FPAH"), pin3: n("AOUT"), pin4: "net.GND" }}
+        connections={{ pin1: n("FPAL"), pin2: n("FPAH"), pin3: "net.GND", pin4: "net.GND" }}
       />
     </group>
   )
