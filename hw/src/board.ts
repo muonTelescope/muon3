@@ -3,10 +3,11 @@ import type { Circuit, Part } from "./circuit.ts";
 import type { Pad } from "../tools/fetch_parts.ts";
 import { type Pt, type Poly, pt, apply, rectPoly, circlePoly, obroundPoly, bboxOf } from "./geom.ts";
 
-/** JLC 6-layer (JLC06161H-2116 class). L2/L5 solid GND; L4 carries power pours. */
-export const LAYERS = ["F.Cu", "In1.Cu", "In2.Cu", "In3.Cu", "In4.Cu", "B.Cu"] as const;
-export const TOP = 0, GND1 = 1, SIG2 = 2, PWR3 = 3, GND4 = 4, BOT = 5;
-export const ROUTE_LAYERS = [TOP, SIG2, PWR3, BOT];
+/** JLC 4-layer 1.6 mm (JLC04161H-7628 class): L1 signal + parts, L2 solid GND, L3 signal/power, L4 signal. */
+export const LAYERS = ["F.Cu", "In1.Cu", "In2.Cu", "B.Cu"] as const;
+export const TOP = 0, GND1 = 1, SIG2 = 2, BOT = 3;
+export const ROUTE_LAYERS = [TOP, SIG2, BOT];
+export const PLANE_LAYERS = [GND1];
 
 /** Design rules (JLC 6-layer capability with margin). */
 export const RULES = {

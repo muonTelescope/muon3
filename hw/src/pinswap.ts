@@ -1,14 +1,15 @@
-// FPGA pin swapping: generic iCE40 I/O nets move to whichever free I/O pad is nearest their far end.
+// Pin swapping: nets on freely-muxable pins (ESP32-S3 GPIO matrix / iCE40 generic I/O) move to the nearest free pad.
 import type { Board } from "./board.ts";
 import type { Part } from "./circuit.ts";
 import { apply, pt } from "./geom.ts";
 
-const FIXED = /SPI_|CDONE|creset|VCC|VPP|GND|EP|G0/; // config/SPI/clock/power pads never move; RGB0-2 are open-drain sinks, excluded
+// never: power/config/SPI/clock pads, iCE40 RGB (open-drain), ESP32 strapping (0,3,45,46), USB (19,20), flash/PSRAM (26-37)
+const FIXED = /SPI_|CDONE|creset|VCC|VPP|GND|EP|G0|^IO(0|3|45|46|19|20|2[6-9]|3[0-7])$/;
 
 export function swapPins(b: Board, ref: string, nets: RegExp) {
   const u = b.parts.find(p => p.ref === ref) as Part;
   const pads = u.info.footprint.pads;
-  const io = pads.filter(pd => /^IO[BT]_/.test(u.info.pins[pd.num] ?? "") && !FIXED.test(u.info.pins[pd.num]));
+  const io = pads.filter(pd => /^IO[BT]_|^IO\d+$/.test(u.info.pins[pd.num] ?? "") && !FIXED.test(u.info.pins[pd.num]));
   const pos = (num: string) => { const pd = pads.find(q => q.num === num)!; return apply(u.place!, pt(pd.x, pd.y)); };
   const movable = Object.entries(u.pads).filter(([, n]) => nets.test(n));
   // far end of each net = centroid of the net's other pads

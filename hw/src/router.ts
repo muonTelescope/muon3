@@ -195,7 +195,7 @@ export class Router {
     const { g, from, stamp, legalCache, legalStamp } = this;
     const neck = this.neckZone(net, cls);
     const halfW = (s: number) => (neck && neck.has(s % this.N) ? cls.neck! : cls.width) / 2;
-    const layerCost = [1.3, 1.0, 1.0, 1.15];
+    const layerCost = [1.3, 1.0, 1.15]; // top is for fan-out; inner signal layer preferred
     const viaCost = 25, turnCost = 0.3, softCost = 12;
     const bx0 = opts.box ? Math.floor(opts.box.x0 / this.pitch) : 0, bx1 = opts.box ? Math.ceil(opts.box.x1 / this.pitch) : this.nx;
     const by0 = opts.box ? Math.floor(opts.box.y0 / this.pitch) : 0, by1 = opts.box ? Math.ceil(opts.box.y1 / this.pitch) : this.ny;

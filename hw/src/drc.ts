@@ -7,9 +7,11 @@ import { ruleHalfClear } from "./router.ts";
 type Item = { net: string; layers: number[]; kind: "pad" | "track" | "via"; label: string;
   segs?: [Pt, Pt][]; r?: number; poly?: Pt[]; at?: Pt };
 
+const ALL = LAYERS.map((_, i) => i);
+
 function items(b: Board): Item[] {
   const out: Item[] = [];
-  for (const p of b.allPads()) out.push({ net: p.net, layers: p.layer === "multi" ? [0, 1, 2, 3, 4, 5] : [p.layer === "top" ? 0 : 5], kind: "pad", label: `${p.ref}.${p.num}`, poly: p.poly });
+  for (const p of b.allPads()) out.push({ net: p.net, layers: p.layer === "multi" ? ALL : [p.layer === "top" ? 0 : ALL.length - 1], kind: "pad", label: `${p.ref}.${p.num}`, poly: p.poly });
   for (const t of b.tracks) {
     const segs: [Pt, Pt][] = [];
     for (const s of t.path) {
@@ -18,7 +20,7 @@ function items(b: Board): Item[] {
     }
     out.push({ net: t.net, layers: [t.layer], kind: "track", label: `track ${t.net} ${LAYERS[t.layer]}`, segs, r: t.width / 2 });
   }
-  for (const v of b.vias) out.push({ net: v.net, layers: [0, 1, 2, 3, 4, 5], kind: "via", label: `via ${v.net}`, at: v.at, r: v.dia / 2 });
+  for (const v of b.vias) out.push({ net: v.net, layers: ALL, kind: "via", label: `via ${v.net}`, at: v.at, r: v.dia / 2 });
   return out;
 }
 

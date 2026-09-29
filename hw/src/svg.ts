@@ -38,7 +38,7 @@ export function renderSvg(b: Board, opts: { layers?: number[]; rats?: boolean; l
   const out: string[] = [];
   out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${-pad} ${-pad} ${b.w + 2 * pad} ${b.h + 2 * pad}" width="${(b.w + 2 * pad) * s}" height="${(b.h + 2 * pad) * s}" style="background:#10151c">`);
   out.push(`<path d="${path(b.outline)}" fill="#1d3b2a" stroke="#e0d060" stroke-width="0.15"/>`);
-  const layers = opts.layers ?? [0, 1, 2, 3, 4, 5];
+  const layers = opts.layers ?? LAYERS.map((_, i) => i);
   for (const L of layers) {
     for (const z of b.zones.filter(z => z.layer === L)) {
       const d = (z.fill ?? []).map(path).join("") + (z.holes ?? []).map(path).join("");

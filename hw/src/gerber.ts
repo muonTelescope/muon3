@@ -96,7 +96,7 @@ export function writeGerbers(b: Board, prefix: string): Record<string, string> {
   const H = b.h;
   const pads = b.allPads();
   const files: Record<string, string> = {};
-  const cuName = ["F_Cu.gtl", "In1_Cu.g2", "In2_Cu.g3", "In3_Cu.g4", "In4_Cu.g5", "B_Cu.gbl"];
+  const cuName = LAYERS.map((n, L) => L === 0 ? "F_Cu.gtl" : L === LAYERS.length - 1 ? "B_Cu.gbl" : `${n.replace(".", "_")}.g${L + 1}`);
   for (let L = 0; L < LAYERS.length; L++) {
     const side = L === 0 ? "Top" : L === LAYERS.length - 1 ? "Bot" : "Inr";
     const g = new GerberWriter(H, prefix, `Copper,L${L + 1},${side}`);
@@ -108,7 +108,7 @@ export function writeGerbers(b: Board, prefix: string): Record<string, string> {
     for (const t of b.tracks.filter(t => t.layer === L)) g.track(t);
     for (const v of b.vias) g.flash(g.aperture("C", [v.dia]), v.at);
     for (const p of pads) {
-      const on = p.layer === "multi" || (L === 0 && p.layer === "top") || (L === 5 && p.layer === "bottom");
+      const on = p.layer === "multi" || (L === 0 && p.layer === "top") || (L === LAYERS.length - 1 && p.layer === "bottom");
       if (on) g.pad(p);
     }
     files[`${prefix}-${cuName[L]}`] = g.toString();
@@ -145,7 +145,7 @@ function excellon(b: Board, plated: boolean): string {
     for (const h of [...b.holes, ...b.parts.flatMap(p => b.partHoles(p))]) if (!h.plated) hits.push({ d: h.d, at: h.at });
   }
   const tools = [...new Set(hits.map(h => h.d.toFixed(3)))].sort();
-  const out = ["M48", "; Muon3 hw-ts", `; #@! TF.FileFunction,${plated ? "Plated,1,6,PTH" : "NonPlated,1,6,NPTH"}`, "METRIC,TZ", ...tools.map((t, i) => `T${i + 1}C${t}`), "%", "G90", "G05"];
+  const out = ["M48", "; Muon3 hw-ts", `; #@! TF.FileFunction,${plated ? `Plated,1,${LAYERS.length},PTH` : `NonPlated,1,${LAYERS.length},NPTH`}`, "METRIC,TZ", ...tools.map((t, i) => `T${i + 1}C${t}`), "%", "G90", "G05"];
   tools.forEach((t, i) => {
     out.push(`T${i + 1}`);
     for (const h of hits.filter(h => h.d.toFixed(3) === t))
