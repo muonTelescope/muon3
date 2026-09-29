@@ -1,152 +1,188 @@
-# Muon3: Networked Cosmic-Ray Muon Telescope
+# Muon3: a networked cosmic-ray muon station
 
-**In plain English:** muons from cosmic-ray showers pass through us all the time. A plastic scintillator
-tile gives off a tiny flash when one crosses it; a silicon photomultiplier (SiPM) turns that flash into a
-current pulse; a small board counts pulses that arrive in several stacked tiles at once. Muon3 is the
-next-generation station for the Georgia State University [gLOWCOST](https://cosmic.gsu.edu/) network —
-cheap, identical detectors in classrooms and labs around the world that log how the muon rate follows
-pressure, temperature and space weather.
+**In plain English:** muons from cosmic-ray showers pass through us all the time. A plastic scintillator tile gives
+off a tiny flash when one crosses it. A silicon photomultiplier (SiPM) turns that flash into a current pulse, and a
+small board counts pulses that arrive in several stacked tiles at once. Muon3 is the next-generation station for the
+Georgia State University [gLOWCOST](https://cosmic.gsu.edu/) network: cheap, identical detectors in classrooms and
+labs that log how the muon rate follows air pressure, temperature and space weather.
 
-![Muon3 station board, 3D](hw/docs/render_3d.png)
+Each station (Rev C) is **one 96 × 64 mm, 4-layer, USB-powered board**, fully assembled by JLC on one side, in a
+**102 × 70 × 16.5 mm printed ABS case** held by four M3 screws.
+- It reads four decommissioned **sPHENIX inner-HCal tiles** (Hamamatsu S12572-33-015P SiPMs). Each tile's micro-coax
+  plugs into a **U.FL jack inside the case**, so the SiPM bias never reaches an outside surface.
+- The **four channels are identical**: channel 0 is placed and routed once, and cells 1–3 are exact copies at a 20 mm
+  pitch (copper identical to 2 µm; checked on every build).
+- The ESP32-S3 time-stamps and counts the hits and reports over Wi-Fi or USB.
+- With cables, the station fits on every one of the 12 inner-HCal tile shapes.
 
-## The station board (Rev B, 2026-09-29)
-
-One **84 × 50 mm, 4-layer, USB-powered board, assembled by JLC on one side only**. It reads four
-**decommissioned sPHENIX inner-HCal tiles** (EJ-200 + Y11 WLS fiber + Hamamatsu **S12572-33-015P**) through four
-edge-launch SMA jacks. There is no battery, no FPGA and no LoRa. The ESP32-S3 time-stamps the hits itself, and a
-USB power bank serves as the UPS. The board is designed, placed, routed and turned into Gerbers entirely in
-TypeScript; see [`hw/`](hw/README.md).
+| | |
+|---|---|
+| ![Station board, 3D](hw/docs/render_3d.png) | ![Board in its case, exploded](hw/docs/render_case.png) |
 
 ```text
-HCal tile ── pigtail + SMA plug ──► edge SMA ×4 (shell = SiPM bias via 47 kΩ; centre = anode)   [SAFETY SIGN-OFF OPEN]
-                                       │
-                         OPA356 TIA (33 kΩ ‖ 2.7 pF; baseline VREF_n = per-channel bias trim, MCP4728 #1)
-                                       │
-                         LMV7219 comparator (threshold VTH_n, MCP4728 #2) ── 33 Ω ── HIT_n
-                                       ▼
-                ESP32-S3-WROOM-1-N8: MCPWM capture (12.5 ns, both edges → time-over-threshold),
-                PCNT singles counters, coincidences in firmware; Wi-Fi / BLE / USB-CDC
-                                       │ HV_PWM (2-pole RC)          ▲ HV_MON (ADC)
-                                       ▼                              │
-                MC34063 boost + BSS123 + 150 µH + LL4148, 1 mH/1 µF LC filter ──► HV (boot-safe low default)
-                                       │
-BME280 (pressure · temperature · humidity) · SC7A20H tilt · STEMMA QT (I2C expansion)
-USB-C 5 V only (5.1 kΩ Rd, USBLC6 ESD) ─► AMS1117-3.3 (digital) + TLV75733 (analog)   ·   no battery: use a USB power bank
+ tile ─ micro-coax ─► U.FL in the case (shell = bias via 47 kΩ) ─► OPA356 TIA (33 kΩ ‖ 2.7 pF) ─► LMV7219 ─► HIT_n ─► ESP32-S3
+   ×4 (identical cells)           ▲                               ▲ VREF (DAC B·A)             ▲ VTH_n (DAC A)      PCNT + MCPWM
+             MC34063 boost → 10 k / 1 µF RC ─ HV (53–83 V) ◄─ HV_TRIM (DAC B·B) ◄──────────────────────────── HV_EN
+                         └──────────── HV_MON (÷ 27.7) ────────────────────────────────────────────────────► ADC
+ INJ (GPIO) ─ 10 k/1.1 k ─ 1 pF into each input: 0.33 pC = 9 p.e. self-test
+ BME280 (slotted thermal island, ≥ 20 mm from any input) · SC7A20H tilt · STEMMA QT · USB-C 5 V → AMS1117 3V3 + TLV75733 3V3A
 ```
 
-| | |
-|---|---|
-| ![Routed copper](hw/docs/routed.png) | ![Top render](hw/docs/render_top.png) |
-| Routed copper: three routed layers (L1, L3, L4) around a solid GND plane on L2. Traces are pulled taut and every corner is a true arc (G02/G03 in the Gerbers). | Top view. Four edge-launch SMAs straddle the top edge (as on gLOWCOST 2v2); USB-C and STEMMA QT sit on the left edge; the ESP32 antenna is flush with the right edge over a copper keep-out. |
+## Numbers (all simulated; see `hw/sim/`)
 
-*These renders date from commit 267a13f (84 × 50 mm, 4-layer), which is before the MC34063 bias change in
-db3ec53. The HV corner still shows the earlier bias parts. Regenerate them with `cd hw && bun run build`.*
+| | Value | From |
+|---|---|---|
+| Bias range | **52.9–83.0 V** (TRIM 2.048 → 0 V); ≈ 4 V while HV_EN is low | ngspice |
+| Bias power-up | nothing until firmware raises HV_EN; settles in 60–90 ms | ngspice |
+| Switching ripple at the TIA output | **0.04 mV pk-pk (0.007 p.e.)**, including capacitor ESL, resistor shunt capacitance and 1.5 nH of ground shared with the boost | ngspice, 5 ns steps |
+| 1 photoelectron / mean muon | **5.8 mV / 337 mV** (58 p.e. assumed), time over threshold ≈ 390 ns | ngspice |
+| Injection self-test | 109 mV with no tile, 55 mV with a tile | ngspice |
+| BME280 reading above room air | **+5.4 K** (low-power firmware), +9.2 K (Wi-Fi always on); a mid-board sensor would read +13 K | 2D thermal model |
+| ESP32 Wi-Fi (+20 dBm) at the TIA inputs, cables included | **0.9–5.6 mV peak**, which rectifies to < 1 µV (≪ 0.01 p.e.) | openEMS FDTD |
 
-Status (last build 2026-09-29 23:35 CEST): fully routed. The KiCad DRC shows 0 errors and 0 unconnected; its
-117 warnings are all "footprint library not configured" notices. The build has 117 placements and 43 BOM lines.
-Rebuild with `cd hw && bun run build` (≈10 s) and `bun run drc`.
+![Bias supply](hw/docs/sim_hv.png)
 
-### What changed, and why (Musk order: fix requirements → delete → simplify → speed up → automate)
+## Build one
 
-GSU's science product is minute/hourly rates from indoor sites that have power and Wi-Fi, at about $700 per
-detector. Everything else had to earn its place.
+1. **Board:** `cd hw && bun run build`, then upload `out/muon3-gerbers.zip` with `out/bom.csv` and `out/cpl.csv` to JLC:
+   4 layers, 1.6 mm, top-side assembly only.
+2. **Case:** `freecadcmd hw/case/case.py` writes `hw/out/case/case_base.stl` and `case_lid.stl`.
+   - Print in ABS: 0.2 mm layers, 4 walls, 30 % infill, each part flat face down (base on its floor, lid on its top).
+   - Hardware: 4 × M3 × 5.7 heat-set inserts (Ø 4.0 holes) and 4 × ISO 4762 M3 × 12 socket-head screws.
+   - Cabling: lay each tile's U.FL micro-coax (Ø 1.13 or 1.37 mm) in its lid notch, close the case, then zip-tie the
+     four cables to the bar on the outside of the base.
+3. **Test:** `python hw/tools/station_test.py board`. The guide, with simulated scope screens, is in
+   [hw/docs/TESTING.md](hw/docs/TESTING.md).
 
-The max-scope freeze earlier on 2026-09-29 is preserved in commit `594b36c`. Rev B supersedes it and removes:
-- panel-head boards, the LVDS harness, TEC coolers and interlocks
-- the LTE modem, GNSS, USB-PD, the 4S/18650 battery and charger
-- Ethernet, OLED, microSD
-- the iCE40 FPGA, LoRa, $16 DACs, and the second comparator per channel
+Details are in [hw/README.md](hw/README.md): the board-as-code pipeline, the parts library, the case and every
+simulation.
 
-What remains is what the tested [gLOWCOST 2v2](https://github.com/tharinduudu/gLOWCOST-2v2-mppcInterface-) board
-proved: edge SMAs with bias on the shell, anode-offset bias trim, and the 2v2 boost topology (now controlled by an
-MC34063 instead of the MAX1932, at about $0.15 instead of $6.09 at quantity 100). Rev B adds USB and Wi-Fi. The
-full kept/deleted list is in [`hw/README.md`](hw/README.md).
+## Design review
 
-**How the tiles connect.** The official sPHENIX inner-HCal tiles have *no connector*. Each tile's SiPM daughter
-board has a short soldered shielded twisted-pair pigtail, and the temperature sensor sits on the tower
-electronics, not the tile ([arXiv:1704.01461](https://arxiv.org/abs/1704.01461); sPHENIX ICD-003,
-[PD-2/3 review 2019](https://indico.bnl.gov/event/6145/)). Muon3 terminates each pigtail in an SMA plug and uses
-the on-board **BME280** for temperature-compensated bias (S12572: 60 mV/°C).
+### Rev C (this revision)
 
-**Safety note: the bias voltage is on the SMA shells [OPEN, needs safety sign-off].** Each jack's outer shell
-carries the SiPM bias (up to ≈ 70–85 V; see the HV note in [`hw/README.md`](hw/README.md)) through a 47 kΩ resistor.
-The 47 kΩ limits a DC short to about 1.7 mA. However, the 100 nF capacitor at each jack sits on the shell side of
-that resistor, so touching a shell can discharge it directly. Get this reviewed and signed off before boards go
-to classrooms.
+- **U.FL jacks, inside the case.** The edge SMAs carried the bias on exposed shells.
+  - Hirose U.FL-R-SMT-1(80) jacks now sit behind the case wall; the tile coax enters through notches.
+  - The bias is enclosed whenever the case is closed.
+  - The jacks cost $0.09 each instead of the SMA's $0.21 (at quantity 100), and they are ordinary top-side parts: no unpasted tabs.
+  - Rating: U.FL is specified for 60 V AC rms (85 V peak) with a 200 V AC withstand. 83 V DC is inside that, but
+    without much margin, so don't run the bias above the 83 V the circuit can reach.
+- **The four channels are identical by construction.**
+  - `place.ts` force-places channel 0 inside its 20 × 22 mm cell and copies it at a 20 mm pitch.
+  - `autoroute.ts` routes channel 0's six local nets and its GND fan-out, then copies them. A copy that isn't legal
+    in its cell is reported rather than silently rerouted.
+  - `copper.ts` smooths a channel-0 track only where the move is legal in all four cells.
+  - The build log states `18/18 copies identical`. A check of the KiCad file finds cells 1–3 equal to cell 0, which
+    is 80 segments each including GND.
+  - The shared feeds (VREF, VTH_n, 3V3A, HV, INJ_D, HIT_n) come from the DACs, the boost and the ESP32 below the row,
+    so their approach to each cell differs.
+- **Room to breathe.** Everything, rotated as each tile needs, fits inside all 12 tile shapes:
+  - The 96 × 64 mm board sits in a 102 × 70 mm case, about 102 × 78 mm with the cable bar.
+  - The largest footprint that still fits every tile is ≈ 175 × 80 mm (tile 11, the most slanted, limits it).
+  - The extra area moved the BME280 island to the left edge, ≥ 20 mm from any TIA input, and lowered the ESP32 so
+    its antenna is ≥ 10 mm from the nearest cell.
+- **Could the bias ripple get amplified? Yes, but there is almost nothing left to amplify.**
+  - Ripple on the jack shell reaches the TIA through the SiPM's own 320 pF.
+  - The TIA's gain from shell to output is ≈ 2× at the 33 kHz switching frequency and rises to C_SiPM / Cf ≈ 120×
+    above 1.8 MHz, where the OPA356's 200 MHz GBW caps it.
+  - The two RC poles in front (10 k / 1 µF, then 47 k / 100 nF) reduce the 230 mV at the boost output to 4 mV on the
+    jack shell. In regulation the MC34063 fires short bursts rather than every cycle.
+  - Net result at the TIA output: 0.04 mV pk-pk, with realistic ESL and a shared ground. An earlier 1.6 mV reading was
+    the RC chain still settling, not ripple.
+  - The main remaining risk is magnetic coupling from the 150 µH inductor into an input trace. The boost is now
+    ≥ 15 mm from every cell.
 
-### Cost
+**Mistakes found and fixed along the way**
 
-Not yet re-estimated for Rev B. Run `cd hw && bun run cost` (`tools/cost.ts` picks the 4-layer and one-sided-assembly
-prices automatically). The ≈ $91/board and ≈ $971 landed figures in earlier versions of this README were for the
-100 × 150 mm 6-layer battery board and no longer apply.
+1. **The bias could not reach the tiles.**
+   - The old PWM trim spanned 26–70 V, not 15–85 V, and overshot to 73 V at power-up.
+   - Now: MCP4728 → 1 k / 100 nF → 68 k into FB (52.9–83.0 V), plus a 2N7002 that holds the boost off until HV_EN.
+2. **Bias noise.** The 1 mH / 1 µF LC post-filter rang with about 2 V pk-pk. An RC plus a 136 mA peak current fixed
+   it.
+3. **The 5 V rail was routed at signal width.** The width table still listed the deleted battery nets. It is now
+   0.5 mm.
+4. **1 p.e. is 5.8 mV, not 9.5 mV.** Thresholds and test limits now use 5.8 mV.
+5. **EMI.** In Rev B the island's plane void sat next to channel 0's input and raised its Wi-Fi pickup to 24.5 mV
+   (3.8 mV with the plane solid). In Rev C the same channel picks up 0.9 mV.
+6. **The Geant4 tile model** (details below).
+   - The published "58 p.e. per muon" was a hard-coded fallback: E_dep × 10 000/MeV × 1.2 % × 0.25, used whenever no
+     tracked photon reached the SiPM, which is 57 p.e. at 1.9 MeV.
+   - Why no tracked photon ever reached it:
+     - every diagonal fiber segment was mirrored (`G4PVPlacement` takes the inverse rotation), leaving the tile by
+       5.8 mm;
+     - the SiPM's silicon had no refractive index, so Geant4 killed every photon at its surface;
+     - the reflector was a skin on the tile, so it also sat between the tile and its fibers;
+     - the fiber ends stopped 21 mm from the SiPM, and the fiber's return leg crossed three other legs in the same
+       plane;
+     - the fiber absorbed its own light over 3.5 cm, and the core had the cladding's refractive index.
 
-## Simulations
+**Temperature sensor.** The BME280 sits on a slotted island on the cool left edge. The island hangs on a
+2.6 × 3.6 mm arm, has no plane copper, is fed by four necked 0.127 mm traces, and has its own ribbed, vented chamber
+in the case.
+- It still reads **+5.4 K** above room with low-power firmware. The 0.3–0.6 W inside the box warms the whole case,
+  and any sensor soldered to the board follows it.
+- The design therefore treats the reading as case temperature with a calibrated offset, and takes SiPM gain from the
+  dark-count staircase (see TESTING).
+- Pressure, the main correction to the muon rate, is unaffected. For true tile temperature, plug a BME280 or TMP117
+  into the STEMMA QT port and tape it to the tiles.
 
-**Front end, HCal tile → station** ([`hw/sim/afe_s12572_tia.cir`](hw/sim/afe_s12572_tia.cir), ngspice). S12572-015
-delivers only ≈ 37 fC per photoelectron from 320 pF, so the amplifier is a transimpedance stage straight on the
-anode. That gives:
-- ≈ 9.5 mV per photoelectron (p.e.)
-- a 5 p.e. threshold at ≈ 35 mV (≈ 8σ above amplifier + dark-count noise)
-- ≈ 380 mV for a mean muon (58 p.e.)
+![Thermal model](hw/docs/thermal.png)
 
-After-pulse settling stays 3–11 mV from baseline, far from the threshold, so a muon cannot count twice.
+**EMI.** The openEMS model includes:
+- the board and the ABS case;
+- the ESP32 can and antenna (tuned to 2.44 GHz);
+- each tile's coax shield, running out through the case wall to the absorbing boundary;
+- the four input paths.
 
-![AFE simulation](hw/docs/sim_afe.png)
+Results:
+- As built, the inputs see 0.9–5.6 mV peak at +20 dBm.
+- **Metal shield cans over the amplifiers make it worse** (1.1–10.6 mV): the pickup arrives on the input path, and a
+  can with a cable notch concentrates the field there.
+- A printed ABS cavity changes nothing.
+- So there are no cans, which saves a part, a placement and ≈ $1 per board.
 
-**Bias supply** ([`hw/sim/hv_mc34063.cir`](hw/sim/hv_mc34063.cir), behavioural MC34063 + BSS123 + LC filter):
+![EMI](hw/docs/sim_emi.png)
 
-![HV simulation](hw/docs/sim_hv.png)
+### Geant4 tile model
 
-**Light yield, sPHENIX inner-HCal tile 01** (Geant4 optical model, `sim/geant4/`, ROOT plots, 200 events):
-⟨N<sub>pe</sub>⟩ ≈ 58 at 1.9 MeV deposited, about 10× margin over the 5 p.e. threshold.
+`sim/geant4/src/HcalTileDetectorConstruction.cc` now follows the tile as published (Aidala et al., IEEE TNS 65
+(2018), Table II):
+- extruded polystyrene + 1.5 % PTP + 0.01 % POPOP, 7 mm thick;
+- Kuraray Y11(200) single-clad 1 mm fiber: polystyrene core n = 1.59 in PMMA cladding n = 1.49, 7 ns decay;
+- the fiber glued with EPO-TEK 301 into its groove, nested inside the tile;
+- a 50 µm painted TiO₂ reflector, modelled as a border surface;
+- a wrap of Al foil, cling film and black vinyl;
+- both fiber ends routed through the connector pocket onto the S12572 behind a 0.75 mm air gap.
 
-| | |
-|---|---|
-| ![HCal p.e.](figures/hcal_inner_tile_pe.png) | ![HCal yield map](figures/hcal_inner_tile_yield_map.png) |
-| ![HCal tile 01](figures/hcal_InnerHCalTile01_EJ200_iso.png) | ![HCal summary](figures/hcal_inner_tile_summary.png) |
+Status: it compiles against Geant4 11.4, passes the overlap check, and transports light end to end. The tracked
+yield is still only **0.1 p.e. per muon**, far below a working tile, so a loss remains. The next suspect is the
+tight S-bend where both fibers converge in the pocket. Until that is found, no p.e./MIP number from this model should
+be quoted.
 
-More in [`sim/`](sim/README.md) (Geant4 optical transport, ngspice, openEMS, thermal and power models),
-[`cad/sphenix_hcal/`](cad/sphenix_hcal/README.md) (tile STEP assemblies) and the paper
-[`Muon3_Simulation_Studies.pdf`](Muon3_Simulation_Studies.pdf) (`./build_paper.sh`). Some sim and paper sections
-describe the earlier July architecture (nRF9151, OPA858, TEC); the physics results still apply.
+### Open questions and risks
 
-```bash
-root -l -b -q 'sim/reports/root_hcal_and_geant4.C'     # HCal tile plots
-ngspice -b hw/sim/afe_s12572_tia.cir                    # front-end gain sweep
-```
+- **The U.FL voltage margin** (83 V DC vs. a 60 V AC rms rating). Formal sign-off is still needed, although the bias
+  no longer reaches an outside surface.
+- **USB power banks** often switch off below 50–100 mA. The station draws 40–120 mA, so use a wall adapter or a bank
+  with an "always on" mode.
+- **The MC34063 reference is ±2 %**, about ±2 V on HV until the factory test stores each board's HV(TRIM) line. After
+  that the dark-count servo holds the gain.
+- **Via-in-pad.** The GND fan-out drops vias inside large pads. Order with filled and capped vias, or check JLC's
+  4-layer terms.
+- **Tile-by-tile V_op.** GSU's per-tile PR data should seed `station_test.py tile`.
 
-## Repository layout
+## Repository
 
 | Path | What |
 |---|---|
-| [`hw/`](hw/README.md) | **Station board as code**: netlist, placement, router, Gerber writer, DRC, JLC BOM/CPL, cost model, parts library (footprints + datasheets + STEP per LCSC part) |
-| `sim/` | Geant4, ngspice, openEMS, Python thermal/power/coincidence models |
-| `cad/` | sPHENIX inner-HCal tile STEP assemblies, Blender scenes |
-| `figures/` | Plots and renders used here and in the paper |
-| `Muon3Vision/` | Vision Pro viewer for the detector geometry |
-| `reference_documentation/` | 28 archived `muonTelescope` repos, publications, earlier reviews and requirements |
-| `scripts/` | Google Drive sync for large data |
-
-The retired July tscircuit board, the Rev A KiCad project, the nRF firmware, the iCE40 gateware and the `pcb/`
-max-scope freeze documents were removed on 2026-09-29. They remain in git history: `git log --all -- pcb board`,
-and `git show 594b36c:pcb/MUON3_MAX_SCOPE_ARCHITECTURE.md`.
-
-## Open items
-
-1. **Safety sign-off for the bias voltage on the SMA shells** (see the note above).
-2. Re-check the bias trim range and power-up behaviour with the real TRIM network (see [`hw/README.md`](hw/README.md)).
-   Then regenerate the renders, re-run the cost model and get a real JLC quote for the 4-layer, one-sided board.
-3. Firmware (ESP-IDF): MCPWM/PCNT hit capture and coincidences, bias control loop (HV_PWM + HV_MON) with BME280
-   temperature compensation, threshold calibration, rates over Wi-Fi/USB. GSU's duty treatment for the US boards.
-4. Bench test of one channel on a real HCal tile before the 5-board order.
-
-## Background
-
-- sPHENIX calorimeter design and beam tests: Aidala et al., IEEE TNS 65 (2018), [arXiv:1704.01461](https://arxiv.org/abs/1704.01461).
-- gLOWCOST network: [cosmic.gsu.edu](https://cosmic.gsu.edu/); ICRC 2019/2021 proceedings in `reference_documentation/publications/`.
-- Earlier readout generations: `reference_documentation/repositories/mppcInterface`, [gLOWCOST 2v2](https://github.com/tharinduudu/gLOWCOST-2v2-mppcInterface-).
+| [`hw/`](hw/README.md) | Board as code (TypeScript → Gerbers), parts library, case (FreeCAD), simulations, test tools |
+| `sim/` | Geant4 tile and panel models, earlier ngspice/openEMS/thermal studies |
+| `cad/` | sPHENIX inner-HCal tile STEP assemblies (all 12 shapes), Blender scenes |
+| `figures/` | Plots and renders used in the paper |
+| `tools/memguard.sh` | Runs heavy jobs under a memory cap. The 8 GB development Mac crashed when builds and simulations ran in parallel |
+| `reference_documentation/` | Archived `muonTelescope` repositories, publications, earlier reviews |
 
 ## License
 
-See [LICENSE](LICENSE). Third-party datasheets and models belong to their manufacturers and are fetched,
-not redistributed (`cd hw && bun run parts`).
+See [LICENSE](LICENSE). Third-party datasheets and 3D models belong to their manufacturers. They are fetched on
+demand (`cd hw && bun run parts`), not redistributed.

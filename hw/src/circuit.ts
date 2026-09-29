@@ -67,6 +67,23 @@ export class Circuit {
     return this.add(prefix, lcsc, { "1": a, "2": b }, { value, footprintFrom: rep });
   }
 
+  /** Bare probe pad (1.2 mm, no paste, not in BOM/CPL). */
+  tp(net: string, opts: { ref?: string; label?: string } = {}) {
+    const ref = opts.ref ?? this.nextRef("TP");
+    const info = {
+      lcsc: "TP", mpn: "TEST POINT", manufacturer: "", package: "TestPoint_Pad_D1.2mm", jlcClass: "", datasheet: "",
+      pins: { "1": "TP" },
+      footprint: {
+        name: "TestPoint_Pad_D1.2mm", silk: [], holes: [],
+        pads: [{ num: "1", shape: "circle" as const, x: 0, y: 0, w: 1.2, h: 1.2, rot: 0, layer: "top" as const, nopaste: true }],
+        bbox: { x0: -0.75, y0: -0.75, x1: 0.75, y1: 0.75 },
+      },
+    };
+    const p: Part = { ref, lcsc: "TP", info, value: opts.label ?? net, pads: { "1": net }, group: this.group };
+    this.parts.push(p);
+    return p;
+  }
+
   /** Decoupling: one cap per value from rail to GND. */
   async decouple(rail: string, values: string[], pkg = "0402") {
     for (const v of values) await this.c(v, rail, "GND", pkg);

@@ -1,0 +1,88 @@
+* Test-guide scope traces for one Muon3 channel (ngspice). Values from hw/src/design.ts:
+*   INJ (ESP32 GPIO, 3.3 V) -> 10k -> INJ_D (1.1k to GND) -> 1 pF -> SIG_n   (0.33 pC per edge = 9 p.e. of S12572-015)
+*   SIG_n -> OPA356 TIA (Rf 33k || Cf 2.7p, IN+ = VREF) -> TIA_n -> LMV7219 (IN+ = VTH_n) -> 33R -> HIT_n
+* Runs (wrdata files in the current directory):
+*   inj_notile  : injection with nothing on the SMA (bench / pogo fixture self-test)
+*   inj_tile    : same with a tile + 2 m coax attached (charge now shares the 320 pF SiPM)
+*   pe1         : single dark pulse (1 p.e.) with a tile; threshold at 5 p.e.
+*   muon        : mean muon, 58 p.e.  [Geant4 estimate for IHCal tile 01]
+.param VREFV=2.5 VTHV=2.465 NPE=1 TILE=1 INJON=0
+.subckt SIPM A K NPE=1 QPE=36.8f TAUR=1n TAUD=20n T0=200n CT=320p
+Bp K A I = (time > {T0}) ? {NPE*QPE/(TAUD-TAUR)} * ( exp(-(time-{T0})/{TAUD}) - exp(-(time-{T0})/{TAUR}) ) : 0
+Ct A K {CT}
+.ends
+* OPA356 behavioural: 200 MHz GBW, 360 V/us slew (rounded), rails 0.05 / 3.25 V
+.subckt RROA INP INN OUT
+Gm 0 n1 INP INN 1m
+R1 n1 0 1Meg
+C1 n1 0 {1m/(6.2832*200Meg)}
+Bsr 0 s I = ( (v(n1)-v(s)) > 0.01 ? 3.6m : ((v(n1)-v(s)) < -0.01 ? -3.6m : (v(n1)-v(s))*0.36 ) )
+Cs s 0 10p
+Rs s 0 1G
+Bout OUT 0 V = v(s) > 3.25 ? 3.25 : (v(s) < 0.05 ? 0.05 : v(s))
+.ends
+* LMV7219: 7 ns, push-pull 3.3 V; HIT high while TIA < VTH (negative-going pulses)
+.subckt CMP INP INN OUT
+Bc c 0 V = v(INN) < v(INP) ? 3.3 : 0
+Rd c d 1k
+Cd d 0 7p
+Bo OUT 0 V = v(d) > 1.65 ? 3.3 : 0
+.ends
+* ---- bias + tile (TILE=0 removes it: just jack + trace capacitance) ----
+VHV hv 0 69
+Rhv hv hvj 47k
+Chv hvj 0 100n
+X1 a_far hvj SIPM NPE={NPE}
+T1 a_far 0 sigc 0 Z0=50 TD=10n
+Rtile sigc sig {TILE > 0.5 ? 0.001 : 1G}
+Cjack sig 0 6p
+* ---- injection ----
+Vinj inj 0 PULSE(0 {3.3*INJON} 400n 2n 2n 1u 3u)
+Ri1 inj injd 10k
+Ri2 injd 0 1.1k
+Ci sig injd 1p
+* ---- TIA, reference, threshold ----
+Vref vref 0 {VREFV}
+Rrf vref vreff 100
+Crf vreff 0 100n
+Cf tia sig 2.7p
+Rf tia sig 33k
+Xa vreff sig tia RROA
+Vth vth 0 {VTHV}
+Rth vth vthf 1k
+Cth vthf 0 100n
+Xc vthf tia hitc CMP
+Rh hitc hit 33
+Chit hit 0 5p
+.control
+set wr_singlescale
+set wr_vecnames
+* bench self-test, nothing plugged in
+alterparam TILE=0
+alterparam NPE=0
+alterparam INJON=1
+reset
+tran 0.2n 1.8u 0 0.5n
+linearize v(inj) v(tia) v(hit)
+wrdata inj_notile.txt v(inj) v(tia) v(hit)
+* injection with a tile attached
+alterparam TILE=1
+reset
+tran 0.2n 1.8u 0 0.5n
+linearize v(inj) v(tia) v(hit)
+wrdata inj_tile.txt v(inj) v(tia) v(hit)
+* one dark pulse, 5 p.e. threshold
+alterparam INJON=0
+alterparam NPE=1
+reset
+tran 0.2n 800n 0 0.5n
+linearize v(tia) v(hit)
+wrdata pe1.txt v(tia) v(hit)
+* mean muon
+alterparam NPE=58
+reset
+tran 0.2n 800n 0 0.5n
+linearize v(tia) v(hit)
+wrdata muon.txt v(tia) v(hit)
+.endc
+.end

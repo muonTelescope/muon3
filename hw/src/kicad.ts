@@ -33,7 +33,7 @@ export function writeKicad(b: Board, path: string, title = "Muon3 station") {
   for (const [n, i] of nets) o.push(`(net ${i} ${q(n)})`);
   for (const p of b.parts) o.push(footprint(b, p, nid));
   // edge
-  o.push(`(gr_poly (pts ${b.outline.map(p => `(xy ${f(p.x)} ${f(p.y)})`).join(" ")}) (stroke (width 0.1) (type solid)) (fill no) (layer "Edge.Cuts") (uuid ${q(uuid())}))`);
+  for (const poly of [b.outline, ...b.cutouts]) o.push(`(gr_poly (pts ${poly.map(p => `(xy ${f(p.x)} ${f(p.y)})`).join(" ")}) (stroke (width 0.1) (type solid)) (fill no) (layer "Edge.Cuts") (uuid ${q(uuid())}))`);
   for (const h of b.holes) o.push(`(footprint "MountingHole" (layer "F.Cu") (uuid ${q(uuid())}) (at ${f(h.at.x)} ${f(h.at.y)}) (property "Reference" "H" (at 0 0 0) (layer "F.Fab") (hide yes) (uuid ${q(uuid())}) (effects (font (size 1 1)))) (attr exclude_from_pos_files exclude_from_bom) (pad "" np_thru_hole circle (at 0 0) (size ${h.d} ${h.d}) (drill ${h.d}) (layers "*.Cu" "*.Mask") (uuid ${q(uuid())})))`);
   for (const t of b.tracks) for (const s of t.path) {
     const L = q(LAYERS[t.layer]);
@@ -66,12 +66,12 @@ function footprint(b: Board, p: Part, nid: (n: string) => number): string {
   out.push(`(property "Reference" ${q(p.ref)} (at 0 0 ${pl.rot}) (layer "F.Fab") (uuid ${q(uuid())}) (effects (font (size 0.5 0.5) (thickness 0.08))))`);
   out.push(`(property "Value" ${q(p.value)} (at 0 0 ${pl.rot}) (layer "F.Fab") (hide yes) (uuid ${q(uuid())}) (effects (font (size 0.5 0.5))))`);
   out.push(`(property "LCSC" ${q(p.lcsc)} (at 0 0 0) (layer "F.Fab") (hide yes) (uuid ${q(uuid())}) (effects (font (size 0.5 0.5))))`);
-  out.push(`(attr smd)`);
+  out.push(p.lcsc === "TP" ? `(attr smd exclude_from_pos_files exclude_from_bom)` : `(attr smd)`);
   for (const pd of fp.pads) {
     const net = p.pads[pd.num];
     const netS = net ? ` (net ${nid(net)} ${q(net)})` : "";
     const ang = (pd.rot + pl.rot) % 360;
-    const layers = pd.layer === "multi" ? `"*.Cu" "*.Mask"` : pd.layer === "bottom" ? (pd.nopaste ? `"B.Cu" "B.Mask"` : `"B.Cu" "B.Paste" "B.Mask"`) : `"F.Cu" "F.Paste" "F.Mask"`;
+    const layers = pd.layer === "multi" ? `"*.Cu" "*.Mask"` : pd.layer === "bottom" ? (pd.nopaste ? `"B.Cu" "B.Mask"` : `"B.Cu" "B.Paste" "B.Mask"`) : pd.nopaste ? `"F.Cu" "F.Mask"` : `"F.Cu" "F.Paste" "F.Mask"`;
     const kind = pd.layer === "multi" ? "thru_hole" : "smd";
     const drill = !pd.drill ? "" : pd.drillLen && pd.drillLen > pd.drill + 1e-3
       ? (pd.h >= pd.w ? ` (drill oval ${f(pd.drill)} ${f(pd.drillLen)})` : ` (drill oval ${f(pd.drillLen)} ${f(pd.drill)})`)

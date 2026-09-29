@@ -8,8 +8,9 @@
 class G4VPhysicalVolume;
 class G4OpticalSurface;
 
-/// sPHENIX Inner HCal tile assembly: tessellated scintillator + WLS fiber +
-/// diffuse coating + light-tight wrap + light blocker + Hamamatsu SiPM.
+/// sPHENIX Inner HCal tile assembly (Aidala et al., IEEE TNS 65 (2018), Table II): extruded polystyrene + 1.5% PTP
+/// + 0.01% POPOP tile, 7 mm; Kuraray Y11(200) single-clad 1 mm WLS fiber glued (EPO-TEK 301) in its groove;
+/// 50 um painted reflector; Al foil + cling film + black vinyl wrap; black coupler holding the SiPM.
 ///
 /// Photosensor (sPHENIX HCal prototype / production lineage):
 ///   Hamamatsu S12572-33-015P (MPPC), 3×3 mm², 15 μm pixels (~40k),
@@ -33,10 +34,10 @@ public:
 
 private:
   void AttachOpticalProperties();
-  void SetupSurfaces(G4VPhysicalVolume* world);
+  void SetupSurfaces(G4VPhysicalVolume* world, G4VPhysicalVolume* tile);
 
   G4String fGdmlPath;
-  G4double fScintYield = 10000.;  // ph/MeV (EJ-200 class)
+  G4double fScintYield = 8000.;   // ph/MeV: extruded PS + PTP/POPOP [EST, tune to measured p.e./MIP]
   G4double fWLSEff = 0.90;
   /// Hamamatsu S12572-015P: ~25% PDE (sPHENIX HCal papers); not MicroFC.
   G4double fPDE = 0.25;

@@ -10,14 +10,26 @@ const MAX_R = 8;
 export function toCopper(b: Board, r: Router, opts: { smooth?: boolean } = {}) {
   b.tracks = []; b.vias = [];
   const smooth = opts.smooth !== false;
+  type T = { layer: number; width: number; path: (Seg | Arc)[] };
+  const copyOut = new Map<string, T[]>(); // identical-cell copies, emitted with their own net
+  const translate = (t: T, dx: number, dy: number): T => ({ ...t, path: t.path.map(sg => sg.kind === "seg"
+    ? { ...sg, a: pt(sg.a.x + dx, sg.a.y + dy), b: pt(sg.b.x + dx, sg.b.y + dy) }
+    : { ...sg, a: pt(sg.a.x + dx, sg.a.y + dy), b: pt(sg.b.x + dx, sg.b.y + dy), c: pt(sg.c.x + dx, sg.c.y + dy) }) });
   for (const rn of r.routed.values()) {
     const n = r.id(rn.net), cls = netClass(rn.net);
-    const out: { layer: number; width: number; path: (Seg | Arc)[] }[] = [];
+    const out: T[] = [...(copyOut.get(rn.net) ?? [])];
     // T-junctions: where another path of this net ends on this one, or a via sits, the vertex is pinned
     const ends = rn.paths.flatMap((p, pi) => [{ pi, L: p.layer, c: p.cells[0] }, { pi, L: p.layer, c: p.cells[p.cells.length - 1] }]);
     const netPads = r.pads.filter(q => q.net === rn.net);
     for (const [pi, p] of rn.paths.entries()) {
+      if (r.copies.has(p)) continue; // emitted from its leader
+      const twins = r.twins.get(p) ?? [];
+      const tw = twins.map(t => ({ ...t, n: r.id(t.net), dx: (t.d % r.nx) * r.pitch, dy: Math.floor(t.d / r.nx) * r.pitch }));
+      // legal here AND at every copy (copies may sit next to different foreign copper)
+      const everywhere = (L: number, q: Pt, rad: number) => r.legal(L, r.cell(q.x, q.y), n, rad) &&
+        tw.every(t => r.legal(L, r.cell(q.x + t.dx, q.y + t.dy), t.n, rad));
       const pts = p.cells.map(c => pt(r.cx(c), r.cy(c)));
+      const first = out.length;
       // a path end inside one of the net's pads continues to the pad centre (full-width entry, no neck)
       const Lb = ROUTE_LAYERS[p.layer];
       const padAt = (q: Pt) => netPads.find(pd => (pd.layer === "multi" || (Lb === 0 && pd.layer === "top") || (Lb === 5 && pd.layer === "bottom")) && pointInPoly(q, pd.poly));
@@ -25,7 +37,7 @@ export function toCopper(b: Board, r: Router, opts: { smooth?: boolean } = {}) {
       // the entry stub is checked too: as wide as the track if legal, else pad-width/signal-width, else skipped
       const stubW = (pad: typeof pa, from: Pt, w: number) => {
         for (const cand of [w, Math.min(w, pad!.w, pad!.h), 0.127]) {
-          const ok = segLegal(from, pad!.c, q => r.legal(p.layer, r.cell(q.x, q.y), n, cand / 2 + cls.halfClear), r.pitch / 2);
+          const ok = segLegal(from, pad!.c, q => everywhere(p.layer, q, cand / 2 + cls.halfClear), r.pitch / 2);
           if (ok) return cand;
         }
         return 0;
@@ -52,14 +64,24 @@ export function toCopper(b: Board, r: Router, opts: { smooth?: boolean } = {}) {
         const run = collinearReduce(pts.slice(start, i + 1));
         const w = sw[start];
         if (run.length >= 2) {
-          const legal = (q: Pt) => r.legal(p.layer, r.cell(q.x, q.y), n, w / 2 + cls.halfClear);
+          const legal = (q: Pt) => everywhere(p.layer, q, w / 2 + cls.halfClear);
           const taut = smooth ? pull(run, legal, r.pitch / 2) : run;
           out.push({ layer: ROUTE_LAYERS[p.layer], width: w, path: smooth ? fillet(taut, legal, r.pitch / 2) : segs(taut) });
         }
         start = i;
       }
+      const lead = out.slice(first);                     // this leader path's tracks, before any copy is added
+      for (const t of tw) {                              // its copies, shifted exactly
+        const cp = lead.map(x => translate(x, t.dx, t.dy));
+        if (t.net === rn.net) out.push(...cp);
+        else (copyOut.get(t.net) ?? copyOut.set(t.net, []).get(t.net)!).push(...cp);
+      }
     }
-    if (smooth) remark(r, rn.net, out, rn.vias);
+    if (smooth) {
+      remark(r, rn.net, out, rn.vias);
+      // re-mark copies on other nets now, so nets smoothed later see the final copper
+      for (const net of new Set(tw_nets(r, rn.paths))) if (net !== rn.net) remark(r, net, copyOut.get(net) ?? [], r.routed.get(net)?.vias ?? []);
+    }
     for (const t of out) { const path = t.path.filter(sg => dist(sg.a, sg.b) > 1e-6); if (path.length) b.tracks.push({ net: rn.net, ...t, path }); }
     for (const v of rn.vias) b.vias.push({ net: rn.net, at: pt(r.cx(v), r.cy(v)), drill: RULES.viaDrill, dia: RULES.viaDia });
   }
@@ -144,9 +166,13 @@ function arcLegal(a: Pt, b: Pt, c: Pt, ccw: boolean, legal: (q: Pt) => boolean, 
   return arcPoints(a, b, c, ccw, step).every(legal);
 }
 
+function tw_nets(r: Router, paths: { layer: number; cells: number[]; width: number[] }[]) {
+  return paths.flatMap(p => (r.twins.get(p as never) ?? []).map(t => t.net));
+}
+
 /** Replace a net's raster marks with ones sampled from its final geometry. */
 function remark(r: Router, net: string, tracks: { layer: number; width: number; path: (Seg | Arc)[] }[], vias: number[]) {
-  r.ripUp(net);
+  r.ripUp(net, false);
   for (const t of tracks) {
     const L = ROUTE_LAYERS.indexOf(t.layer);
     const pts: Pt[] = [];

@@ -27,6 +27,7 @@ async function main() {
   const c = await build();
   const lines = new Map<string, { lcsc: string; mpn: string; refs: string[] }>();
   for (const p of c.parts) {
+    if (p.lcsc === "TP") continue;
     const l = lines.get(p.lcsc) ?? { lcsc: p.lcsc, mpn: p.value, refs: [] };
     l.refs.push(p.ref); lines.set(p.lcsc, l);
   }

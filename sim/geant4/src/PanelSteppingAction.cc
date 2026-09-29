@@ -19,7 +19,7 @@ void PanelSteppingAction::UserSteppingAction(const G4Step* step) {
   // Muon3 panel volumes ("Panel*") and sPHENIX Inner HCal tessellated tiles
   if (volName.find("Panel") != std::string::npos ||
       volName.find("InnerHCal") != std::string::npos ||
-      volName.find("EJ200") != std::string::npos) {
+      volName.find("EJ200") != std::string::npos || volName.find("PS_PTP") != std::string::npos) {
     G4double edep = step->GetTotalEnergyDeposit();
     if (edep > 0 && fEventAction) {
       fEventAction->AddScintEnergy(edep);

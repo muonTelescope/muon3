@@ -10,8 +10,7 @@ export const PLANE = new Set(["GND"]);
 const HV_NETS = /^(HV|HV_SW|HV_RAW|HV_FB_MID|HVJ\d|HV_MON_MID)$/;
 // IPC-2221 external 1 oz, ≤20 °C rise: 1.78 A (ILIM cap) -> 0.44 mm; per-cell branch ≤0.45 A.
 const POWER_W: Record<string, number> = {
-  VBUS: 0.6, PMID: 0.6, CHG_SW: 0.6, VSYS: 0.6, VBAT: 0.6, CELL0_P: 0.4, CELL1_P: 0.4, CELL2_P: 0.4, CELL3_P: 0.4,
-  "3V3": 0.4, "3V3A": 0.3, "1V2": 0.3, HV_SW: 0.3, // REGN (~20 mA) stays signal width
+  "5V": 0.5, "3V3": 0.4, "3V3A": 0.3, HV_SW: 0.3, // USB 5 V feeds the LDOs + 136 mA boost pulses
 };
 /** Raster quantisation margin: the grid router plans with clearance + 2×GRID_MARGIN, DRC checks the true rule. */
 const GRID_MARGIN = 0.04;
@@ -26,7 +25,7 @@ export function netClass(net: string): NetClass {
   return { width: RULES.track, halfClear: hc };
 }
 
-type Path = { layer: number; cells: number[]; width: number[] }; // layer = index into ROUTE_LAYERS
+export type Path = { layer: number; cells: number[]; width: number[] }; // layer = index into ROUTE_LAYERS
 export type RoutedNet = { net: string; paths: Path[]; vias: number[]; failed: number };
 
 const NL = ROUTE_LAYERS.length;
@@ -97,6 +96,7 @@ export class Router {
     for (let c = 0; c < this.N; c++) {
       const p = { x: this.cx(c), y: this.cy(c) };
       let blocked = !pointInPoly(p, this.b.outline) || p.x < bb.x0 + m || p.y < bb.y0 + m || p.x > bb.x1 - m || p.y > bb.y1 - m;
+      if (!blocked) for (const cut of this.b.cutouts) if (distPtPoly(p, cut) < m) { blocked = true; break; }
       if (!blocked) for (const h of holes) if (Math.hypot(p.x - h.at.x, p.y - h.at.y) < h.d / 2 + RULES.hole + 0.1) { blocked = true; break; }
       if (!blocked) for (const k of this.keepouts) if (p.x >= k.x0 && p.x <= k.x1 && p.y >= k.y0 && p.y <= k.y1) { blocked = true; break; }
       if (blocked) for (let L = 0; L < NL; L++) { this.own[L][c] = -1; this.hard[L][c] = 1; }
@@ -160,7 +160,39 @@ export class Router {
     this.routed.get(net)!.vias.push(c);
   }
 
-  ripUp(net: string) {
+  // ───────────────────────── identical cells ─────────────────────────
+  /** Leader path -> its copies (net, cell offset); copper.ts smooths a leader only where every copy stays legal. */
+  twins = new Map<Path, { net: string; d: number }[]>();
+  /** Paths that are copies: copper.ts emits them from their leader instead of smoothing them on their own. */
+  copies = new Set<Path>();
+  private locked = new Map<string, { paths: Path[]; vias: number[] }>();
+  /** Pads whose plane connection is part of a locked cell: fanoutPlane leaves them alone. */
+  lockedPads = new Set<WPad>();
+  /** Freeze copper: hard-marked (soft routing can't cross it) and restored after any rip-up of its net. */
+  lock(net: string, paths: Path[], vias: number[]) {
+    const l = this.locked.get(net) ?? { paths: [], vias: [] }; this.locked.set(net, l);
+    l.paths.push(...paths); l.vias.push(...vias);
+    const hc = netClass(net).halfClear;
+    for (const p of paths) p.cells.forEach((c, i) => this.disk(c, p.width[i] / 2 + hc, c2 => { this.hard[p.layer][c2] = 1; }));
+    for (const v of vias) for (let L = 0; L < NL; L++) this.disk(v, RULES.viaDia / 2 + hc, c2 => { this.hard[L][c2] = 1; });
+  }
+  isLocked(net: string) { return this.locked.has(net); }
+  /** Copy paths + vias shifted by d cells onto net `dst`. All or nothing: false (and nothing committed) if any copy
+   *  cell is illegal. The copies are locked, and the leader paths remember them as twins. */
+  replicate(paths: Path[], vias: number[], dst: string, d: number): boolean {
+    const n = this.id(dst), hc = netClass(dst).halfClear;
+    for (const p of paths) for (let i = 0; i < p.cells.length; i++) if (!this.legal(p.layer, p.cells[i] + d, n, p.width[i] / 2 + hc)) return false;
+    for (const v of vias) if (!this.viaLegal(v + d, n, hc)) return false;
+    if (!this.routed.has(dst)) this.routed.set(dst, { net: dst, paths: [], vias: [], failed: 0 });
+    const np = paths.map(p => ({ layer: p.layer, cells: p.cells.map(c => c + d), width: [...p.width] }));
+    for (const q of np) { this.commit(dst, q); this.copies.add(q); }
+    for (const v of vias) this.commitVia(dst, v + d);
+    paths.forEach(p => (this.twins.get(p) ?? this.twins.set(p, []).get(p)!).push({ net: dst, d }));
+    this.lock(dst, np, vias.map(v => v + d));
+    return true;
+  }
+
+  ripUp(net: string, keepLocked = true) {
     const n = this.id(net), m = this.marks.get(n);
     if (m) {
       // mark() only records cells it changed from 0, so every recorded cell goes back to 0 (incl. rings around pads)
@@ -170,6 +202,8 @@ export class Router {
     }
     const r = this.routed.get(net);
     if (r) { for (const v of r.vias) this.disk(v, RULES.viaDrill + HOLE_GAP + 0.05, c2 => { if (this.drill[c2]) this.drill[c2]--; }); r.paths = []; r.vias = []; }
+    const l = keepLocked ? this.locked.get(net) : undefined;
+    if (l) { for (const p of l.paths) this.commit(net, p); for (const v of l.vias) this.commitVia(net, v); }
   }
 
   // ───────────────────────── A* ─────────────────────────
@@ -276,7 +310,7 @@ export class Router {
   }
 
   private neckCache = new Map<string, Set<number>>();
-  /** Cells within 1 mm of this net's own small pads: wide nets neck down here. */
+  /** Cells within 1 mm of this net's own small pads, and all thermal-island cells: wide nets neck down here. */
   private neckZone(net: string, cls: NetClass) {
     if (!cls.neck || cls.neck >= cls.width) return null;
     let z = this.neckCache.get(net);
@@ -290,6 +324,7 @@ export class Router {
       const c0 = this.cell(p.c.x, p.c.y);
       this.disk(c0, ext, c => { z!.add(c); });
     }
+    for (let c = 0; c < this.N; c++) if (this.inNoPlane(c)) z.add(c); // every mm² of copper there leaks heat to the sensor
     this.neckCache.set(net, z);
     return z;
   }
@@ -310,17 +345,18 @@ export class Router {
   }
 
   /** GND / plane nets: every pad drops a via into the planes (in-pad for large pads) or reuses a nearby GND via. */
-  fanoutPlane(net: string): string[] {
+  fanoutPlane(net: string, only?: (p: WPad) => boolean): string[] {
     const n = this.id(net), r = this.routed.get(net) ?? { net, paths: [], vias: [], failed: 0 };
     this.routed.set(net, r); r.failed = 0;
     const toRip = new Set<string>();
     const cls = netClass(net);
-    for (const p of this.pads.filter(p => p.net === net)) {
+    for (const p of this.pads.filter(p => p.net === net && !this.lockedPads.has(p) && (!only || only(p)))) {
       if (p.layer === "multi") continue; // through-hole pad already reaches the planes
       const big = p.w * p.h >= 1.0;
       const src = this.padStates(p);
       const goal = (s: number) => {
         const c = s % this.N, L = Math.floor(s / this.N);
+        if (this.inNoPlane(c)) return false; // thermal island: no plane there, so no plane via either
         if (L === 0 && this.core[0][c] === n && !src.includes(s) && this.isViaCore(net, c)) return true; // existing GND via
         if (this.insideAnyPadCore(c)) {
           if (!big) return false;
@@ -339,7 +375,8 @@ export class Router {
       }
       // last resort: route to any existing copper of this net (other pads, stubs, vias), ripping what's in the way
       const mine = new Set(src);
-      const tree = (s: number) => { const L = Math.floor(s / this.N), c = s % this.N; return this.core[L][c] === n && !mine.has(s); };
+      // (copper on a thermal island is not a way to the plane: island pads must reach copper outside it)
+      const tree = (s: number) => { const L = Math.floor(s / this.N), c = s % this.N; return this.core[L][c] === n && !mine.has(s) && !this.inNoPlane(c); };
       const res2 = this.search(net, src, tree, null, { maxCost: 400 }) ?? this.search(net, src, tree, null, { soft: true, maxCost: 400 });
       if (!res2) { r.failed++; continue; }
       for (const x of res2.crossed) { if (x !== net) { this.ripUp(x); toRip.add(x); } }
@@ -348,6 +385,7 @@ export class Router {
     }
     return [...toRip];
   }
+  inNoPlane(c: number) { const x = this.cx(c), y = this.cy(c); return this.b.noPlane.some(k => x > k.x0 && x < k.x1 && y > k.y0 && y < k.y1); }
   private viaCores = new Map<string, Set<number>>();
   isViaCore(net: string, c: number) { return this.routed.get(net)?.vias.includes(c) ?? false; }
   private padCoreAny: Uint8Array | null = null;

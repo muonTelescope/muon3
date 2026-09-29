@@ -1,0 +1,69 @@
+* Bias ripple at the TIA with parasitics: does the TIA amplify it?  (DAC 1.0 V, pre-charged, 0.4 ms at 2 ns)
+* Path: HV_RAW -> 10k -> HV (1 uF) -> 47k -> HVJ (100 nF) -> SiPM 320 pF -> TIA (33k || 2.7p, OPA356 200 MHz GBW)
+* Gain from HVJ to TIA: ~ w·Csipm·Rf = 2.2x at 33 kHz, rising to Csipm/Cf = 118x above 1.8 MHz, capped by the op-amp
+* (noise gain 120 -> closed loop 1.7 MHz). Parasitics [EST, 0805/1206 X7R + 4-layer layout]:
+*   caps: ESL 0.8 nH (0805) / 1.1 nH (1206) + ESR 15 mOhm; resistors: 0.08 pF across each 0805;
+*   ground: the boost's switch current returns through 1.5 nH + 5 mOhm shared with the AFE ground (via + plane).
+.param VDAC=1.0 LG=1.5n
+V5 v5 gb 5
+Rsc v5 ipk 2.2
+Vsen ipk ipk2 0
+L1 ipk2 lx 150u
+Rdcr lx sw 2.4
+Vosc osc 0 PULSE(0 1 0 10n 10n 26u 30u)
+Blatch 0 lat I = ( v(osc) < 0.5 ) ? (1 - v(lat)) * 1m : ( ( i(Vsen) > 0.136 ) ? -v(lat) * 1m : 0 )
+Clat lat 0 1n IC=1
+Rlat lat 0 1G
+Bgate graw 0 V = ( v(osc) > 0.5 && v(fb) < 1.25 && v(lat) > 0.5 ) ? 1 : 0
+Rg graw g 1k
+Cg g 0 20p
+Gsw sw gb cur = v(sw,gb) * v(g) / 2 + v(sw,gb) * 1e-9
+Csw sw gb 15p
+D1 sw raw LL4148
+.model LL4148 D(IS=2.5n N=1.9 RS=0.6 CJO=4p TT=5n BV=100)
+* boost ground gb -> shared return -> AFE ground 0
+Lg gb gm {LG}
+Rgr gm 0 5m
+* HV_RAW caps (1 uF 1206 derated + 100 nF 0805), with ESL/ESR, returned to the boost ground
+Craw raw r1 0.44u IC=69
+Lraw r1 r2 1.1n
+Rraw r2 gb 15m
+Craw2 raw r3 60n IC=69
+Lraw2 r3 r4 0.8n
+Rraw2 r4 gb 15m
+Rpost raw hv 10k
+Cpr raw hv 0.08p
+Chv hv h1 0.4u IC=68.6
+Lhv h1 h2 1.1n
+Rhv h2 0 15m
+Rmon hv 0 2.075Meg
+Rj1 hv j1 47k
+Cpj hv j1 0.08p
+Cj1 j1 j2 60n IC=68.4
+Lj1 j2 j3 0.8n
+Rj3 j3 0 15m
+Ij1 j1 0 4u
+* feedback (to boost-ground referenced FB)
+Ru raw fb 1.02Meg
+Rl fb gb 20k
+Vdac dac 0 {VDAC}
+Rf1 dac tf 1k
+Ctf tf 0 100n IC={VDAC}
+Rd tf fb 68k
+* SiPM + TIA (OPA356 behavioural, from scope_guide.cir)
+Csipm j1 tin 320p IC=65.9
+.subckt RROA INP INN OUT
+Gm 0 n1 INP INN 1m
+R1 n1 0 1Meg
+C1 n1 0 {1m/(6.2832*200Meg)}
+Bsr 0 s I = ( (v(n1)-v(s)) > 0.01 ? 3.6m : ((v(n1)-v(s)) < -0.01 ? -3.6m : (v(n1)-v(s))*0.36 ) )
+Cs s 0 10p
+Rs s 0 1G
+Bout OUT 0 V = v(s) > 3.25 ? 3.25 : (v(s) < 0.05 ? 0.05 : v(s))
+.ends
+Vref vref 0 2.5
+Xa vref tin tia RROA
+Rf tia tin 33k
+Cf tia tin 2.7p
+.save v(tia) v(hv) v(j1) v(raw)
+.end

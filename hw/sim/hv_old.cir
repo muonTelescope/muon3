@@ -1,0 +1,14 @@
+* OLD trim (commit db3ec53): PWM -> 10k -> 1u -> 10k -> TRIM (1u, 100k pull-up to 3V3) -> 47k -> FB; Ru 1.02M, Rl 22k
+.include hv_common.inc
+.param PWMV=0 HIZ=1 VT0=0
+Ru raw fb 1.02Meg
+Rl fb 0 22k
+Rd trim fb 47k
+Vpwm pwmsrc 0 {PWMV}
+Rpin pwmsrc pwm {HIZ ? 1e12 : 1}
+R1 pwm pf 10k
+C1 pf 0 1u IC={VT0}
+R2 pf trim 10k
+C2 trim 0 1u IC={VT0}
+Rpu v33 trim 100k
+.end

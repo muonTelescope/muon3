@@ -33,6 +33,9 @@ export type Hole = { at: Pt; d: number; plated: boolean };
 export class Board {
   w: number; h: number;
   outline: Poly;
+  cutouts: Poly[] = []; // internal routed slots (Edge.Cuts)
+  /** Thermal islands: no plane copper and no vias inside (heat leaves only through thin traces). */
+  noPlane: { x0: number; y0: number; x1: number; y1: number }[] = [];
   tracks: Track[] = [];
   vias: Via[] = [];
   zones: Zone[] = [];
@@ -97,4 +100,34 @@ export function roundedRect(w: number, h: number, r: number, n = 8): Poly {
       out.push(pt(cx + r * Math.cos(a), cy + r * Math.sin(a)));
     }
   return out;
+}
+
+/** Rounded slot (stadium) from (x0,y0) to (x1,y1), width w — routed by a mill of the same width. */
+export function slot(x0: number, y0: number, x1: number, y1: number, w: number, n = 8): Poly {
+  const dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, r = w / 2;
+  const out: Pt[] = [];
+  const a0 = Math.atan2(uy, ux);
+  for (let i = 0; i <= n; i++) { const a = a0 - Math.PI / 2 + (Math.PI * i) / n; out.push(pt(x1 + r * Math.cos(a), y1 + r * Math.sin(a))); }
+  for (let i = 0; i <= n; i++) { const a = a0 + Math.PI / 2 + (Math.PI * i) / n; out.push(pt(x0 + r * Math.cos(a), y0 + r * Math.sin(a))); }
+  return out;
+}
+
+/** Routed slot along a polyline (mitred corners, round ends): one closed outline, no self-intersections. */
+export function slotPath(path: Pt[], w: number, n = 8): Poly {
+  const r = w / 2, L: Pt[] = [], R: Pt[] = [];
+  const dir = (a: Pt, b: Pt) => { const dx = b.x - a.x, dy = b.y - a.y, l = Math.hypot(dx, dy) || 1; return pt(dx / l, dy / l); };
+  for (let i = 0; i < path.length; i++) {
+    const d0 = i > 0 ? dir(path[i - 1], path[i]) : dir(path[0], path[1]);
+    const d1 = i < path.length - 1 ? dir(path[i], path[i + 1]) : d0;
+    let nx = -(d0.y + d1.y), ny = d0.x + d1.x; const nl = Math.hypot(nx, ny) || 1; nx /= nl; ny /= nl;
+    const k = r / Math.max(0.2, nx * -d0.y + ny * d0.x); // miter length
+    L.push(pt(path[i].x + nx * k, path[i].y + ny * k)); R.push(pt(path[i].x - nx * k, path[i].y - ny * k));
+  }
+  const cap = (c: Pt, d: Pt, sgn: number) => {
+    const a0 = Math.atan2(d.y, d.x), out: Pt[] = [];
+    for (let i = 1; i < n; i++) { const a = a0 + sgn * (Math.PI / 2 - (Math.PI * i) / n); out.push(pt(c.x + r * Math.cos(a), c.y + r * Math.sin(a))); }
+    return out;
+  };
+  const e = path.length - 1;
+  return [...L, ...cap(path[e], dir(path[e - 1], path[e]), 1).reverse().reverse(), ...R.reverse(), ...cap(path[0], dir(path[1], path[0]), 1)];
 }

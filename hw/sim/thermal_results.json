@@ -1,0 +1,22 @@
+{
+ "A_low": {
+  "board_max_K": 9.73,
+  "air_K": 3.99,
+  "bme_K": 5.36
+ },
+ "A": {
+  "board_max_K": 19.11,
+  "air_K": 7.13,
+  "bme_K": 9.19
+ },
+ "B": {
+  "board_max_K": 19.29,
+  "air_K": 7.3,
+  "bme_K": 9.86
+ },
+ "C": {
+  "board_max_K": 19.28,
+  "air_K": 7.3,
+  "bme_K": 13.44
+ }
+}

@@ -1,0 +1,21 @@
+* REV2 (RC post-filter, Ipk 136 mA). NEW trim: MCP4728 (2.048 V ref) -> 1k -> 100n -> 68k -> FB; Ru 1.02M, Rl 20k.
+* HV_EN: 3V3 -> 10k -> X -> LL4148 -> FB holds FB > 1.25 V (switch off) until the 2N7002 on X turns on.
+* Noise path: HV ripple -> 47k/100n -> SiPM cathode -> 320 pF -> TIA (33k || 2.7p) -> comparator input.
+.include hv_rev2.inc
+.param VDAC=1.0 TEN=20m
+Ru raw fb 1.02Meg
+Rl fb 0 20k
+Vdac dac 0 {VDAC}
+Rf1 dac tf 1k
+Ctf tf 0 100n
+Rd tf fb 68k
+Rpx v33 x 10k
+Den x fb LL4148
+Ven en 0 PULSE(0 1 {TEN} 1u 1u 10 20)
+Bnm x 0 I = v(en) > 0.5 ? v(x) / 5 : v(x) * 1e-9
+Csipm j1 tin 320p
+Vref vref 0 1.0
+E1 tia 0 vref tin 1e5
+Rf tia tin 33k
+Cf tia tin 2.7p
+.end

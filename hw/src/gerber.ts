@@ -129,7 +129,7 @@ export function writeGerbers(b: Board, prefix: string): Record<string, string> {
     files[`${prefix}-${side === "top" ? "F" : "B"}_Silkscreen.${ext}`] = g.toString();
   }
   const e = new GerberWriter(H, prefix, "Profile,NP");
-  for (let i = 0; i < b.outline.length; i++) e.line(b.outline[i], b.outline[(i + 1) % b.outline.length], 0.1);
+  for (const poly of [b.outline, ...b.cutouts]) for (let i = 0; i < poly.length; i++) e.line(poly[i], poly[(i + 1) % poly.length], 0.1);
   files[`${prefix}-Edge_Cuts.gm1`] = e.toString();
   files[`${prefix}-PTH.drl`] = excellon(b, true);
   files[`${prefix}-NPTH.drl`] = excellon(b, false);

@@ -1,127 +1,110 @@
-# Muon3 station board (Rev B): board-as-code, straight to Gerbers
+# Muon3 station board: board as code, straight to Gerbers
 
-One **84 × 50 mm, 4-layer, USB-powered** board for the GSU gLOWCOST / Muon3 telescope, assembled by JLC on one
-side. It reads four decommissioned sPHENIX inner-HCal tiles (Hamamatsu S12572-33-015P) over SMA coax. There is no
-battery, no FPGA and no LoRa.
+A 96 × 64 mm, 4-layer, USB-powered board (Rev C) for the GSU gLOWCOST / Muon3 telescope, assembled by JLC on one
+side, in a printed ABS case. It reads four sPHENIX inner-HCal tiles (Hamamatsu S12572-33-015P) over micro-coax on
+U.FL jacks inside the case. The four channel cells are identical copies.
 
-Everything is TypeScript: circuit, placement, routing, copper, Gerbers, drill, BOM/CPL. KiCad is used only as an
-**independent checker** (DRC) and for 3D renders; the fabrication files are written by `src/gerber.ts`.
+TypeScript does the whole job: circuit, placement, routing, copper smoothing, planes, silkscreen, Gerbers, drill,
+BOM and CPL. KiCad serves only as an **independent DRC oracle** and 3D renderer.
 
 ![3D render](docs/render_3d.png)
 
-*The renders in `docs/` (render_3d, render_top, routed, sim_afe) date from commit 267a13f, which is before the
-MC34063 bias change. `sim_hv.png` is current. Rebuild to refresh them.*
-
 ```bash
 cd hw
-bun run build        # netlist → place → route → smooth → planes → silk → Gerbers/drill/BOM/CPL (~10 s)
-bun run drc          # kicad-cli DRC on the exported board (oracle); expect 0 errors, 0 unconnected
-bun run cost         # BOM + JLC fees + freight/duty scenarios (Berlin, GSU/US)
-bun run parts        # (re)fetch footprints, pin names, datasheets, STEP/OBJ for every LCSC part
-bun run index        # regenerate parts/INDEX.md
+bun run build        # netlist → place → route → smooth → planes → silk → Gerbers/drill/BOM/CPL (~5 s)
+bun run drc          # kicad-cli DRC on the exported board: expect 0 errors, 0 unconnected
+bun run cost         # BOM + JLC fees + freight/duty (Berlin prototypes, GSU/US batch)
+bun run parts        # (re)fetch footprints, pins, datasheets, STEP/OBJ for every LCSC part
+freecadcmd case/case.py                       # case STEP/STL from out/board.json
+python tools/station_test.py board            # automated factory test over USB (docs/TESTING.md)
 ```
 
-Outputs land in `out/` (git-ignored):
-- `muon3-gerbers.zip` (upload to JLC), `bom.csv`, `cpl.csv`
-- `routed.svg` and per-layer SVGs
-- `kicad/muon3.kicad_pcb` (+ `.kicad_pro/.kicad_dru`) for DRC and 3D
-
-`out/` is not cleaned between builds. Delete it before a fresh build so leftover 6-layer files from older builds
-(`gerber/muon3-In3_Cu.g4`, `In4_Cu.g5`, `layer6.svg`, `zoom_fpga.png`) don't confuse anyone. The zip only contains
-the current layers.
+Heavy jobs (the board build, FreeCAD, ngspice, openEMS, Geant4, Blender) go through
+`../tools/memguard.sh -l <MB> -- cmd`, one at a time. The 8 GB development Mac crashed apps when they ran in
+parallel.
 
 ## Board
 
-- **Outline:** 84 × 50 mm, 3 mm corner radius, 4 × M3 holes 3.5 mm from the corners (`src/floorplan.ts`).
-- **Edges:**
-  - 4 edge-launch SMAs on the top edge (x = 13/31/51/69 mm)
-  - USB-C and the STEMMA QT connector on the left edge
-  - ESP32-S3 on the right, antenna flush with the right edge over a copper keep-out
-- **Layout:** four identical analog channels sit directly behind their jacks, with the DACs and BME280 between
-  them. The HV bias is centre-left.
-- **Stack-up:** JLC 4-layer 1.6 mm (`src/board.ts`, `src/kicad_stackup.txt`).
-  - L1: signal + parts
-  - L2: solid GND
-  - L3: signal/power
-  - L4: signal
-- **Rules:** 0.127/0.127 mm signal track/clearance, 0.3 mm power, 0.5 mm HV clearance, 0.3/0.5 mm vias.
-- **Assembly:** all parts on the top. The SMA jacks' bottom tabs are left **unpasted** (`noPasteBottom`), so JLC
-  assembles one side only; the top tabs and the centre pin are soldered. `B_Paste` is empty.
-
-## What's on the board, and what was deleted
-
-| Kept | Why |
+| | |
 |---|---|
-| 4× edge-launch SMA (BWSMA-KE-P001, as on 2v2), **shell = SiPM cathode = bias (HVJ_n)**, centre = anode | 2v2 heritage. A 47 kΩ resistor from HV limits a short to ≤ 1.7 mA; 100 nF at each jack AC-grounds the shell so it shields the signal. **[OPEN] needs safety sign-off**: exposed shells carry bias, and that 100 nF sits on the shell side of the 47 kΩ. |
-| 4 channels: OPA356 TIA (Rf 33k / Cf 2.7p) → LMV7219 → 33 Ω → HIT_n, one per jack | [SIM] `sim/afe_s12572_tia.cir`: 9.5 mV/p.e.; 5 p.e. = 35 mV; mean muon (58 p.e.) ≈ 380 mV; noise ≈ 1.4 mV rms |
-| **Bias: MC34063 boost** (Ipk 0.3 A via 1 Ω, CT 1 nF ≈ 33 kHz, discontinuous) + BSS123 (1 kΩ gate pull-down) + 150 µH + LL4148, 1 mH/1 µF LC post-filter | Same power stage as 2v2; the MC34063 costs ≈ $0.15 vs $6.09 for the MAX1932 (qty 100). [SIM] `sim/hv_mc34063.cir` |
-| Bias set by **ESP32 PWM** (HV_PWM, IO12) → 2-pole RC (10k/1µ ×2, fc ≈ 16 Hz) → 47 kΩ into the 1.02 MΩ / 22 kΩ feedback node; **boot-safe** 100 kΩ pull-up on HV_TRIM keeps the bias low until firmware drives the PWM; HV_MON divider (2 MΩ / 75 kΩ, 80 V → 2.9 V) on IO6 closes the loop in firmware | S12572 needs 59–79 V. The design comment says ≈ 15 V (TRIM 3.3 V) … 85 V (TRIM 0 V), about 17 mV steps with 12-bit PWM. See the HV note below. |
-| Per-channel bias trim = TIA reference VREF_n from MCP4728 #1 (I2C0); thresholds VTH_n from MCP4728 #2 (I2C1) | 2v2's anode-offset idea, zero extra HV parts |
-| ESP32-S3-WROOM-1-N8 (PCB antenna, −40…85 °C): HIT0–3 on IO1/2/4/5 (GPIO matrix), **MCPWM capture at 12.5 ns on both edges** (time stamp + time-over-threshold) and **PCNT** singles counters; coincidences in firmware | Replaces the iCE40. Wi-Fi/BLE; native USB (IO19/20) for data and USB-CDC debug; BOOT button + status LED |
-| USB-C, **5 V only** (5.1 kΩ Rd on CC1/CC2), USBLC6 ESD → AMS1117-3.3 (digital, SOT-223) + TLV75733 (analog 3V3A) | No battery: a USB power bank is the UPS |
-| BME280 (0x76) for SiPM/ambient temperature, pressure and humidity; SC7A20H tilt (0x19); STEMMA QT (JST-SH 4) on I2C0 | The tiles have no sensor (sPHENIX put thermistors on the tower electronics); I2C expansion for future sensors |
+| Outline | 96 × 64 mm, 3 mm corner radius, 4 × M3 holes 3.5 mm from the corners |
+| Channel cells | 4 × (20 × 22 mm) along the top edge, 20 mm pitch (`floorplan.ts` `CELLS`). Each cell holds a U.FL at x = 18.5 + 20k, y = 3, the 47 k / 100 nF bias feed, the TIA, the comparator and a TIA/GND scope pair. Placement, local copper, GND fan-out and silk are identical (`place.ts`, `autoroute.ts` `routeCells`, `copper.ts`) |
+| Edges | USB-C and STEMMA QT on the left; ESP32-S3 low on the right with its antenna flush with the edge over a copper keep-out, ≥ 10 mm from the nearest cell |
+| Stack-up | JLC 4-layer 1.6 mm: L1 signal + parts, **L2 solid GND**, L3 signal/power, L4 signal |
+| Rules | 0.127/0.127 mm signal track/clearance; 0.5 mm for 5 V, 0.4 mm for 3V3, 0.3 mm for 3V3A and HV_SW; HV nets ≥ 0.26 mm to anything (IPC-2221 B2 needs 0.25 mm at 100 V); 0.3/0.5 mm vias |
+| Assembly | Top side only; test points are bare pads, excluded from BOM and CPL |
+| BME280 island | x 0–8.4, y 25–35.6 mm on the left edge, ≥ 20 mm from any TIA input, cut free by two C-shaped slots. It hangs on a 2.6 × 3.6 mm arm plus two 1 mm FR4 edge bridges. Island and arm have **no plane and no plane vias** (`board.noPlane`); the router necks power traces to 0.127 mm there |
+| Probe row | 22 pads at 2.54 mm on the bottom edge: GND 5V 3V3 3V3A VREF VTH0–3 HIT0–3 INJ HV_EN HV_TRIM HV_MON DAC_C DAC_D SDA0 SCL0 GND. Each channel also has a TIA/GND pair for a ground-spring probe |
 
-Deleted (relative to the 2026-09-29 max-scope freeze, commit `594b36c`, and the first Rev B draft):
-- iCE40UP5K FPGA
-- 18650 cells + BQ25890 charger
-- LoRa
-- MAX1932
-- head boards + LVDS + custom harness
-- TEC drivers + interlocks
-- nRF9151 LTE + SIM, GNSS
-- USB-PD / 4S charger / balancer
-- Ethernet, OLED, microSD
-- DAC80508, ADS7128 ×3
-- the second comparator per channel
-- TCXO, FPGA flash, I/O expanders, per-tile NTC/LED lines
+### Circuit (`src/design.ts`)
 
-**HV note [CHECK before ordering].** The 15–85 V figures in `src/design.ts` assume HV_TRIM is driven by an ideal
-source, and the ngspice deck does the same (`Vt vt 0 {VTRIM}`). On the real network, the 20 kΩ RC filter and the
-100 kΩ pull-up load the TRIM node. A hand calculation gives roughly:
-
-| ESP pin (HV_PWM) | TRIM | HV |
+| Block | Parts | Notes |
 |---|---|---|
-| High | ≈ 2.76 V | ≈ 26 V |
-| Low | ≈ 0.73 V | ≈ 70 V |
-| Floating | ≈ 1.9 V | ≈ 45 V |
+| Input × 4 | Hirose U.FL-R-SMT-1(80) (C88374) inside the case; shell = SiPM cathode = HVJ_n fed from HV via 47 kΩ, with 100 nF to GND; centre = anode = SIG_n | The shell is the bias *and* the signal's AC shield. U.FL is rated 60 V AC rms / 200 V AC withstand; the bias tops out at 83 V DC |
+| TIA × 4 | OPA356, Rf 33 k ‖ Cf 2.7 p, IN+ = VREF through 100 Ω / 100 nF | [SIM] 5.8 mV per p.e., 337 mV for a 58 p.e. muon |
+| Discriminator × 4 | LMV7219, IN+ = VTH_n through 1 k / 100 nF, 33 Ω series into the ESP32 | Threshold at 5 p.e. is set by calibration |
+| Self-test | INJ GPIO → 10 k / 1.1 k → 1 pF into every SIG_n | Each edge injects 0.33 pC = 9 p.e. |
+| DACs | MCP4728 A (I2C0) = VTH0–3. MCP4728 B (I2C1) = VREF, HV_TRIM, and DAC_C / DAC_D (spares on the probe row) | Internal 2.048 V reference |
+| Bias | MC34063 (2.2 Ω sense → 136 mA peak, 1 nF timing), BSS123, 150 µH, LL4148, 1 µF + 100 nF; **10 k / 1 µF RC post-filter**. Feedback 1.02 M / 20 k; TRIM → 1 k / 100 nF → 68 k into FB. HV_EN: a 2N7002 releases a 10 k / LL4148 clamp that otherwise holds FB high | HV = 1.25 + 1.02 M·(1.25/20 k + (1.25 − V_TRIM)/68 k): **83.0 V at TRIM 0 V, 52.9 V at 2.048 V** [SIM]. ≈ 4 V while HV_EN is low. HV_MON = HV ÷ 27.7 to the ADC |
+| MCU | ESP32-S3-WROOM-1-N8. The pin-swap step picks the nearest free GPIOs for HIT0–3 (the build log lists them). USB on IO19/20 | PCNT singles, MCPWM capture (time stamp + time over threshold), coincidences in firmware |
+| Power | USB-C 5 V (5.1 k Rd), USBLC6 ESD → AMS1117-3.3 (digital) + TLV75733 (analog) | No battery |
+| Sensors | BME280 (0x76) on the island; SC7A20H tilt (0x19); STEMMA QT (JST-SH) on I2C0 | Add a remote BME280/TMP117 on the QT port to measure the tiles themselves |
 
-The floating-pin case is still below breakdown. Also, the TRIM filter capacitors start at 0 V, so at power-up the
-loop briefly aims high before they charge. Re-simulate with the real TRIM network, and confirm that the range
-reaches the tiles' operating voltage (up to 79 V), before ordering.
+## Case (`case/case.py`, FreeCAD)
+
+![Exploded case](docs/render_case.png)
+
+- **Outer size and split.** 102 × 70 × 16.5 mm, split at the board mid-plane.
+- **Coax entry.** A 1.8 × 2.4 mm notch in the lid skirt above each U.FL takes a Ø 1.13 or 1.37 mm micro-coax. A
+  zip-tie bar on the outside of the base takes the strain off the U.FL plugs. The bias on the U.FL shells stays
+  inside the closed case.
+- **Fasteners.** Four ISO 4762 M3 × 12 socket-head screws pass through counterbored lid columns and the board's
+  corner holes, into M3 × 5.7 heat-set inserts (Ø 4.0 × 6.0 holes) in the base bosses. Each screw engages 5.5 mm.
+- **Openings.** A USB-C opening (12.6 × 6.8) and a STEMMA QT opening in the left wall. A pin hole over BOOT and a
+  Ø 2 light pipe over the status LED.
+- **BME280 chamber.** Ribs above and below the island, stopping 0.15 mm short of the board so they never clamp it.
+  Eight 1.6 mm slots through the left wall vent the chamber to room air.
+- **Hot side.** Eight 1.6 × 14 mm chimney slots in the floor and lid over the ESP32 and AMS1117.
+- **Antenna end.** The brass inserts and screws are the only metal in the case. The bottom-right one sits ≈ 5 mm past the end of the antenna keep-out; the openEMS model uses a plastic case, so check the Wi-Fi RSSI on the first prototype.
+
+## Simulations (`sim/`)
+
+| File | What | Result |
+|---|---|---|
+| `hv_rev2.cir` + `hv_rev2.inc`, `run_hv2.sh`, `plot_hv.py` | MC34063 bias, behavioural, 0.1 µs step (coarser steps under-count the 0.3 µs diode pulses) | 52.9 / 68.4 / 83.0 V; < 0.09 mV ripple at the TIA → `docs/sim_hv.png` |
+| `hv_old.cir`, `hv_new.cir`, `run_hv.sh` | The old PWM trim vs. the DAC trim, both with the old LC filter | Old: 25.9–70.6 V with a 73 V boot overshoot; this is why the trim was replaced |
+| `scope_guide.cir`, `plot_scope.py` | One channel: injection with and without a tile, 1 p.e., muon | → `docs/scope_guide.png`, the test guide's scope screens |
+| `afe_s12572_tia.cir` | Rf/Cf sweep against the p.e. count | Chose 33 k / 2.7 p |
+| `hv_ripple.cir` | Ripple with parasitics: capacitor ESL/ESR, resistor shunt C, 1.5 nH shared ground, OPA356 GBW-limited TIA; 6 ms at 5 ns | Switching ripple 230 mV on HV_RAW → 4 mV on the jack shell → **0.04 mV pk-pk at the TIA** (the TIA's gain from shell to output is ≈ 2× at 33 kHz, up to 120× above 1.8 MHz) |
+| `thermal.py` | 2D conduction in the board + case air nodes; layouts A (island + chamber), B (island, no chamber), C (mid-board) | BME280 +5.4 K (low-power firmware), +9.2 K (Wi-Fi on), mid-board +13 K → `docs/thermal.png` |
+| `emi_openems.py`, `plot_emi.py` | openEMS FDTD, 2.44 GHz: board, case, ESP32 can and antenna, U.FL jacks + coax shields leaving the case, 4 input paths; variants none / metal cans / ABS cavity | 0.9–5.6 mV peak at +20 dBm; cans make it worse (up to 10.6 mV) → `docs/sim_emi.png` |
+
+The openEMS Python bindings are built from source against Homebrew's CSXCAD/openEMS (VTK 9.7):
+`CSXCAD_INSTALL_PATH=/opt/homebrew pip install --no-build-isolation CSXCAD/python openEMS/python`, with setuptools,
+cython and h5py installed first.
 
 ## Pipeline
 
 | Step | File | Notes |
 |---|---|---|
-| Parts | `tools/fetch_parts.ts` | LCSC/EasyEDA API → pads (mm, rotation-aware bbox), pin names, holes/slots, 3D body; datasheet (validated `%PDF`, falls back to LCSC's direct link), STEP + OBJ |
-| Passives | `src/passives.ts` | value + package → **nearest JLC basic part** (±5 % R / ±25 % C) unless `=value`; basic parts carry no loading fee |
-| Circuit | `src/design.ts` | netlist by pin *name*; each value tagged [DS]/[2v2]/[SIM] |
-| Placement | `src/floorplan.ts`, `src/place.ts` | edge parts fixed; groups anchored; force-directed + 90° rotation choice + spiral legalisation |
-| Pin swap | `src/pinswap.ts` | GPIO-matrix nets (e.g. ESP32 HIT_n) assigned to the nearest free pin |
-| Routing | `src/router.ts`, `src/autoroute.ts` | 0.1 mm grid, half-clearance occupancy (+0.04 mm quantisation margin), 3 routed layers (L1/L3/L4), octilinear A* with via moves, windowed then full-board search, soft rip-up with PathFinder history cost; GND = via fan-out into the L2 plane (via-in-pad only when the whole via fits); hole-to-hole mask; no top copper under module bodies |
-| Copper | `src/copper.ts` | per net: pull taut (farthest legal straight shot), fillet every corner with the largest legal tangent arc (≤ 8 mm), pin T-junctions/vias, straight pad entries; grid re-marked so later nets see the smoothed copper |
-| Planes | `src/planes.ts` | L2 solid GND, 0.3 mm edge pull-back, antipads, antenna cut-out |
-| Silk | `src/silk.ts`, `src/labels.ts` | LCSC footprint outlines + pin-1 marks, built-in stroke font, polarity/labels |
-| Gerber | `src/gerber.ts` | RS-274X X2, flashed pads (macro for rotated rects), **native arcs (G02/G03)**, regions + LPC antipads, Excellon with G85 slots |
-| Checks | `src/drc.ts`, `src/kicad.ts` | JS exact-geometry clearance + connectivity; `.kicad_pcb` export for kicad-cli DRC and STEP/PNG renders |
-| JLC | `src/jlc.ts`, `tools/cost.ts` | BOM/CPL (Gerber frame, origin bottom-left); cost incl. extended-part loading fees; 4-layer and one-sided pricing chosen from the board |
+| Parts | `tools/fetch_parts.ts` | LCSC/EasyEDA API → pads, pin names, holes/slots, 3D body, datasheet (validated `%PDF`), STEP + OBJ |
+| Passives | `src/passives.ts` | value + package → nearest JLC *basic* part (no loading fee) unless `=value` |
+| Circuit | `src/design.ts`, `src/circuit.ts` | Netlist by pin *name*; `c.tp()` adds bare test pads |
+| Placement | `src/floorplan.ts`, `src/place.ts` | Edge parts, the island and the probe row are fixed; groups are placed by force + legalisation |
+| Pin swap | `src/pinswap.ts` | GPIO-matrix nets (HIT_n) go to the nearest free ESP32 pin |
+| Routing | `src/router.ts`, `src/autoroute.ts` | 0.1 mm grid A*, 3 routed layers, soft rip-up + PathFinder history. GND is a via fan-out into L2, except on thermal islands, where GND leaves on traces |
+| Copper | `src/copper.ts` | Pulls each net taut, then fillets every corner with the largest legal arc |
+| Planes | `src/planes.ts` | L2 GND with antipads; cut-outs for the antenna keep-out, the slots and the thermal island |
+| Silk | `src/silk.ts`, `src/labels.ts` | Footprint outlines; collision-aware labels (probe row, scope pairs, HV warnings); bottom-side notes |
+| Output | `src/gerber.ts`, `src/jlc.ts`, `src/kicad.ts` | Gerber X2 with native arcs, Excellon with G85 slots, BOM/CPL, and a `.kicad_pcb` export for DRC and renders |
 
-## Status (2026-09-29)
+## Status (2026-09-30)
 
-- Last build (23:35 CEST): **fully routed**. kicad-cli DRC shows 0 errors and 0 unconnected; the 117 warnings are
-  all `lib_footprint_issues` ("footprint library 'muon3' not configured"). 117 placements, 43 BOM lines.
-  Parts list: [`parts/INDEX.md`](parts/INDEX.md).
-- Cost: **not yet re-run for Rev B** (`bun run cost`). The earlier ≈ $91/board and ≈ $971 landed figures were for
-  the 100 × 150 mm 6-layer, two-sided battery board.
-- 3D: KiCad library models replace EasyEDA models that don't render correctly (edge SMA); see `src/kicad.ts`.
-- Not yet: firmware (ESP-IDF), a JLC quote with real prices, and regenerated renders.
-
-## Open items before ordering
-
-1. **Safety sign-off for the bias voltage on the exposed SMA shells** (47 kΩ-limited DC; 100 nF at each jack on
-   the shell side).
-2. HV trim range and power-up behaviour with the real TRIM network (HV note above).
-3. Real JLC quote for the 84 × 50 mm 4-layer, one-sided board. Confirm that the unpasted SMA bottom tabs give
-   enough mechanical retention (hand-solder them if needed).
-4. GSU procurement: tariff treatment of the 3 US boards (importer of record: GSU).
-5. Firmware, and a one-channel bench test on a real HCal tile.
+- Rev C fully routed: 156 parts. Cells: `6 local nets × 4 cells, 18/18 copies identical`. JS DRC: 0 clearance,
+  0 open. **kicad-cli DRC: 0 errors, 0 unconnected.**
+- Parts list: [`parts/INDEX.md`](parts/INDEX.md). Test guide: [`docs/TESTING.md`](docs/TESTING.md).
+- **Not done:**
+  - firmware (ESP-IDF; its USB protocol is specified in `tools/station_test.py`);
+  - a real JLC quote;
+  - a Geant4 tile model that gives a believable yield (it compiles, is overlap-free and transports light, but gives
+    0.1 p.e. per muon; see the top-level README).

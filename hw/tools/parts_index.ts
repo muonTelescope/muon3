@@ -6,6 +6,7 @@ const ROOT = new URL("../parts/", import.meta.url).pathname;
 const c = await build();
 const rows = new Map<string, { refs: string[]; value: string; mpn: string; mfr: string; pkg: string; ds: string; cls: string; fp: string }>();
 for (const p of c.parts) {
+  if (p.lcsc === "TP") continue;
   const r = rows.get(p.lcsc) ?? { refs: [], value: p.value, mpn: p.info.mpn, mfr: p.info.manufacturer, pkg: p.info.footprint.name, ds: p.info.datasheet, cls: p.info.jlcClass, fp: p.info.lcsc };
   r.refs.push(p.ref); rows.set(p.lcsc, r);
 }

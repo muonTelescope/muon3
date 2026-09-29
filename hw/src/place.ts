@@ -7,7 +7,9 @@ export type Anchor = { x: number; y: number; r?: number }; // group centre and s
 export type Floorplan = {
   fixed: Record<string, { x: number; y: number; rot: number }>; // ref -> pose
   groups: Record<string, Anchor>;
-  keepouts: { x0: number; y0: number; x1: number; y1: number; why: string }[];
+  keepouts: { x0: number; y0: number; x1: number; y1: number; why: string; copper?: boolean; cell?: string }[]; // copper: also no routing; cell: that group may use it
+  /** Identical channel cells: groups[0] is placed inside `box`, groups[k] are exact copies shifted by k·pitch in x. */
+  cells?: { groups: string[]; pitch: number; box: { x0: number; y0: number; x1: number; y1: number } };
 };
 
 type Box = { x0: number; y0: number; x1: number; y1: number };
@@ -41,7 +43,20 @@ export function place(b: Board, fp: Floorplan, iters = 400) {
     const a = fp.groups[g] ?? { x: b.w / 2, y: b.h / 2 };
     ps.forEach((p, i) => { const t = i * 2.4, r = 0.8 * Math.sqrt(i); p.place = { x: a.x + r * Math.cos(t), y: a.y + r * Math.sin(t), rot: 0, side: "top" }; });
   }
-  const movable = parts.filter(p => !fixed.has(p.ref));
+  // identical cells: followers copy their leader's pose (matched by creation order inside the group)
+  const cells = fp.cells, follow = new Map<Part, { lead: Part; dx: number }>();
+  if (cells) {
+    const lead = parts.filter(p => p.group === cells.groups[0]);
+    cells.groups.slice(1).forEach((g, j) => {
+      const fs = parts.filter(p => p.group === g);
+      if (fs.length !== lead.length) throw new Error(`cell ${g}: ${fs.length} parts, ${cells.groups[0]} has ${lead.length}`);
+      fs.forEach((f, i) => { if (!fixed.has(f.ref)) follow.set(f, { lead: lead[i], dx: cells.pitch * (j + 1) }); });
+    });
+  }
+  const sync = () => { for (const [f, { lead, dx }] of follow) f.place = { ...lead.place!, x: lead.place!.x + dx }; };
+  const isLead = (p: Part) => !!cells && p.group === cells.groups[0];
+  const inCell = (bx: Box) => !!cells && bx.x0 >= cells.box.x0 + 0.3 && bx.y0 >= cells.box.y0 && bx.x1 <= cells.box.x1 - 0.3 && bx.y1 <= cells.box.y1;
+  const movable = parts.filter(p => !fixed.has(p.ref) && !follow.has(p));
 
   // net membership: part -> pins with local pad offsets
   const netPins = new Map<string, { p: Part; off: Pt }[]>();
@@ -58,7 +73,8 @@ export function place(b: Board, fp: Floorplan, iters = 400) {
   const world = (q: { p: Part; off: Pt }) => apply(q.p.place!, q.off);
 
   const inBoard = (bx: Box) => bx.x0 >= 0.5 && bx.y0 >= 0.5 && bx.x1 <= b.w - 0.5 && bx.y1 <= b.h - 0.5;
-  const fixedBoxes = () => [...parts.filter(p => fixed.has(p.ref)).map(p => boxAt(p, p.place!.x, p.place!.y, p.place!.rot)), ...fp.keepouts];
+  const fixedBoxes = (g?: string) => [...parts.filter(p => fixed.has(p.ref)).map(p => boxAt(p, p.place!.x, p.place!.y, p.place!.rot)),
+    ...fp.keepouts.filter(k => k.cell === undefined || k.cell !== g)];
 
   for (let it = 0; it < iters; it++) {
     const T = 1 - it / iters; // cooling
@@ -76,9 +92,9 @@ export function place(b: Board, fp: Floorplan, iters = 400) {
     for (const p of movable) { const a = fp.groups[p.group]; if (a) { const f = force.get(p)!; f.x += (a.x - p.place!.x) * 0.2; f.y += (a.y - p.place!.y) * 0.2; } }
     // overlap repulsion
     const boxes = movable.map(p => boxAt(p, p.place!.x, p.place!.y, p.place!.rot));
-    const fb = fixedBoxes();
+    const fbAll = fixedBoxes(), fbLead = cells ? fixedBoxes(cells.groups[0]) : fbAll;
     for (let i = 0; i < movable.length; i++) {
-      const bi = boxes[i];
+      const bi = boxes[i], fb = isLead(movable[i]) ? fbLead : fbAll;
       for (let j = i + 1; j < movable.length; j++) {
         const bj = boxes[j]; if (!overlap(bi, bj)) continue;
         const dx = (bi.x0 + bi.x1 - bj.x0 - bj.x1) / 2, dy = (bi.y0 + bi.y1 - bj.y0 - bj.y1) / 2;
@@ -102,12 +118,23 @@ export function place(b: Board, fp: Floorplan, iters = 400) {
       const bx = boxAt(p, p.place!.x, p.place!.y, p.place!.rot);
       if (bx.x0 < 0.5) p.place!.x += 0.5 - bx.x0; if (bx.x1 > b.w - 0.5) p.place!.x -= bx.x1 - (b.w - 0.5);
       if (bx.y0 < 0.5) p.place!.y += 0.5 - bx.y0; if (bx.y1 > b.h - 0.5) p.place!.y -= bx.y1 - (b.h - 0.5);
+      if (cells && isLead(p)) { // leaders stay inside their cell
+        const c = cells.box, q = boxAt(p, p.place!.x, p.place!.y, p.place!.rot);
+        if (q.x0 < c.x0 + 0.3) p.place!.x += c.x0 + 0.3 - q.x0; if (q.x1 > c.x1 - 0.3) p.place!.x -= q.x1 - (c.x1 - 0.3);
+        if (q.y0 < c.y0) p.place!.y += c.y0 - q.y0; if (q.y1 > c.y1) p.place!.y -= q.y1 - c.y1;
+      }
     }
+    sync();
     // try rotations for two-pin parts every 50 iterations: pick the one with shortest pin-to-centroid sum
     if (it % 50 === 49) for (const p of movable) bestRotation(p, netPins, railPins);
   }
-  legalise(b, movable, fixedBoxes(), inBoard);
+  if (cells) {
+    const leads = movable.filter(isLead), rest = movable.filter(p => !isLead(p));
+    legalise(b, leads, fixedBoxes(cells.groups[0]), inCell);
+    legalise(b, rest, [...fixedBoxes(), ...leads.map(p => boxAt(p, p.place!.x, p.place!.y, p.place!.rot))], inBoard);
+  } else legalise(b, movable, fixedBoxes(), inBoard);
   for (const p of movable) { p.place!.x = Math.round(p.place!.x * 20) / 20; p.place!.y = Math.round(p.place!.y * 20) / 20; }
+  sync(); // followers = leader + k·pitch exactly (pitch is a multiple of the 0.1 mm routing grid)
 }
 
 function bestRotation(p: Part, ...maps: Map<string, { p: Part; off: Pt }[]>[]) {
