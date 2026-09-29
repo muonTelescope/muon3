@@ -44,14 +44,10 @@ CMakeCache.txt
 CMakeFiles/
 docs-images/
 figures/drive/
-firmware/build/
-gateware/build/
 geant4-data/
 Makefile
 Muon3Vision/.build/
 Muon3Vision/Package.resolved
-pcb/tscircuit/bun.lock
-pcb/tscircuit/node_modules/
 rclone.conf
 scripts/*.token
 scripts/*token*.json
@@ -78,10 +74,5 @@ sim/tot_model.png
 # --- tscircuit board-as-code (repo root) ---
 /node_modules/
 /dist/
-/fab/muon3-gerbers/
-board/**/circuit.json
 # Keep manifests despite the blanket *.json ignore above
-!/package.json
-!/tsconfig.json
-!/tscircuit.config.json
 # bun.lock is not *.json, so it is tracked for reproducibility

@@ -1,0 +1,11 @@
+# build outputs (regenerate with `bun run build`); the README images live in docs/
+cache/
+out/
+# the repo root ignores *.json — part data and configs here are source
+!*.json
+!**/*.json
+# fetched per part by `bun run parts` (deterministic from the LCSC code); part.json + INDEX.md are committed
+parts/*/datasheet*.pdf
+parts/*/datasheet.txt
+parts/*/model.step
+parts/*/model.obj
