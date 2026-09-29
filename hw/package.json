@@ -1,0 +1,14 @@
+{
+  "name": "muon3-hw",
+  "private": true,
+  "type": "module",
+  "description": "Muon3 station board: circuit, placement, topological routing and Gerber output, all in TypeScript.",
+  "scripts": {
+    "build": "bun src/build.ts",
+    "parts": "bun tools/fetch_parts.ts",
+    "index": "bun tools/parts_index.ts",
+    "cost": "bun tools/cost.ts",
+    "jlc": "bun tools/jlc.ts",
+    "drc": "cd out/kicad && kicad-cli pcb drc --refill-zones --severity-error --severity-warning -o drc.json muon3.kicad_pcb"
+  }
+}

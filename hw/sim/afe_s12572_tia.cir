@@ -1,0 +1,52 @@
+* Muon3 station AFE (TIA) for sPHENIX inner HCal tile + Hamamatsu S12572-33-015P
+* S12572-015: gain 2.3e5 -> QPE 36.8 fC, Ct ~320 pF [DS S12571 family, EST area-scaled]
+* Pulse shape set by Y11 WLS decay (~10 ns) + 15 um cell recovery: TAUD 20 ns [EST]
+* 50 cm Cat6 pair -> OPA4354 TIA (Rf, Cf) referenced to VREF_n -> LMV7219
+.param NPE=5 RF=20k CF=3.3p
+.subckt SIPM A K NPE=1 QPE=36.8f TAUR=1n TAUD=20n T0=100n CT=320p
+Bp K A I = (time > {T0}) ? {NPE*QPE/(TAUD-TAUR)} * ( exp(-(time-{T0})/{TAUD}) - exp(-(time-{T0})/{TAUR}) ) : 0
+Ct A K {CT}
+.ends
+* OPA356: GBW 200 MHz
+.subckt RROA INP INN OUT
+Gm 0 n1 INP INN 1m
+R1 n1 0 1Meg
+C1 n1 0 {1m/(6.2832*200Meg)}
+Bsr 0 s I = ( (v(n1)-v(s)) > 0.01 ? 1.5m : ((v(n1)-v(s)) < -0.01 ? -1.5m : (v(n1)-v(s))*0.15 ) )
+Cs s 0 10p
+Rs s 0 1G
+Bout OUT 0 V = v(s) > 3.25 ? 3.25 : (v(s) < 0.05 ? 0.05 : v(s))
+.ends
+VHV hv 0 69
+Rhv hv hvf 1k
+Chv hvf 0 100n
+X1 a_far hvf SIPM NPE={NPE}
+T1 a_far 0 a_near 0 Z0=55 TD=2.5n
+Vref vref 0 3.0
+Cf out a_near {CF}
+Rf out a_near {RF}
+Xa vref a_near out RROA
+.control
+foreach rf 10k 20k 33k
+foreach n 1 5 58 300
+  alterparam RF=$rf
+  alterparam NPE=$n
+  if $rf = 10k
+    alterparam CF=4.7p
+  end
+  if $rf = 20k
+    alterparam CF=3.3p
+  end
+  if $rf = 33k
+    alterparam CF=2.7p
+  end
+  reset
+  tran 0.2n 600n
+  meas tran pk MIN v(out)
+  meas tran tr WHEN v(out)=2.97 FALL=1
+  echo "RF=$rf NPE=$n"
+  print pk
+end
+end
+.endc
+.end
