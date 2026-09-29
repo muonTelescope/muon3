@@ -120,7 +120,7 @@ export function writeGerbers(b: Board, prefix: string): Record<string, string> {
   }
   for (const [side, L, ext] of [["top", "Top", "gtp"], ["bottom", "Bot", "gbp"]] as const) {
     const g = new GerberWriter(H, prefix, `Paste,${L}`);
-    for (const p of pads) if (p.layer === side && !p.drill) g.pad(p, p.w * p.h > 6 ? -0.15 : 0); // big EPs: reduced paste
+    for (const p of pads) if (p.layer === side && !p.drill && !p.nopaste) g.pad(p, p.w * p.h > 6 ? -0.15 : 0); // big EPs: reduced paste
     files[`${prefix}-${side === "top" ? "F" : "B"}_Paste.${ext}`] = g.toString();
   }
   for (const [side, L, ext] of [["top", "Top", "gto"], ["bottom", "Bot", "gbo"]] as const) {

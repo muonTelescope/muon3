@@ -36,9 +36,10 @@ export class Circuit {
   }
 
   /** Add a part by LCSC code. conn maps pin name (or pad number) -> net name. */
-  async add(prefix: string, lcsc: string, conn: Record<string, string>, opts: { value?: string; ref?: string; footprintFrom?: string } = {}) {
+  async add(prefix: string, lcsc: string, conn: Record<string, string>, opts: { value?: string; ref?: string; footprintFrom?: string; noPasteBottom?: boolean } = {}) {
     // Passives take footprint + 3D model from one representative part per package (one EasyEDA fetch per package).
     const info = await fetchPart(opts.footprintFrom ?? lcsc, { assets: true, datasheet: !opts.footprintFrom });
+    if (opts.noPasteBottom) info.footprint.pads = info.footprint.pads.map(pd => pd.layer === "bottom" ? { ...pd, nopaste: true } : pd);
     const ref = opts.ref ?? this.nextRef(prefix);
     if (opts.ref && this.parts.some(q => q.ref === opts.ref)) throw new Error(`duplicate ref ${opts.ref}`);
     const pads: Record<string, string> = {};

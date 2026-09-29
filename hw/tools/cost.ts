@@ -34,7 +34,7 @@ async function main() {
   for (const p of c.parts) {
     joints += p.info.footprint.pads.length;
     tht += p.info.footprint.pads.filter(q => q.layer === "multi" && !/TYPE-C/.test(p.info.mpn)).length;
-    if (p.info.footprint.pads.some(q => q.layer === "bottom")) bottomSide = true;
+    if (p.info.footprint.pads.some(q => q.layer === "bottom" && !q.nopaste)) bottomSide = true;
   }
   const hits = new Map<string, Awaited<ReturnType<typeof search>>[number] | undefined>();
   for (const l of lines.values()) hits.set(l.lcsc, (await search(l.lcsc)).find(x => "C" + x.lcsc === l.lcsc));

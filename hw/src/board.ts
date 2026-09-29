@@ -21,6 +21,7 @@ export type WPad = {
   ref: string; num: string; net: string; layer: "top" | "bottom" | "multi";
   shape: Pad["shape"]; c: Pt; w: number; h: number; rot: number; poly: Poly; drill?: number;
   slot?: [Pt, Pt]; // plated slot: drill-width centreline end points
+  nopaste?: boolean;
 };
 export type Seg = { kind: "seg"; a: Pt; b: Pt };
 export type Arc = { kind: "arc"; a: Pt; b: Pt; c: Pt; ccw: boolean }; // from a to b about centre c
@@ -65,7 +66,7 @@ export class Board {
         const r1 = apply({ x: 0, y: 0, rot: pd.rot }, along);
         slot = [apply(t, pt(pd.x + r1.x, pd.y + r1.y)), apply(t, pt(pd.x - r1.x, pd.y - r1.y))];
       }
-      return { ref: p.ref, num: pd.num, net: p.pads[pd.num] ?? `NC_${p.ref}_${pd.num}`, layer, shape: pd.shape, c, w: pd.w, h: pd.h, rot, poly, drill: pd.drill, slot };
+      return { ref: p.ref, num: pd.num, net: p.pads[pd.num] ?? `NC_${p.ref}_${pd.num}`, layer, shape: pd.shape, c, w: pd.w, h: pd.h, rot, poly, drill: pd.drill, slot, nopaste: pd.nopaste };
     });
   }
 

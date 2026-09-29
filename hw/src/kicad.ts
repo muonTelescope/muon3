@@ -71,7 +71,7 @@ function footprint(b: Board, p: Part, nid: (n: string) => number): string {
     const net = p.pads[pd.num];
     const netS = net ? ` (net ${nid(net)} ${q(net)})` : "";
     const ang = (pd.rot + pl.rot) % 360;
-    const layers = pd.layer === "multi" ? `"*.Cu" "*.Mask"` : pd.layer === "bottom" ? `"B.Cu" "B.Paste" "B.Mask"` : `"F.Cu" "F.Paste" "F.Mask"`;
+    const layers = pd.layer === "multi" ? `"*.Cu" "*.Mask"` : pd.layer === "bottom" ? (pd.nopaste ? `"B.Cu" "B.Mask"` : `"B.Cu" "B.Paste" "B.Mask"`) : `"F.Cu" "F.Paste" "F.Mask"`;
     const kind = pd.layer === "multi" ? "thru_hole" : "smd";
     const drill = !pd.drill ? "" : pd.drillLen && pd.drillLen > pd.drill + 1e-3
       ? (pd.h >= pd.w ? ` (drill oval ${f(pd.drill)} ${f(pd.drillLen)})` : ` (drill oval ${f(pd.drillLen)} ${f(pd.drill)})`)
@@ -96,7 +96,7 @@ function footprint(b: Board, p: Part, nid: (n: string) => number): string {
 }
 
 function project() {
-  const hvNets = ["HV", "HV_FB_MID", "HVJ0", "HVJ1", "HVJ2", "HVJ3", "HV_MON_MID"];
+  const hvNets = ["HV", "HV_SW", "HV_RAW", "HV_FB_MID", "HVJ0", "HVJ1", "HVJ2", "HVJ3", "HV_MON_MID"];
   return {
     board: { design_settings: { rules: {
       min_clearance: RULES.clearance, min_track_width: 0.12, min_via_diameter: 0.45, min_through_hole_diameter: 0.3,

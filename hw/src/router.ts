@@ -6,9 +6,8 @@ import { mst } from "./svg.ts";
 
 export type NetClass = { width: number; halfClear: number; neck?: number };
 export const PLANE = new Set(["GND"]);
-// HV class = long bias runs. The MAX1932's own switch/sense nodes (HV_SW, HV_RAW, HV_CSN) sit at its 0.8 mm pin
-// pitch by design and stay local, so they use the standard 0.127 mm (≈ IPC-2221 B4, coated, 31–150 V: 0.13 mm).
-const HV_NETS = /^(HV|HV_FB_MID|HVJ\d|HV_MON_MID)$/;
+// HV class (up to 85 V): the boost switch node, rectified output, bias distribution and dividers.
+const HV_NETS = /^(HV|HV_SW|HV_RAW|HV_FB_MID|HVJ\d|HV_MON_MID)$/;
 // IPC-2221 external 1 oz, ≤20 °C rise: 1.78 A (ILIM cap) -> 0.44 mm; per-cell branch ≤0.45 A.
 const POWER_W: Record<string, number> = {
   VBUS: 0.6, PMID: 0.6, CHG_SW: 0.6, VSYS: 0.6, VBAT: 0.6, CELL0_P: 0.4, CELL1_P: 0.4, CELL2_P: 0.4, CELL3_P: 0.4,
@@ -360,7 +359,7 @@ export class Router {
         for (let y = Math.floor((bb.y0 - 0.3) / this.pitch); y <= Math.ceil((bb.y1 + 0.3) / this.pitch); y++)
           for (let x = Math.floor((bb.x0 - 0.3) / this.pitch); x <= Math.ceil((bb.x1 + 0.3) / this.pitch); x++) {
             const cc = y * this.nx + x; if (cc < 0 || cc >= this.N) continue;
-            if (distPtPoly({ x: (x + 0.5) * this.pitch, y: (y + 0.5) * this.pitch }, p.poly) < RULES.viaDia / 2) this.padCoreAny[cc] = 1;
+            if (distPtPoly({ x: (x + 0.5) * this.pitch, y: (y + 0.5) * this.pitch }, p.poly) < RULES.viaDia / 2 + 0.1) this.padCoreAny[cc] = 1; // no via grazing a pad
           }
       }
     }

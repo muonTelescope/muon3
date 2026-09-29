@@ -13,6 +13,7 @@ export type Pad = {
   num: string; shape: "rect" | "oval" | "circle" | "poly";
   x: number; y: number; w: number; h: number; rot: number;
   layer: "top" | "bottom" | "multi"; drill?: number; drillLen?: number; poly?: [number, number][];
+  nopaste?: boolean; // copper + mask only: not assembled (e.g. edge-SMA bottom tabs)
 };
 export type Footprint = {
   name: string; pads: Pad[];
