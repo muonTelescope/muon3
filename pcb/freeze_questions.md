@@ -1,5 +1,50 @@
 # Schematic-freeze questions and decisions
 
+> **Superseded in part on 2026-09-29.** The max-scope architecture review froze decisions
+> #1–#12, listed in the section below. Where they conflict with the 2026-07-11 answers, the
+> 2026-09-29 decisions win. Full specification: [MUON3_MAX_SCOPE_ARCHITECTURE.md](MUON3_MAX_SCOPE_ARCHITECTURE.md).
+> Parts list with status: [key_parts_max_scope.csv](key_parts_max_scope.csv).
+
+## 2026-09-29 — Max-scope architecture freeze (decisions #1–#12, FROZEN)
+
+Reviewed and answered by Sawaiz on 2026-09-29, between 20:09 and 20:36 Europe/Berlin.
+
+| # | Decision (FROZEN 2026-09-29) | Supersedes (2026-07-11) |
+| --- | --- | --- |
+| 1 | **ESP32-S3-WROOM-1U-N16 (C2980298) is the main controller.** It provides Wi-Fi + BLE 5 + USB-OTG (CDC + MSC) and configures the iCE40 over SPI from its flash. **RP2040 and nRF54 are removed.** | Q11 (nRF9151 primary + RP2040 co-processor + optional nRF54). |
+| 2 | **Panel-Head Board (PHB) per SiPM + Molex Micro-Fit 3.0 2×12 locking harness** (header 0430452400 / C277384, housing 0430252400). The AFE (OPA858 **at 5 V, VBOT 3.0 V**), TLV3601 ×2, MCP4728, injection, TMP117 and ID EEPROM sit on the head board. The 50 cm harness carries **LVDS digital**, not analog. | Q5/Q6 (a single hybrid connector carrying analog SiPM signal + bias). The hybrid connector is retired. |
+| 3 | **DRV8873 ×4 + hardware interlock on every main board.** CP30238 coolers, fans and heatsinks are fitted only on hot-site or lab units. Temperature-compensated bias is the primary gain stabilisation. The DRV8873 internal ITRIP minimum is 3.27 A, so the trip is an IPROPI comparator. | Q1/Q3/Q10 are kept. "ITRIP ≤ 2.5 A" is replaced by the IPROPI trip. |
+| 4 | **nRF9151-LACA-R7 is an optional LTE-M/NB-IoT variant, not fitted by default.** It runs Nordic Serial LTE Modem firmware over UART. No SIM7080G on Rev A; SIM7080G is only a Rev B candidate if nRF9151 lead time exceeds 8 weeks. | Q11 / the Q10 (second) role of the nRF9151. |
+| 5 | **External antennas via U.FL** for Wi-Fi, GNSS, LoRa and LTE. | Q10 (second; the Nordic reference antenna geometry drove the outline). |
+| 6 | **4× 18650 in on-PCB holders, 4S1P ≈ 49 Wh.** BQ25798 charger + BQ76907 protection and balancing; MYOUNG BH-18650-B1BA002 on the bottom side of the 160 × 120 mm board. The autonomy requirement is revised to an **≥ 18 h UPS**; multi-day operation comes from an off-board 12–24 V AUX input. | Q2 (TPS25751 + BQ2579x is kept; the battery is now on board). **CH224K is dropped.** |
+| 7 | **RAK3172 LoRa** (RAK3172-T-8-SM-I / -T-9-SM-I), regional SKUs on one footprint. | New. |
+| 8 | **SiPM soldered directly on the PHB.** TEC units use a **flex carrier ≤ 3 cm** (125 V FPC connector). | New (resolves the SiPM mechanical question). |
+| 9 | **First 5-unit build: 3× US915 (T-9) + 2× EU868 (T-8); one of the five is the LTE variant.** | New. |
+| 10 | **Stations ship without cells.** Specify UN38.3 Samsung 35E / LG MJ1-class cells. | New. |
+| 11 | **LoRa backhaul: TTN where covered, otherwise one LoRaWAN gateway per site cluster.** | New. |
+| 12 | **Added features:** W5500 Ethernet + magjack option (not fitted by default); LIS2DH12-class accelerometer (SC7A20H fitted); boot self-test + automatic threshold/gain calibration + cosmic plateau scan; ESP32-S3 Secure Boot v2 + flash encryption + signed OTA (bitstream inside the image) + per-device certificates; SSD1306 OLED header (not fitted by default); pre-crimped Molex harness route. | New. |
+
+Other changes adopted with this freeze. They are PROPOSED part choices and bug fixes; see the architecture doc §(i).
+- iCE40 **VCCPLL at 1.2 V**, not 3.3 V (TLV77312 + RC).
+- MAX-M10S replaces LC76G.
+- One DAC80508Z for HV plus an MCP4728 per head, replacing two 8-ch DAC80508.
+- SHT45 + MS5607 replace BME280, for balloon use.
+- DS90LV048A LVDS receivers.
+- W25Q128 removed: the ESP32 configures the FPGA.
+- ADS7128 ×3 and a PCA9554 expander.
+- KiCad is the fab source.
+
+**Still OPEN (user):**
+- **LTE SIM provider.** Onomondo was not approved; other candidates are DT nuSIM, 1NCE and Hologram.
+- **Which sites get TEC-fitted units.**
+- **Firmware-signing key custody and device CA / MQTT broker owner.** The recommendation is GSU COSMIC, with an offline signing key and a self-hosted broker.
+
+Verification gates before fab are listed in the architecture doc §(j). **Do not order the current Rev A.**
+
+---
+
+## 2026-07-11 — Original freeze answers (historical)
+
 All ten questions were answered on 2026-07-11. These are now binding
 architecture decisions for the first manufacturable revision.
 

@@ -40,6 +40,19 @@ cloned under `reference_documentation/repositories/`:
 > is reference material, not a fabrication release. It has known electrical blockers and no routed
 > tracks. Read the [PCB review](reference_documentation/review_and_requirements/NEXT_GENERATION_PCB_REVIEW.md)
 > before using any schematic, simulation result, footprint, or BOM.
+>
+> **Architecture update (2026-09-29):** the current system architecture is
+> [pcb/MUON3_MAX_SCOPE_ARCHITECTURE.md](pcb/MUON3_MAX_SCOPE_ARCHITECTURE.md), with parts in
+> [pcb/key_parts_max_scope.csv](pcb/key_parts_max_scope.csv) and decisions #1–#12 in
+> [pcb/freeze_questions.md](pcb/freeze_questions.md). The main changes:
+> - **ESP32-S3-WROOM-1U-N16 is the controller.** The nRF9151 becomes an optional LTE variant; RP2040 and nRF54 are removed.
+> - **Panel-head boards** send LVDS over a Micro-Fit 2×12 harness.
+> - Power: **TPS25751 + BQ25798 + an on-board 4S1P 18650 pack** (CH224K dropped).
+> - **RAK3172 LoRa**, external U.FL antennas, and a W5500 Ethernet option.
+>
+> The tscircuit `board/` and the Rev A KiCad in `pcb/` **predate this spec and need rework.
+> Do not order Rev A.** Where this README still describes the nRF9151-centred design, the
+> 2026-09-29 spec supersedes it.
 
 ## Baseline detector concept
 
@@ -190,6 +203,8 @@ See `figures/`, `cad/blender/`, `cad/sphenix_hcal/`, `sim/`, and the paper for m
 See `sim/geant4/README.md`, `sim/README.md`, and the paper for instructions. Full Geant4 (with visualization and all required libraries) is needed for the complete optical model; stand-in + Python models provide rapid iteration.
 
 ## Current PCB work
+
+> **2026-09-29:** see [pcb/MUON3_MAX_SCOPE_ARCHITECTURE.md](pcb/MUON3_MAX_SCOPE_ARCHITECTURE.md). The part list and the 2026-07-11 decisions in this section and the next are superseded where that spec differs (ESP32-S3 controller, CH224K → TPS25751/BQ25798, hybrid connector → Micro-Fit 2×12 + head boards, Nordic antenna geometry → U.FL). The current board files need rework before any order.
 
 The active clean-sheet PCB work now lives in [pcb/](pcb/README.md). It is a P0 architecture
 baseline, not a fabrication release. The directory contains:

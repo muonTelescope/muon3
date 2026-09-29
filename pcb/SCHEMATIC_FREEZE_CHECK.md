@@ -1,5 +1,24 @@
 # Muon3 schematic freeze check
 
+> **Update 2026-09-29: the power contradiction is resolved, and the architecture is re-frozen.**
+>
+> This check (2026-07-11) contradicted `freeze_questions.md` on power:
+> - The decision table below says "No battery/solar, protected USB-C PD input only; CH224K".
+> - Freeze answer Q2 says "TPS25751 + BQ2579x on the main PCB".
+>
+> It is resolved in favour of the larger scope:
+> - **TPS25751D** USB-PD sink (20 V / 5 A).
+> - **BQ25798** buck-boost charger with MPPT, UPS and a second AUX input.
+> - **On-board 4S1P 18650 pack** with BQ76907 protection.
+> - **CH224K is removed.**
+>
+> The nRF9151-primary logic, the hybrid connector and Nordic antenna geometry below are also
+> superseded: the ESP32-S3 is now the controller, head boards connect over a Micro-Fit 2×12
+> LVDS harness, and antennas are external U.FL. The current specification and gates are in
+> [MUON3_MAX_SCOPE_ARCHITECTURE.md](MUON3_MAX_SCOPE_ARCHITECTURE.md), with the parts list in
+> [key_parts_max_scope.csv](key_parts_max_scope.csv) and decisions #1–#12 in
+> [freeze_questions.md](freeze_questions.md). The content below is kept as the 2026-07-11 record.
+
 Date: 2026-07-11 (updated same day with decision answers)
 
 Status: architecture decisions frozen. All ten freeze questions were answered

@@ -241,3 +241,19 @@ never trust generated EDA artifacts without netlist-level assertions.
    framing over LTE-M instead of USB CDC), temperature loop, batching/PSM.
 3. PCB routing per D13 guidance; then fab outputs.
 4. Bench validation plan is in the design report §8 (charge injection 0.27 V ≈ 1 p.e.).
+
+---
+
+## D-2026-09-29. Max-scope architecture freeze (supersedes D2 and related entries)
+**Decision:** The architecture was re-frozen on 2026-09-29 (decisions #1–#12). The full record is in
+`pcb/MUON3_MAX_SCOPE_ARCHITECTURE.md` and `pcb/freeze_questions.md`.
+- **Controller:** ESP32-S3-WROOM-1U-N16 replaces the nRF9151 as controller. The nRF9151 is an optional LTE modem (Serial LTE Modem firmware, not fitted by default). RP2350/RP2040 and nRF54 are not used.
+- **Readout:** iCE40UP5K timing is kept. The analog front end moves to a Panel-Head Board per SiPM, with LVDS over a Micro-Fit 3.0 2×12 harness.
+- **Power:** TPS25751 + BQ25798 + an on-board 4S1P 18650 pack (BQ76907).
+- **Radio and extras:** RAK3172 LoRa; external U.FL antennas; W5500 Ethernet option; secure boot / flash encryption / signed OTA.
+**Reasoning:**
+- GSU sites are networked indoor rooms, so Wi-Fi and USB should be first-class.
+- The nRF9151 is JLC pre-order only.
+- A 50 cm analog run next to TEC PWM is avoided.
+- Power failures cause data gaps, so the board carries a UPS.
+**Status:** [OPEN] Verification gates G-AFE/G-HV/G-PWR/G-BAT/G-ESPIO/G-FPGA-IO/G-SEC etc. (spec §j). Rev A KiCad/tscircuit predate this decision and must be reworked.

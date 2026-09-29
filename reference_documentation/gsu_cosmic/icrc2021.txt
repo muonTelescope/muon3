@@ -1,0 +1,337 @@
+                                                                                       ONLINE ICRC
+                                                                                               ICRC 2021
+                                                                                                    2021
+                                                                                                  THE ASTROPARTICLE PHYSICS CONFERENCE
+                                                                                                                      Berlin | Ger many
+                                                                                                THE ASTROPARTICLE PHYSICS CONFERENCE
+                                                                                                                    Ber37
+                                                                                                                       lin International
+                                                                                                                          th
+                                                                                                                             | Ger many
+                                                                                                                   Cosmic Ray Conference
+                                                                                                                          12–23 July 2021
+
+
+
+
+Development and Production of Modular Cosmic Ray
+Telescopes
+
+
+
+
+                                                                                                                                            PoS(ICRC2021)1257
+X. He,𝑎,∗ C. Butler,𝑎 S. Syed,𝑎 E. Potdevin,𝑎 P. Tarrant,𝑎 N. Chen𝑏 and T.-C. Wei𝑏
+ 𝑎 Georgia State University,
+
+   25 Park Place, Atlanta, USA
+ 𝑏 Northwestern Polytechnical University,
+
+   Xian, China
+   E-mail: xhe@gsu.edu
+
+
+   While the quest of searching for the origins of the most energetic cosmic rays and the associated
+   dynamics continues, there is a growing interest in recent years of the use of the cosmic rays for
+   practical applications following the advancement of particle detection technologies. One of these
+   important applications is to study the correlations between the cosmic ray flux variations and the
+   space and earth weather at global scale in real-time at low cost. Key to these efforts is improving
+   the understanding the correlation patterns to increase the accuracy, reliability, and timeliness of
+   space-earth-weather forecasts. A state-of-the-art portable and modular cosmic ray muon and
+   neutron detector prototype has been developed at Georgia State University for the measurement of
+   cosmic ray muon and neutron flux variations simultaneously. The detector consists of three layers
+   of plastic scintillator and a neutron-cell with liquid scintillator mounted on an extruded aluminum
+   frame. The scintillation light is collected through embedded wavelength shifting fiber which is
+   coupled to silicon photomultipliers (SiPM) for signal readout. The modular, portable and low cost
+   nature of this cosmic ray telescope provides a technological choice to quantify the cosmic ray flux
+   variation around the globe in an unprecedented spacial and time resolution. In the talk, we will
+   highlight the details of the detector design, assembly and mass production. An initial test result
+   will also be presented.
+
+
+
+
+37th International Cosmic Ray Conference (ICRC 2021)
+July 12th – 23rd, 2021
+Online – Berlin, Germany
+
+    ∗ Presenter
+
+
+
+© Copyright owned by the author(s) under the terms of the Creative Commons
+Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND 4.0).           https://pos.sissa.it/
+Modular and Portable Cosmic Ray Telescope                                                       X. He
+
+
+1. Introduction
+
+      In recent years, there are growing interests in using cosmic ray measurements for applications
+in space and the earth weather monitoring, non-invasive void structural tomography, soil moisture
+monitoring, radiation effects in health of general population, etc. [1–12] This is in part inspired by
+the advancement of particle detection and instrumentation over the past a few decades in accelerator-
+based particle and high energy nuclear experiments. However, all of the detectors developed for
+cosmic ray measurement have large volumes, complex readout electronics, are expensive, and
+not-easy to maintain and operate. While these detectors are operated by experts uniquely at a
+
+
+
+
+                                                                                                          PoS(ICRC2021)1257
+given experimental location for their designed research objectives, it is extremely challenging if not
+impossible to duplicate the setup in order to perform the measurements at global scale.
+      Measurement of cosmic ray flux around the world in real-time is a unique approach for studying
+the dynamical correlation between the space/earth weather and the flux variation. This is indeed
+very important for understanding the forcing factors of the earth climate change. The solar activity
+(like Forbush events) influences geomagnetic field which in turn modulates the cosmic ray shower
+distribution at a given geo-position. The earth’s atmosphere itself is a large particle detector in
+which the primary cosmic rays interact with atmospheric molecules at an altitude around 15 km
+from sea level with seasonal variations. Because of the gravitational binding, to the first order, the
+total air mass on earth is more or less a constant but the local air mass varies following the changes
+of the local barometric pressure. Measurement of the secondary cosmic ray particles reaching to
+the surface of the earth at a global scale in real-time is a unique tool to capture the dynamic weather
+patterns worldwide.
+      The keys for achieving the global cosmic ray measurement include, but not limited to, a few
+critical factors listed as follows:
+
+    • Identical detector design and performance, which eliminate the need for detector acceptance
+      correction.
+
+    • Portability and low cost, which enable the construction and distribution of a large number of
+      detectors worldwide in a competitive funding environment.
+
+    • Sensitivity to the changes of local meteorological parameters in shorter time frame.
+
+    • Dedicated effort of maintaining and operating the detector continuously.
+
+Based on these requirements, a multi-layer-scintillator cosmic ray telescope have been developed
+at Georgia State University (GSU). The design of the scintillator tile is motivated by the excellent
+performance of the scintillator tiles for the sPHENIX Hadronic Calorimeter [13]. The readout
+consists of a Raspberry PI and a customized PCB which supplies bias-voltage to SiPMs [14] and
+records the data in combination of counts both from single layer and coincidences in paired-layers.
+     In this proceedings, a brief description of the telescope design and its components is given in
+Section 2 which is followed with telescope assembly and test in Section 3. A brief summary and
+an outlook of the future of this project are given in Section 4.
+
+
+                                                  2
+Modular and Portable Cosmic Ray Telescope                                                         X. He
+
+
+
+
+                                                                                                            PoS(ICRC2021)1257
+Figure 1: Design of the cosmic ray telescope: (a) Muon telescope; (b) Muon and Neutron telescope; and (c)
+Neutron cell.
+
+
+2. Cosmic Ray Telescope Design
+
+      Following the design goals as mentioned in the previous section, there are three generations of
+the cosmic ray telescope that have been developed and tested at GSU since 2016. The latest version
+is shown in Fig. 1. There are two types of the telescope design. One is for muon measurement only
+and the other with a neutron cell in order to count cosmic ray muons and neutrons simultaneously.
+The study of the neutron cell performance and its efficiency is still ongoing.
+      The key component of the telescope is the scintillator tile which not only needs to be large
+enough for recording statistically meaningful particle hits in a shorter time window (at about a
+1-minute level) but also provides uniform scintillation light collection efficiency for hits counting.
+The design of the tile is based on the group’s extensive work on building and testing of a Hadronic
+Calorimeter of the sPHENIX experiment at Brookhaven National Lab [13]. The tile dimension is
+20 cm × 20 cm × 1 cm with a cutoff at a corner in order to mount a PCB board with a silicon
+photomultiplier (SiPM) [14]. A wavelength shifting fiber loop is glued into a shallow groove near
+the surface of the tile on one side. The fiber ends meet the SiPM at the corner as shown in Fig. 2.
+Also shown in Fig. 2 (on right) is a display of scintillation light production and propagation in
+the tile using GEANT4 simulation [15] in order to understand the light collection uniformity and
+efficiency.
+      The readout consists of a Raspberry PI and a custom made 8-channel readout board (the latest
+version). Raspberry PI provides an affordable computing and network tool for configuring the
+PCB and remote data taking, as shown in Fig. 3. The custom PCB interfaces with the Raspberry
+PI through its digital logic pins and provides controllable bias voltage, amplification and signal
+shaping, as well as FPGA based logic for coincidence and high speed counting. The interface to the
+SiPMs is made through U.FL cables providing the bias voltage and a shielded signal path for noisy
+environment. Another advantage of using Raspberry PI is the possibility of integrating low-cost
+sensors (GPS, humidity, temperature, inclination, etc.) to the telescope. The readout electronics
+are typically mounted on the bottom of the telescope or on its side.
+
+
+                                                   3
+Modular and Portable Cosmic Ray Telescope                                                               X. He
+
+
+
+
+                                                                                                                  PoS(ICRC2021)1257
+Figure 2: The design of the scintillator tile (left figure) and a display of scintillation light production and
+propagation inside the tile from a GEANT4-based simulation study.
+
+
+
+
+Figure 3: Raspberry PI-based readout. (upper left) 8-channel FPGA PCB; (lower left) backside of the PCB;
+(right) Raspberry PI with the PCB.
+
+
+     With the 8-channel readout, the telescope design has a greater flexibility in comparison with
+our previous prototypes. One can arrange as many as 8 tiles in different combination for a broader
+cosmic ray flux measurement with varying sky-facing angular acceptance. In our production
+configuration, a three-layer telescope is assembled with a 25 cm separation between the top and
+the bottom layer (see Fig. 1) while the middle layer location can be adjusted for choosing a specific
+angular acceptance. In order to determine the angular acceptance of a given pair of tiles, a software
+package has also been developed using GEANT4 with realistic material property and the exact
+geometry as shown in Fig. 4. One can also study the relative efficiency of muon and neutron
+measurement using the same software package.
+
+
+3. Telescope Assembly and Test
+
+    The assembling and testing of the telescopes are mainly carried out by undergraduate and
+graduate students. Figure 5 shows two undergraduate students who were assembling telescope
+frames during the COVID-19 pandemic in the nuclear physics labs at GSU. We also had two high
+
+
+                                                      4
+Modular and Portable Cosmic Ray Telescope                                                            X. He
+
+
+
+
+                                                                                                               PoS(ICRC2021)1257
+Figure 4: (color online) Acceptance study using GEANT4 simulation. (left panel) muon telescope; (right
+panel) muon/neutron telescope. [Red color lines represent negative charged partile tracks, blue for positive
+particles and green for charge-neutral particle including gammas and neutrons]
+
+
+
+
+Figure 5: Two undergraduate students working on telescope assembling during COVID-19 pandemic in
+2021.
+
+
+school students who helped on assembling tasks during summer breaks. This project has proven to
+be a great tool for STEM training, which is one of the objectives of the cosmic ray project at GSU.
+     Our near-term goal is to assemble 50 three-layer telescopes by the end of 2021 and to make a
+plan for a worldwide distribution. There are close to 200 scintillator tiles made for this distribution.
+Half of the 200 tiles were fabricated in the physics shop at GSU while the newest tiles were made
+by Uniplast in Russia (the same company that produced the scintillator tiles for the sPHENIX
+experiment). Figure 6 shows a box of tile shipment from Uniplast (right) together with a picture
+of the fiber ends. Having tiles made locally provides a great opportunity for our students to learn
+polishing tiles and gluing wavelength shifting fibers.
+     Once a telescope is assembled, a multi-week test is run to study its performance and stability.
+
+
+                                                     5
+Modular and Portable Cosmic Ray Telescope                                                            X. He
+
+
+
+
+                                                                                                               PoS(ICRC2021)1257
+            Figure 6: Scintillator tiles (ready to be installed) produced by Unplast in Russian.
+
+
+
+
+Figure 7: Test setups for monitoring the telescope performance and stability. (left) muon telescope; (right)
+muon/neutron telescope.
+
+
+A typical test is to record a minute-long flux counts (counts from single layers and counts of
+coincidence from a pair of layers) 24/7 and to check the sensitivity of the flux variations to the
+changes of the space radiation level (i.e., solar activity) and the local meteorological parameters.
+Figure 7 shows two such setups which have been recording data continuously for several months.
+     An example of the data analysis is shown in Fig. 8. The time series plots of a hourly coincidence
+flux in each of the paired-layer show the well-known seasonable variation of the cosmic ray muon
+flux reaching to the surface of the earth. Also shown in Fig. 8 is the sensitivity of the flux variation
+to a Forbush-like event. Arranging equal layer separation of the top-middle and the middle-bottom
+pair provides a self-consistent check of the telescope performance.
+
+
+4. Summary and Outlook
+
+     We present in this proceedings an updated cosmic ray telescope design, assembly and test. The
+main advantages of this telescope design includes its low cost, portable nature, and flexibility for
+adding additional environmental sensors for broader applications of the cosmic ray measurement at
+a global scale. This opens up the unprecedented opportunity to built a realistic and identical cosmic
+ray detector network around the world for space and earth weather monitoring.
+
+
+                                                     6
+Modular and Portable Cosmic Ray Telescope                                                     X. He
+
+
+
+
+                                                                                                        PoS(ICRC2021)1257
+Figure 8: Example of data analysis. The top panel shows the hourly coincidence counts between the the
+top and the middle layer. The middle and the bottom panel show the corresponding hourly flux from the
+middle-bottom and top-bottom paired layers, respectively.
+
+
+     This project also opens up a great opportunity for STEM outreach both in regional and
+worldwide effort to share the learning experience beyond the age gaps and the culture difference.
+We are looking forward to establishing a worldwide consortium to distribute, install, and operate
+this network.
+
+References
+
+ [1] Borozdin, K. N. and et al. 2003, Surveillance: Radiographic imaging with cosmic-ray muons,
+     Nature, 422, 277.
+
+ [2] Borozdin, K. et al. 2012, Cosmic Ray Radiography of the Damaged Cores of the Fukushima
+     Reactors, PRL, 109, 152501.
+
+ [3] Kunihiro Morishima and et al. 2017, Discovery of a big void in Khufu’s Pyramid by obser-
+     vation of cosmic-ray muons, Nature, 552, 386-390.
+
+ [4] G. Zumerle and et al. 2018, The Cosmic Muon Tomography (CMT) Project, http://
+     mutomweb.pd.infn.it
+
+ [5] Jasper Kirkby, 2007, Cosmic Rays and Climate, Surv. Geophys, 28, 333-375.
+
+ [6] Lu, Q.B. 2009, Correlation between Cosmic Rays and Ozone Depletion, Phys. Rev. Lett.,
+     102(11), 118501.
+
+ [7] A. Ollila 2012, Changes in cosmic ray fluxes improve correlation to global warming, Int. J.
+     Phys. Scie., 7, 822-826.
+
+ [8] N. J. Shaviv 2005, On climate response to changes in the cosmic ray flux and radiative budget,
+     J. Geophys. Res, 110, A08105.
+
+
+                                                 7
+Modular and Portable Cosmic Ray Telescope                                                   X. He
+
+
+ [9] Henrik Svensmark 1998, Influence of Cosmic Rays on Earth’s Climate, Phys. Rev. Lett., 81,
+     5027-5030.
+
+[10] Kennedy, A. R. 2014, Biological Effects of Space Radiation and Development of Effective
+     Countermeasures, Life Scie. Space Res., 1, 10-43.
+
+[11] Mertens, C. J. and et al. 2013, Space Weather, 11(10), 603-635.
+
+[12] Wilson, J.W., & Mertens, C.J., & Goldhagan, P., & Copeland, K., & Bidasaria, H. B. 2005,
+     Atmospheric ionizing radiation and human exposure (NASA Technical Paper, NASA/TP-
+
+
+
+
+                                                                                                     PoS(ICRC2021)1257
+     2005-213935, Washington, D. C.)
+
+[13] C. A. Aidala et al., Design and Beam Test Results for the sPHENIX Electromagnetic and
+     Hadronic Calorimeter Prototypes, in IEEE Transactions on Nuclear Science, vol. 65, no. 12,
+     pp. 2901-2919, Dec. 2018. doi: 10.1109/TNS.2018.2879047
+
+[14] Multi-pixel photon counter (SiPM): https://www.hamamatsu.com/resources/pdf/
+     ssd/s13360_series_kapd1052e.pdf.
+
+[15] J. Allison, et al., Recent developments in Geant4, Nuclear Instruments and Methods in Physics
+     Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment, Vol-
+     ume 835, 2016, Pages 186-225, ISSN 0168-9002, https://doi.org/10.1016/j.nima.2016.06.125.
+
+
+
+
+                                                8
+
