@@ -245,8 +245,9 @@ never trust generated EDA artifacts without netlist-level assertions.
 ---
 
 ## D-2026-09-29. Max-scope architecture freeze (supersedes D2 and related entries)
-**Decision:** The architecture was re-frozen on 2026-09-29 (decisions #1–#12). The full record is in
-`pcb/MUON3_MAX_SCOPE_ARCHITECTURE.md` and `pcb/freeze_questions.md`.
+**Decision:** The architecture was re-frozen on 2026-09-29 (decisions #1–#12). The full record (`pcb/MUON3_MAX_SCOPE_ARCHITECTURE.md`,
+`pcb/key_parts_max_scope.csv`, `pcb/freeze_questions.md`) was removed from `main` and is preserved in commit `594b36c`
+(e.g. `git show 594b36c:pcb/MUON3_MAX_SCOPE_ARCHITECTURE.md`). **Superseded by D-2026-09-29b (station Rev B).**
 - **Controller:** ESP32-S3-WROOM-1U-N16 replaces the nRF9151 as controller. The nRF9151 is an optional LTE modem (Serial LTE Modem firmware, not fitted by default). RP2350/RP2040 and nRF54 are not used.
 - **Readout:** iCE40UP5K timing is kept. The analog front end moves to a Panel-Head Board per SiPM, with LVDS over a Micro-Fit 3.0 2×12 harness.
 - **Power:** TPS25751 + BQ25798 + an on-board 4S1P 18650 pack (BQ76907).
@@ -256,4 +257,32 @@ never trust generated EDA artifacts without netlist-level assertions.
 - The nRF9151 is JLC pre-order only.
 - A 50 cm analog run next to TEC PWM is avoided.
 - Power failures cause data gaps, so the board carries a UPS.
-**Status:** [OPEN] Verification gates G-AFE/G-HV/G-PWR/G-BAT/G-ESPIO/G-FPGA-IO/G-SEC etc. (spec §j). Rev A KiCad/tscircuit predate this decision and must be reworked.
+**Status:** [OPEN] Verification gates G-AFE/G-HV/G-PWR/G-BAT/G-ESPIO/G-FPGA-IO/G-SEC etc. (spec §j). Rev A KiCad/tscircuit predate this decision and must be reworked. **[SUPERSEDED]** by D-2026-09-29b.
+
+---
+
+## D-2026-09-29b. Station Rev B: 84 × 50 mm, 4-layer, USB-only (supersedes D-2026-09-29)
+**Decision:** The station is a single 84 × 50 mm, 4-layer board, assembled by JLC on one side (commits 267a13f and
+db3ec53, merged to `main` in 8afe8bd). The code is in `hw/`, and `hw/README.md` describes it.
+- **Controller and timing:** ESP32-S3-WROOM-1-N8. Hit time stamps and time-over-threshold come from MCPWM
+  capture (12.5 ns, both edges); PCNT counts singles; coincidences are done in firmware.
+- **Front end:** 4× edge SMA (shell = SiPM bias via 47 kΩ, centre = anode) → OPA356 TIA → LMV7219. Two MCP4728
+  DACs provide the per-channel bias trim (TIA baseline) and the thresholds.
+- **Bias:** MC34063 boost + BSS123 + 150 µH + LL4148 with a 1 mH/1 µF filter. It is set by an RC-filtered ESP32
+  PWM with a boot-safe low default, and read back on HV_MON.
+- **Power:** USB-C 5 V only, feeding AMS1117 + TLV75733. There is no battery; a USB power bank is the UPS.
+- **Sensors:** BME280, SC7A20H, STEMMA QT.
+- **Assembly:** the SMA bottom tabs are unpasted, so assembly is one-sided.
+- **Dropped:** the iCE40, 18650 cells + charger, LoRa, MAX1932, panel-head boards / LVDS harness, TEC, LTE/SIM,
+  GNSS, USB-PD, Ethernet, OLED and microSD.
+
+**Reasoning:** GSU sites are indoor, powered and networked, so every other feature had to earn its place. The
+ESP32 timers are enough for minute/hourly rates and coincidences. The MC34063 costs ≈ $0.15 vs $6.09 for the MAX1932.
+A smaller 4-layer, one-sided board cuts PCB and PCBA cost.
+
+**Status:** [OPEN]
+- Safety sign-off for the bias voltage on the exposed SMA shells.
+- Verify the HV trim range and power-up behaviour with the real TRIM network. The design comment and the sim
+  assume an ideal TRIM source.
+- Re-run the cost estimate and get a JLC quote.
+- Firmware.
