@@ -9,7 +9,6 @@
 *.blg
 *.d
 *.elf
-*.fdb_latexmk
 *.fls
 *.json
 *.log
@@ -17,7 +16,6 @@
 *.out
 *.pyc
 *.root
-*.synctex.gz
 *.tar.gz
 *.tgz
 *.toc
@@ -28,13 +26,9 @@
 **/build*/
 # Additional build artifacts
 # Firmware/gateware build artifacts
-# Google Drive / documentation credentials (never commit)
 # Large data / build
-# LaTeX temp files (keep the main PDF)
-# Muon3Vision build
 # OS
 # Python cache etc already covered
-# rclone config if using local (prefer not committing)
 # Regenerable CAD intermediates (STEP/FCStd are kept)
 # Simulation generated artifacts
 cad/sphenix_hcal/step/*.FCStd
@@ -42,20 +36,8 @@ cad/sphenix_hcal/stl/
 cmake_install.cmake
 CMakeCache.txt
 CMakeFiles/
-docs-images/
-figures/drive/
 geant4-data/
 Makefile
-Muon3Vision/.build/
-Muon3Vision/Package.resolved
-rclone.conf
-scripts/*.token
-scripts/*token*.json
-scripts/client_secret*.json
-sim/*.png
-sim/additional/drive/
-sim/circuit/plots/
-sim/circuit/results/
 sim/geant4/*.csv
 sim/geant4/build_clean/
 sim/geant4/build*/
@@ -64,12 +46,6 @@ sim/geant4/build2/
 sim/geant4/build3/
 sim/geant4/plots/
 sim/geant4/testbuild/
-sim/plots/
-sim/power_budget_modes.png
-sim/reports/figures/*.png
-sim/reports/Muon3_Simulation_Report.pdf
-sim/thermal_step.png
-sim/tot_model.png
 
 # --- tscircuit board-as-code (repo root) ---
 /node_modules/

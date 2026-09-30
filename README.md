@@ -19,10 +19,38 @@ three-segment case covers the board. There is no display: the station reports ov
 
 ## Contents
 
-1. [What you get](#1-what-you-get) · 2. [Bill of materials and cost](#2-bill-of-materials-and-cost) · 3. [Install it: step by step](#3-install-it-step-by-step)
+0. [Quick start](#quick-start) · [How a muon becomes a count](#how-a-muon-becomes-a-count) · 1. [What you get](#1-what-you-get) · 2. [Bill of materials and cost](#2-bill-of-materials-and-cost) · 3. [Install it: step by step](#3-install-it-step-by-step)
 · 4. [Test and calibrate](#4-test-and-calibrate) · 5. [The 12 tile shapes](#5-the-12-tile-shapes) · 6. [The electronics](#6-the-electronics)
 · 7. [Simulated performance](#7-simulated-performance) · 8. [Regenerate the design files](#8-regenerate-the-design-files)
 · 9. [Design notes, open questions, repository map](#9-design-notes-open-questions-repository-map)
+
+---
+
+## Quick start
+
+```bash
+git clone git@github.com:muonTelescope/muon3.git && cd muon3/hw
+bun run parts && bun run build && bun run drc      # the board: Gerbers, BOM, CPL in hw/out/ (section 8 lists the tools to install first)
+freecadcmd case/case.py                            # the three case segments
+TILE=6 freecadcmd case/assembly.py                 # the frame, plate and tile stack for tile shape 6 (any of 1–12)
+python tools/station_test.py board                 # factory test over USB, once a board is assembled
+```
+
+## How a muon becomes a count
+
+1. **Light.** A cosmic-ray muon crossing a 7 mm polystyrene tile deposits about 1.5 MeV and makes some 13 000 scintillation photons
+   (blue, 420 nm). About 2 500 of them are absorbed by the 1 mm wavelength-shifting fiber in the tile and re-emitted at 476 nm (green);
+   light trapped in the fiber travels both ways round the closed loop to the SiPM. Of the order of 150 photons reach the SiPM and about
+   35 are detected (PDE 25 %): the **photoelectrons (p.e.)**.
+2. **Current.** The S12572 SiPM, biased at 53–83 V, turns each p.e. into a fast current pulse (gain about 2.3 × 10⁵). The bias comes from
+   the MC34063 boost converter on the board and reaches the SiPM over the same micro-coax that carries the signal back.
+3. **Voltage.** A transimpedance amplifier (OPA356, 33 kΩ) gives 5.8 mV per p.e., so a mean muon makes a 209 mV pulse about 370 ns long.
+4. **Decision.** A comparator (LMV7219) fires when the pulse passes a threshold set by a DAC: 29 mV, 5 p.e., rejects dark counts (single
+   p.e.) and keeps essentially every muon that crosses the tile.
+5. **Count.** The ESP32-S3 time-stamps each edge (MCPWM capture, 12.5 ns) and counts singles (PCNT); coincidences of the four tiles are
+   formed in firmware, together with pressure and temperature (BME280), and sent over Wi-Fi or USB. The muon rate follows air pressure,
+   temperature and space weather: that is what the gLOWCOST network logs. `sim/python/coincidence_rates.py` computes the coincidence and
+   accidental rates; `sim/python/sipm_to_tot.py` maps SiPM charge to time over threshold.
 
 ---
 
@@ -491,7 +519,7 @@ python sim/emi_openems.py none OUT && python sim/plot_emi.py OUT    # 2.44 GHz c
 cd sim/geant4 && mkdir build && cd build
 cmake .. -DCMAKE_PREFIX_PATH=$CONDA_PREFIX && make -j2 hcal_tile      # in the conda env, -DEXPAT_LIBRARY/-DZLIB_LIBRARY (and *_INCLUDE_DIR) may be needed
 G4BUILD=$PWD sh ../scripts/run_tile.sh 12 200 run12                   # tile 12, 200 muons → run12/muon_panel_hits.csv
-HCAL_DEBUG=1 HCAL_DEBUG_EVENTS=20 ./hcal_tile run.mac                 # + photon_fate.csv, photon_tracks.csv (run.mac: /run/initialize, /run/beamOn N)
+HCAL_DEBUG=1 HCAL_DEBUG_EVENTS=20 ./hcal_tile run.mac                 # + photon_fate.csv, photon_tracks.csv (run.mac: /run/initialize, /run/beamOn N; ../macros/hcal_tile_run.mac and hcal_tile_vis.mac are ready-made)
 python3 ../scripts/plot_hcal_tile_results.py --csv muon_panel_hits.csv
 python3 ../scripts/debug_photons.py . ../gdml/mesh/InnerHCalTile01_EJ200_mesh.json debug.png
 ```
@@ -530,23 +558,27 @@ python3 ../scripts/debug_photons.py . ../gdml/mesh/InnerHCalTile01_EJ200_mesh.js
 - **Via-in-pad:** the GND fan-out drops vias inside large pads; order filled and capped vias or check JLC's terms.
 - **Not done:** firmware (ESP-IDF; the USB protocol is specified in `hw/tools/station_test.py`); a real JLC quote; the EMI variants with
   cans or an ABS cavity for this layout; Geant4 for shapes 02, 04, 05, 07, 08, 10, 11.
-- **Stale July material:** `Muon3_Simulation_Studies.tex` (the paper) and `sim/reports/` still describe the July architecture and the old
-  Geant4 numbers; they need a rewrite before being quoted.
 
 ### Repository map
 
 | Path | What |
 |---|---|
-| `hw/src/`, `hw/tools/` | Board as code (TypeScript → Gerbers), parts fetcher, cost model, factory-test tool (`station_test.py`), cell-identity check |
-| `hw/case/` | FreeCAD case and assembly generators, Blender renderer, doc/montage builder |
-| `hw/sim/` | ngspice (bias, front end, scope screens), thermal, openEMS |
-| `hw/docs/` | Figures used here (board renders, simulation plots, `assembly/` renders) |
-| `hw/parts/INDEX.md` | The fetched parts list (datasheets and models are fetched on demand, not redistributed) |
-| `cad/sphenix_hcal/` | Tile outline/parameter data, the fiber-loop generator (`scripts/fiber_loop.py`), one STEP per tile shape |
-| `sim/geant4/` | Geant4 tile model (`hcal_tile`), scripts, per-shape results (`hcal_tiles_yield.json`) |
-| `figures/` | Plots and renders used in the paper and here |
+| `hw/src/` | Board as code: `design.ts` (netlist), `floorplan.ts` + `place.ts` (placement, identical cells), `router.ts` + `autoroute.ts` (routing), `copper.ts` (smoothing, tapers), `planes.ts`, `silk.ts` + `labels.ts`, `gerber.ts`, `jlc.ts`, `kicad.ts`, `drc.ts`, `build.ts` (the driver) |
+| `hw/tools/` | `fetch_parts.ts` (LCSC/EasyEDA parts), `cost.ts` and `bom_cost.ts` (BOM and landed cost), `station_test.py` (factory test and the firmware's USB protocol), `cell_identity.py` (copper check) |
+| `hw/case/` | `case.py` (three case segments), `assembly.py` (FreeCAD tile stack, frame, plate, cables), `render_assembly.py` (Blender), `assembly_doc.py` (copies renders, refills the shape table here), `build_assemblies.sh` |
+| `hw/sim/` | ngspice (bias, front end, ripple, scope screens), `thermal.py`, `emi_openems.py` and their plot scripts |
+| `hw/docs/` | The figures used in this README: board renders, simulation plots, `assembly/` renders |
+| `hw/parts/` | The parts index and one folder per LCSC part (datasheets and 3D models are fetched on demand, not redistributed) |
+| `hw/out/` | Generated (git-ignored): Gerbers, BOM/CPL, KiCad file, case and assembly files |
+| `cad/sphenix_hcal/` | `tile_params.json`, the original tile GDMLs, `scripts/fiber_loop.py` (the fiber-loop generator), `scripts/parse_inner_tile.py`, `scripts/export_mesh_json.py`, and one STEP per tile shape in `step/` |
+| `sim/geant4/` | Geant4 tile model: `hcal_tile.cc` and `src/` (the `hcal_tile` program), `gdml/mesh/` (tile meshes and loops), `scripts/` (`run_tile.sh`, plots), `hcal_tiles_yield.json`. The older `muon_panel` program (the July 200 × 200 mm panel) still builds from the same CMake project and is not used |
+| `sim/python/` | `coincidence_rates.py` (coincidence and accidental rates), `sipm_to_tot.py` (SiPM charge to time over threshold) |
+| `figures/` | Geant4 result plots used in this README |
 | `tools/memguard.sh` | Runs heavy jobs under a memory cap |
-| `reference_documentation/` | Archived `muonTelescope` repositories, publications, earlier reviews |
+| `reference_documentation/` | Archived `muonTelescope` repositories, publications and earlier reviews |
+
+The LaTeX paper, the July reports and charts, the Octave plots, the Vision Pro visualiser, the Google-Drive scripts and the July
+panel renders were removed; `git log --diff-filter=D --name-only` finds them.
 
 ## License
 

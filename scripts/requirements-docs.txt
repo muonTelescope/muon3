@@ -1,6 +1,0 @@
-# For Google Drive pull (pull_google_drive.py) - for simulations and additional information
-google-auth-oauthlib
-google-api-python-client
-
-# Alternative (recommended for most users, supports multiple accounts easily):
-# brew install rclone   # excellent for multi-account Google Drive syncs, scripts, etc.
