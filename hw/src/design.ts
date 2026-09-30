@@ -1,4 +1,4 @@
-// Muon3 station board (Rev C, 2026-09-30): 4 sPHENIX inner-HCal tiles (S12572-33-015P) on U.FL inside the case, USB-C powered.
+// Muon3 station board (Rev D, 2026-09-30): 4 sPHENIX inner-HCal tiles (S12572-33-015P) on U.FL inside the case, USB-C powered.
 // Every value is traced: [DS] datasheet, [2v2] tested gLOWCOST 2v2 board, [SIM] hw/sim/*.cir.
 import { Circuit } from "./circuit.ts";
 
@@ -15,7 +15,6 @@ export const P = {
   usblc6: "C2687116",
   usbc: "C2765186",
   ufl: "C88374",         // Hirose U.FL-R-SMT-1(80): 60 V AC rms / 200 V AC withstand [DS]; shell = bias, inside the case
-  jstsh4: "C160404",     // SM04B-SRSS-TB: STEMMA QT / Qwiic
   bss123: "C78755",
   n2n7002: "C8545",      // 2N7002, JLC basic (HV_EN gate)
   ll4148: "C3015531",
@@ -32,7 +31,7 @@ export const TEST_ROW = ["GND", "5V", "3V3", "3V3A", "VREF", "VTH0", "VTH1", "VT
 
 export async function build(): Promise<Circuit> {
   const c = new Circuit();
-  c.reserve("J1", "J2", "J3", "J4", "J5", "J6", "U1", "U2", "C1", ...TEST_ROW.map((_, k) => `TP${k + 1}`)); // floorplan-fixed; U1 = ESP32-S3, U2/C1 = BME280 island
+  c.reserve("J1", "J2", "J3", "J4", "J5", "U1", "U2", "C1", ...TEST_ROW.map((_, k) => `TP${k + 1}`)); // floorplan-fixed; U1 = ESP32-S3, U2/C1 = BME280 island
 
   // ───────────── test points: pogo row (bottom edge) + per-channel scope pairs + HV ─────────────
   c.group = "testrow";
@@ -147,7 +146,7 @@ export async function build(): Promise<Circuit> {
     c.tp(`TIA${i}`, { label: `TIA${i}` }); c.tp("GND", { label: "GND" }); // scope pair: tip + ground spring
   }
 
-  // ───────────── sensors, STEMMA QT ─────────────
+  // ───────────── sensors ─────────────
   c.group = "sensors";
   // BME280 = air temperature for SiPM bias compensation + pressure for rate correction: on a slotted island at the
   // cool edge of the board, in its own vented case chamber (see floorplan + case).
@@ -157,8 +156,6 @@ export async function build(): Promise<Circuit> {
   c.group = "sensors";
   await c.add("U", P.accel, { VDD: "3V3", VDDIO: "3V3", GND: "GND", GNDIO: "GND", CS: "3V3", SDx: "SDA0", SCx: "SCL0", SDO: "3V3", INT1: "ACC_INT", INT2: "NC_ACC2" }); // 0x19
   await c.c("100n", "3V3", "GND");
-  // STEMMA QT / Qwiic pinout: 1 GND, 2 V+ (3.3 V), 3 SDA, 4 SCL
-  await c.add("J", P.jstsh4, { "1": "GND", "2": "3V3", "3": "SDA0", "4": "SCL0", "5": "GND", "6": "GND" }, { ref: "J6", value: "STEMMA QT" });
 
   return c;
 }

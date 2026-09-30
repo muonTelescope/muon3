@@ -5,7 +5,7 @@
 *   inj_notile  : injection with nothing on the SMA (bench / pogo fixture self-test)
 *   inj_tile    : same with a tile + 2 m coax attached (charge now shares the 320 pF SiPM)
 *   pe1         : single dark pulse (1 p.e.) with a tile; threshold at 5 p.e.
-*   muon        : mean muon, 58 p.e.  [Geant4 estimate for IHCal tile 01]
+*   muon        : mean muon, 36 p.e.  [Geant4, IHCal tile 01, closed fiber loop]
 .param VREFV=2.5 VTHV=2.465 NPE=1 TILE=1 INJON=0
 .subckt SIPM A K NPE=1 QPE=36.8f TAUR=1n TAUD=20n T0=200n CT=320p
 Bp K A I = (time > {T0}) ? {NPE*QPE/(TAUD-TAUR)} * ( exp(-(time-{T0})/{TAUD}) - exp(-(time-{T0})/{TAUR}) ) : 0
@@ -78,8 +78,8 @@ reset
 tran 0.2n 800n 0 0.5n
 linearize v(tia) v(hit)
 wrdata pe1.txt v(tia) v(hit)
-* mean muon (19.5 p.e.: Geant4 tile 01, sim/geant4, direct-coupler model)
-alterparam NPE=20
+* mean muon (36 p.e.: Geant4 tile 01, sim/geant4, closed fiber loop, muons that cross the tile)
+alterparam NPE=36
 reset
 tran 0.2n 800n 0 0.5n
 linearize v(tia) v(hit)

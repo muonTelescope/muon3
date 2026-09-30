@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Parse sPHENIX Inner HCal tile GDML tessellations.
 
-Extracts outline vertices, groove/exit pocket geometry, bounding box, and a
-recommended dual-end WLS fiber path consistent with sPHENIX HCal design:
+Extracts outline vertices, the connector-pocket geometry and the bounding box. The GDML has NO fiber, so the WLS fiber is
+added from fiber_loop.py: one closed loop, both ends side by side at the SiPM edge (Aidala et al. 2018, Fig. 6):
   - max deposit-to-fiber distance ~2.5 cm
   - minimum bend radius ~2.5 cm
-  - dual fiber ends at outer-radius exit with SiPM coupler / light blocker
+  - one compact coupler + one 3x3 mm SiPM centred on the two fiber ends, 0.75 mm air gap
 
 Original GDML files are never modified; this only reads them.
 """
@@ -14,9 +14,13 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Dict, List, Tuple
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from fiber_loop import loop_tokens, dense  # noqa: E402
 
 Point3 = Tuple[float, float, float]
 Point2 = Tuple[float, float]
@@ -77,21 +81,13 @@ def parse_tile_gdml(path: Path) -> dict:
         pocket_y = ymax - 8.0
         pocket_x0, pocket_x1 = min(xs) + 30.0, max(xs) - 20.0
 
-    # Dual fiber exit centers at outer edge (y = ymax)
-    exit_span = pocket_x1 - pocket_x0
-    exit_left = (pocket_x0 + 0.20 * exit_span, ymax)
-    exit_right = (pocket_x0 + 0.80 * exit_span, ymax)
-
-    fiber_path = build_serpentine_path(
-        x_min=min(xs) + 8.0,
-        x_max=max(xs) - 8.0,
-        y_min=8.0,
-        y_max=pocket_y - 4.0,
-        exit_left=exit_left,
-        exit_right=exit_right,
-        pitch=45.0,
-        bend_r=25.0,
-    )
+    # One fiber loop; both ends at the SiPM edge, 1.2 mm apart, centred on the SiPM x of the source CAD
+    x0 = min(xs)
+    hull_local = [(x - x0, y) for x, y in hull]
+    sipm_x = 0.5 * (pocket_x0 + pocket_x1) - x0
+    tok, loop = loop_tokens(hull_local, sipm_x, ymax)
+    fiber_path = [[x + x0, y] for x, y in dense(tok, 1.0)]
+    exit_left, exit_right = tuple(fiber_path[0]), tuple(fiber_path[-1])
 
     mesh_verts = list(positions.values())
     mesh_faces = []
@@ -124,6 +120,8 @@ def parse_tile_gdml(path: Path) -> dict:
             "y_exit": ymax,
         },
         "fiber_exit": {"left": list(exit_left), "right": list(exit_right)},
+        "fiber_loop": {k: round(v, 3) for k, v in loop.items()},
+        "fiber_tokens": [[t[0], *[[round(c, 4) for c in q] for q in t[1:]]] for t in tok],     # local coordinates (x from the tile's xmin): the FreeCAD assembly sweeps these
         "fiber_path_xy": fiber_path,
         "fiber_radius_mm": 0.50,  # Kuraray single-clad ~1.0 mm diameter
         "clad_outer_mm": 0.60,
@@ -135,7 +133,7 @@ def parse_tile_gdml(path: Path) -> dict:
             "cx": 0.5 * (exit_left[0] + exit_right[0]),
             "cy": ymax + 3.0,
             "cz": z_mid,
-            "sx": max(12.0, abs(exit_right[0] - exit_left[0]) + 6.0),
+            "sx": 16.0,
             "sy": 6.0,
             "sz": max(4.0, thickness + 1.0),
         },
@@ -189,73 +187,6 @@ def _convex_hull(pts: List[Point2]) -> List[Point2]:
             upper.pop()
         upper.append(p)
     return lower[:-1] + upper[:-1]
-
-
-def build_serpentine_path(
-    x_min: float,
-    x_max: float,
-    y_min: float,
-    y_max: float,
-    exit_left: Point2,
-    exit_right: Point2,
-    pitch: float = 45.0,
-    bend_r: float = 25.0,
-) -> List[Point2]:
-    """Build a dual-end serpentine fiber path inside the tile face.
-
-    Path starts at exit_left, snakes toward the inner radius, and returns to
-    exit_right — matching the sPHENIX dual-end outer-radius readout topology.
-    """
-    if x_max - x_min < 20 or y_max - y_min < 20:
-        # Degenerate / very small tile: simple U
-        return [
-            list(exit_left),
-            [exit_left[0], y_min],
-            [exit_right[0], y_min],
-            list(exit_right),
-        ]
-
-    # Number of horizontal legs
-    height = y_max - y_min
-    n_legs = max(2, int(math.floor(height / pitch)) + 1)
-    # Even number of legs so we end on the same side we need for exit_right
-    if n_legs % 2 == 1:
-        n_legs += 1
-
-    ys = [y_max - i * (height / (n_legs - 1)) for i in range(n_legs)]
-    path: List[Point2] = [list(exit_left)]
-
-    # Drop into first leg from left exit
-    path.append([exit_left[0], ys[0]])
-
-    going_right = True
-    for i, y in enumerate(ys):
-        if going_right:
-            path.append([x_max, y])
-            if i + 1 < n_legs:
-                # Arc-ish corner: two intermediate points
-                y_next = ys[i + 1]
-                path.append([x_max, y - 0.5 * (y - y_next)])
-                path.append([x_max - bend_r * 0.3, y_next])
-        else:
-            path.append([x_min, y])
-            if i + 1 < n_legs:
-                y_next = ys[i + 1]
-                path.append([x_min, y - 0.5 * (y - y_next)])
-                path.append([x_min + bend_r * 0.3, y_next])
-        going_right = not going_right
-
-    # Last leg should end near right; route to exit_right
-    path.append([exit_right[0], ys[-1] if not going_right else ys[-1]])
-    path.append([exit_right[0], exit_right[1]])
-    path.append(list(exit_right))
-
-    # Deduplicate consecutive points
-    cleaned: List[Point2] = []
-    for p in path:
-        if not cleaned or math.hypot(p[0] - cleaned[-1][0], p[1] - cleaned[-1][1]) > 0.05:
-            cleaned.append([float(p[0]), float(p[1])])
-    return cleaned
 
 
 def main():

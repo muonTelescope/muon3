@@ -6,6 +6,7 @@ import { mst } from "./svg.ts";
 const PRIORITY: [RegExp, number][] = [
   [/^(SIG|TIA|VREFF|VTHF|CMP)\d$/, 0],        // analog front end: shortest, most sensitive
   [/^(HV|HV_\w+|HVJ\d)$/, 1],                  // bias
+  [/^INJ$/, 1],                                 // charge-injection step to the far probe row
   [/^5V$/, 2],                                  // USB supply
   [/^(3V3|3V3A)$/, 3],
   [/^USB_D[PN]$/, 4],

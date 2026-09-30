@@ -3,7 +3,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { build as buildCircuit, P } from "./design.ts";
 import { Board, ROUTE_LAYERS, PLANE_LAYERS, slotPath } from "./board.ts";
 import { place } from "./place.ts";
-import { floorplan, W, H, MOUNT_HOLES, ISLAND, CELLS } from "./floorplan.ts";
+import { floorplan, W, H, MOUNT_HOLES, ISLAND, ISLAND_BOX, CELLS, JACK_X, isl } from "./floorplan.ts";
 import { renderSvg, ratsnest } from "./svg.ts";
 import { writeGerbers } from "./gerber.ts";
 import { autoroute } from "./autoroute.ts";
@@ -26,15 +26,15 @@ const issues = circuit.check();
 if (issues.length) console.log(issues.map(s => "  ! " + s).join("\n"));
 const board = new Board(circuit, W, H);
 for (const h of MOUNT_HOLES) board.holes.push({ at: h, d: 3.2, plated: false });
-// BME280 island: two C-shaped slots (1 mm FR4 bridge at the board edge); their inner legs run right to armX and
-// leave a 2.6 mm arm between them. Island + arm carry no plane and no vias.
-{ const I = ISLAND, r = I.slotW / 2, xr = I.x1 + r;
+// BME280 island (far long edge): two C-shaped slots (1 mm FR4 bridge at the board edge); their inner legs run right to armX and
+// leave a 2.6 mm arm between them. Island + arm carry no plane and no vias. Described in the island's own frame, mapped by isl().
+{ const I = ISLAND, r = I.slotW / 2, xr = I.x1 + r, m = (x: number, y: number) => isl(x, y);
   board.cutouts.push(
-    slotPath([{ x: 1.0 + r, y: I.y0 }, { x: xr, y: I.y0 }, { x: xr, y: I.neckY0 }, { x: I.armX, y: I.neckY0 }], I.slotW),
-    slotPath([{ x: I.armX, y: I.neckY1 }, { x: xr, y: I.neckY1 }, { x: xr, y: I.y1 }, { x: 1.0 + r, y: I.y1 }], I.slotW));
+    slotPath([m(1.0 + r, I.y0), m(xr, I.y0), m(xr, I.neckY0), m(I.armX, I.neckY0)].map(q => ({ x: q.x, y: q.y })), I.slotW),
+    slotPath([m(I.armX, I.neckY1), m(xr, I.neckY1), m(xr, I.y1), m(1.0 + r, I.y1)].map(q => ({ x: q.x, y: q.y })), I.slotW));
   // plane void = island + arm only: a bigger notch in L2 next to the ch0 input raised its 2.4 GHz pickup 7× (openEMS)
-  board.noPlane.push({ x0: 0, y0: I.y0 - r, x1: xr + r + 0.2, y1: I.y1 + r },
-                     { x0: xr, y0: I.neckY0 - r, x1: I.armX + r + 0.2, y1: I.neckY1 + r }); }
+  const rect = (xa: number, ya: number, xb: number, yb: number) => { const a = m(xa, ya), b = m(xb, yb); return { x0: Math.min(a.x, b.x), y0: Math.min(a.y, b.y), x1: Math.max(a.x, b.x), y1: Math.max(a.y, b.y) }; };
+  board.noPlane.push(rect(0, I.y0 - r, xr + r + 0.2, I.y1 + r), rect(xr, I.neckY0 - r, I.armX + r + 0.2, I.neckY1 + r)); }
 place(board, floorplan);
 const mcuU = circuit.parts.find(p => p.lcsc === P.esp32)!.ref;
 console.log("  ESP32 hit-pin swap:", swapPins(board, mcuU, /^HIT\d$/).join(" "));
@@ -60,7 +60,7 @@ execFileSync("zip", ["-q", "-j", "-FS", OUT + "muon3-gerbers.zip", ...Object.key
 writeFileSync(OUT + "placement.json", JSON.stringify(circuit.parts.map(p => ({ ref: p.ref, lcsc: p.lcsc, ...p.place })), null, 1));
 // geometry for the case generator (case/case.py) and the thermal/EM models
 writeFileSync(OUT + "board.json", JSON.stringify({
-  w: W, h: H, thickness: 1.6, holes: MOUNT_HOLES, island: ISLAND,
+  w: W, h: H, thickness: 1.6, holes: MOUNT_HOLES, island: ISLAND, island_box: ISLAND_BOX, jack_x: JACK_X,
   cutouts: board.cutouts, noPlane: board.noPlane,
   parts: circuit.parts.filter(p => p.place).map(p => {
     const c = board.courtyard(p, 0); const xs = c.map(q => q.x), ys = c.map(q => q.y);

@@ -18,9 +18,8 @@ Firmware line protocol (ESP32-S3 USB-CDC, 115200, one command per line, one repl
   INJ <n> <period_us>       -> OK                                (n injection pulses, both edges inject)
   COUNT <ch> <ms>           -> OK <hits>                         (PCNT, rising edges, pulses < 20 ns ignored)
   RSSI?                     -> OK <dBm>                          (joins the test AP "muon3-test", averages 20 beacons)
-  DISP <line0>|<line1>|...  -> OK                                (up to four 21-character lines on the pod's OLED)
   SAVE <key> <value>        -> OK                                (NVS calibration store)
-Limits come from the simulations in hw/sim (see hw/docs/TESTING.md).
+Limits come from the simulations in hw/sim (see section 4 of the top-level README).
 """
 import argparse, glob, sys, time
 
@@ -97,7 +96,6 @@ def board(st):
         ok &= check(f"ch{ch} injection 50 % (mV)", a, LIM["inj_mv"])
         st.cmd(f"SAVE inj{ch} {a:.2f}")
     ok &= check("Wi-Fi RSSI, test AP (dBm)", float(st.cmd("RSSI?")[0]), LIM["rssi_dbm"])   # external antenna + pigtail seated
-    st.cmd("DISP MUON3 REV C|HV %.1fV  I2C 4/4 OK|INJ  4/4 CH   %s|SELF-TEST  %s" % (h0, "OK" if ok else "??", "PASS" if ok else "FAIL"))
     print("BOARD", "PASS" if ok else "FAIL")
     return ok
 
@@ -119,7 +117,6 @@ def tile(st, ch, vop):
     st.cmd(f"VTH {ch} {VREF - vth / 1000:.4f}"); st.cmd(f"SAVE vth{ch} {vth:.2f}"); st.cmd(f"SAVE pe{ch} {pe_mv:.3f}")
     rate = int(st.cmd(f"COUNT {ch} 10000")[0]) / 10
     print(f"  VTH = 5 p.e. = {vth:.1f} mV, singles {rate:.1f} /s  (expect ≈ 1-3 /s per tile for muons + tail of dark counts)")
-    st.cmd(f"DISP TILE{ch} CAL 1pe {pe_mv:.1f}mV|VOP {vop:.1f}V  VTH {vth:.0f}mV|SAVED")
     return True
 
 if __name__ == "__main__":

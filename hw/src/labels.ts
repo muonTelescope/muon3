@@ -1,7 +1,7 @@
 // Board-specific silkscreen: what a student/teacher needs to plug in, probe, and not get hurt.
 import type { Board } from "./board.ts";
 import { text, line, label, around } from "./silk.ts";
-import { JACK_X, JACK_Y, W, H, ROW_X0, ROW_Y, ISLAND } from "./floorplan.ts";
+import { JACK_X, JACK_Y, W, H, ROW_X0, ROW_Y, ISLAND_BOX } from "./floorplan.ts";
 import { TEST_ROW } from "./design.ts";
 import { pt, pointInPoly, distPtPoly } from "./geom.ts";
 
@@ -34,16 +34,15 @@ export function labels(b: Board, date: string) {
   }
   // connectors, controls, LEDs, sensor island
   label(b, "USB-C 5V", around(cb("J1"), 0.9, len("USB-C 5V", 0.9)).map(q => pt(q.x + 3, q.y)), 0.9, { align: "center" });
-  label(b, "QWIIC 3V3", around(cb("J6"), 0.8, len("QWIIC 3V3", 0.8)).map(q => pt(q.x + 3, q.y)), 0.8, { align: "center" });
   for (const sw of b.parts.filter(p => /^SW/.test(p.ref))) label(b, "BOOT", around(cb(sw.ref), 0.8, len("BOOT", 0.8)), 0.8, { align: "center" });
   for (const d of b.parts.filter(p => p.lcsc === "C2286")) label(b, d.value, around(cb(d.ref), 0.7, len(d.value, 0.7)), 0.7, { align: "center" });
-  label(b, "AIR T/P", [pt(1.4, ISLAND.y1 - 1.3), pt(1.4, ISLAND.y0 + 1.2), pt(3.0, ISLAND.y1 - 1.3), pt(0.9, ISLAND.y1 - 1.3),
-    ...[1.6, 2.4, 3.2, 8.4, 9.2].flatMap(x => [11, 12, 17, 18].map(y => pt(x, y)))], 0.6, { align: "left" });
+  { const I = ISLAND_BOX; label(b, "AIR T/P", [pt(I.x1 + 3.0, I.y1 - 2.0), pt(I.x0 - 3.0, I.y1 - 2.0), pt(I.x1 + 4.5, I.y1 - 6.0), pt(I.x0 - 4.5, I.y1 - 6.0),
+    ...[0, 1.6, 3.2].flatMap(dy => [I.x0 - 8, I.x1 + 8, I.x0 - 12, I.x1 + 12].map(x => pt(x, I.y0 - 1 - dy)))], 0.6, { align: "center" }); }
   // reference designators for ICs, transistors and connectors (passives: BOM/CPL carry them)
   for (const p of b.parts.filter(p => /^(U|J|Q)\d/.test(p.ref) && p.place && p.ref !== "U1"))
     label(b, p.ref, around(cb(p.ref), 0.7, len(p.ref, 0.7)), 0.7, { align: "center" });
   // ── bottom: probe + safety guide ──
-  const L = (s: string, i: number, h = 1.0) => text(b, s, pt(W / 2, 14 + i * 2.4), h, { align: "center", layer: "bottom" });
+  const L = (s: string, i: number, h = 1.0) => text(b, s, pt(W / 2, 5 + i * 3.0), h, { align: "center", layer: "bottom" });
   [
     `MUON3 STATION REV C  ${date}`,
     "GSU GLOWCOST - 4X SPHENIX INNER HCAL TILE",
@@ -55,7 +54,7 @@ export function labels(b: Board, date: string) {
     "HV = HVMON X 27.7   TRIM 0-2.048V = 83-53V   HV_EN LOW = 4V",
     "PROBES: GND 5V 3V3 3V3A VREF VTH0-3 HIT0-3 INJ HVEN TRIM HVMON DACC DACD SDA SCL GND",
   ].forEach((s, i) => L(s, i, i === 0 ? 1.4 : i === 8 ? 0.8 : 1.0));
-  text(b, "JLCJLCJLCJLC", pt(W / 2, 40), 1.0, { align: "center", layer: "bottom" });
+  text(b, "JLCJLCJLCJLC", pt(W / 2, 33), 1.0, { align: "center", layer: "bottom" });
   clipSilkOverPads(b);
 }
 

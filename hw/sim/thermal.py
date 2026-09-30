@@ -4,6 +4,8 @@
 sources at their placed footprints, convection+radiation from both board faces to the enclosed air, the main cavity air
 coupled through the ABS walls to the room, and the BME280 chamber as its own air node (vented grille + thin ribs).
 
+Rev D: the board is a 337 x 40 mm strip with the island on the far long edge; the case air is still one lumped node (an
+estimate: the real air is warmer near the hub and cooler at the far cells).
 Reads hw/out/board.json. Writes hw/docs/thermal.png and prints the BME280 offset for three layouts:
   A  island + own vented chamber (the design)      B  island, no chamber      C  sensor mid-board, no island
 Usage: python hw/sim/thermal.py
@@ -61,7 +63,8 @@ def solve(layout):
         pts = np.c_[cx.ravel(), cy.ravel()]
         for c in B["cutouts"]:   # C-shaped slots: true point-in-polygon, not the bounding box
             mask &= ~Path([(p["x"], p["y"]) for p in c]).contains_points(pts).reshape(mask.shape)
-        island = (cx < I["x1"]) & (cy > I["y0"]) & (cy < I["y1"]) & mask   # the pad itself (arm stays in the main air)
+        IB = B["island_box"]; ix0 = IB["x0"] + 1.4                               # the island sits on the far long edge (y = H)
+        island = (cx > ix0) & (cx < ix0 + I["y1"] - I["y0"]) & (cy > H - I["x1"]) & mask   # the pad itself (arm stays in the main air)
     n_board = NX * NY
     AIR, BAIR = n_board, n_board + 1                  # main air node, BME-chamber air node
     N = n_board + 2
@@ -120,7 +123,7 @@ if __name__ == "__main__":
     json.dump(out, open(os.path.join(HERE, "thermal_results.json"), "w"), indent=1)
     try:
         import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
-        fig, axs = plt.subplots(1, 2, figsize=(10, 3.4), dpi=150)
+        fig, axs = plt.subplots(2, 1, figsize=(11, 5.0), dpi=150)
         for ax, k in zip(axs, "AC"):
             g = res[k][0]
             im = ax.imshow(g, extent=[0, W, H, 0], cmap="inferno", vmin=0, vmax=np.nanmax(res["C"][0]))

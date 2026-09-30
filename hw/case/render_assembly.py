@@ -11,25 +11,34 @@ TILE = MAN["tile"]
 W = max(x for x, _ in MAN["hull"]) ; D = 260.0; H = 330.0
 CX = W / 2
 
-STEPS = {"step1": ["tile", "sipm"], "step2": ["tile", "sipm", "frame"], "step3": ["tile", "sipm", "frame", "plate"],
-         "step4": ["tile", "sipm", "frame", "plate", "electronics", "display"], "step5": ["tile", "sipm", "frame", "plate", "electronics", "display", "cables"]}
-ALL = ["tile", "sipm", "frame", "plate", "electronics", "display", "cables"]
+STEPS = {"step1": ["tile", "wrap", "sipm"], "step2": ["tile", "wrap", "sipm", "frame"], "step3": ["tile", "wrap", "sipm", "frame", "plate"],
+         "step4": ["tile", "wrap", "sipm", "frame", "plate", "electronics"], "step5": ["tile", "wrap", "sipm", "frame", "plate", "electronics", "cables"]}
+ALL = ["tile", "wrap", "sipm", "frame", "plate", "electronics", "cables"]
 xs, zc = MAN["xs"], MAN["zc"]
 R = math.sqrt(W * W + D * D + H * H)
 VIEWS = {
     "iso_front": dict(dir=(-0.75, -1.0, 0.62), look=(CX, 100, 150), ortho=1.08 * R, groups=ALL, res=(1500, 1700)),
     "iso_back": dict(dir=(0.85, 1.0, 0.55), look=(CX, 100, 150), ortho=1.08 * R, groups=ALL, res=(1500, 1700)),
     "top": dict(dir=(0, 0.001, 1), look=(CX, 100, 150), ortho=max(W, D) * 1.15, groups=ALL, up=(0, 1, 0)),
-    "top_fixed": dict(dir=(0, 0.001, 1), look=(210, 105, 150), ortho=520, groups=["tile", "sipm", "frame"], up=(0, 1, 0), res=(1300, 900)),  # same scale for every shape
+    "top_fixed": dict(dir=(0, 0.001, 1), look=(210, 105, 150), ortho=520, groups=["tile", "sipm", "frame"], up=(0, 1, 0), res=(1300, 900),
+                      recolor={"Tile0_": ((0, 0, 0), 0.0), "Tile1_": ((0, 0, 0), 0.0), "Tile2_": ((0, 0, 0), 0.0),       # the four tiles coincide in this view: show the top one only
+                               "Tile3_Fiber": ((0.0, 0.85, 0.15), 1.0), "Tile3_Body": ((0.55, 0.78, 0.95), 0.10)}),  # same scale for every shape
     "side": dict(dir=(1, 0, 0.001), look=(CX, 100, 150), ortho=max(H, D) * 1.12, groups=ALL, up=(0, 0, 1)),
     "sec_x_sipm": dict(dir=(1, 0, 0.001), look=(xs, 198, 300), ortho=75, groups=ALL, up=(0, 0, 1), cut="sec_x"),
     "sec_x_case": dict(dir=(1, 0, 0.001), look=(xs, 214, zc), ortho=110, groups=ALL, up=(0, 0, 1), cut="sec_x"),
     "detail_coupler": dict(dir=(-0.6, 1.0, 0.7), look=(xs, 200, 300), ortho=110, groups=ALL),
     "sec_x": dict(dir=(1, 0, 0.001), look=(xs, 110, 150), ortho=max(H, D) * 1.12, groups=ALL, up=(0, 0, 1), cut="sec_x"),
-    "sec_zcase": dict(dir=(0, 0.001, 1), look=(xs + 20, 215, zc), ortho=230, groups=ALL, up=(0, 1, 0), cut="sec_zcase"),
+    "sec_zcase": dict(dir=(0, 0.001, 1), look=(xs, 230, zc), ortho=200, groups=ALL, up=(0, 1, 0), cut="sec_zcase"),
     "sec_ztile": dict(dir=(0, 0.001, 1), look=(CX, 100, 300), ortho=max(W, D) * 1.15, groups=ALL, up=(0, 1, 0), cut="sec_ztile"),
-    "explode_elec": dict(dir=(0.8, 1.0, 0.55), look=(xs, 235, zc), ortho=260, groups=["electronics", "display", "plate", "cables"],
-                         explode={"Case_Lid": (0, 55, 0), "PCB": (0, 26, 0), "LidScrew": (0, 80, 0), "Pod": (0, 30, 0), "OLED": (0, 14, 0), "PodScrew": (0, 60, 0)}),
+    "explode_elec": dict(dir=(1.0, 0.95, 0.30), look=(xs, 235, zc), ortho=400, res=(1800, 1500), groups=["electronics", "plate", "cables"],
+                         explode={"Case_Lid": (0, 55, 0), "PCB": (0, 26, 0), "LidScrew": (0, 80, 0), "Antenna": (0, 62, 0), "BoardPlug": (0, 26, 0)}),
+    # one panel (top tile): the bare tile with its fiber loop in the groove, and the coating/wrap layers lifted off one by one
+    "panel_bare": dict(dir=(-0.35, -0.75, 1.0), look=(CX, 100, 300), ortho=math.hypot(W, 191) * 1.12, groups=["tile", "sipm"], only=["Tile3_"], res=(1600, 1300), up=(0, 1, 0),
+                       recolor={"Tile3_Fiber": ((0.0, 0.85, 0.15), 1.0), "Tile3_Body": ((0.50, 0.75, 0.96), 0.28)}),
+    "panel_layers": dict(dir=(-0.55, -1.0, 0.75), look=(CX, 100, 345), ortho=math.hypot(W, 191) * 1.25, groups=["tile", "wrap", "sipm"], only=["Tile3_"], res=(1600, 1500),
+                         topcut=("Tile3_Coating", "Tile3_WrapAl", "Tile3_WrapCling", "Tile3_WrapVinyl"),
+                         recolor={"Tile3_Fiber": ((0.0, 0.85, 0.15), 1.0), "Tile3_Body": ((0.50, 0.75, 0.96), 0.30), "Tile3_WrapVinyl": ((0.03, 0.03, 0.04), 0.75), "Tile3_WrapAl": ((0.82, 0.84, 0.88), 0.70), "Tile3_Coating": ((0.98, 0.98, 0.95), 0.70)},
+                         explode={"Tile3_Coating": (0, 0, 16), "Tile3_WrapAl": (0, 0, 32), "Tile3_WrapCling": (0, 0, 48), "Tile3_WrapVinyl": (0, 0, 64)}),
 }
 for k, g in STEPS.items():
     VIEWS[k] = dict(dir=(0.85, 1.0, 0.55), look=(CX, 120, 150), ortho=1.08 * R, groups=g, res=(1500, 1700))
@@ -63,6 +72,7 @@ def render(vname, v):
     n = 0
     for p in MAN["parts"]:
         if p["group"] not in v["groups"]: continue
+        if v.get("only") and not any(p["name"].startswith(pre) for pre in v["only"]): continue
         if cut:
             path = p["sec"].get(cut)
             if not path: continue
@@ -75,8 +85,16 @@ def render(vname, v):
         o.matrix_world = mtx
         for key, off in v.get("explode", {}).items():
             if p["name"].startswith(key): o.location += Vector(off)
-        key = (tuple(p["color"]), p["alpha"])
-        if key not in mats: mats[key] = material(f"m{len(mats)}", p["color"], p["alpha"])
+        col, alp = tuple(p["color"]), p["alpha"]
+        for pre, (c2, a2) in v.get("recolor", {}).items():
+            if p["name"].startswith(pre): col, alp = c2, a2
+        key = (col, alp)
+        if key not in mats: mats[key] = material(f"m{len(mats)}", col, alp)
+        if any(p["name"].startswith(pre) for pre in v.get("topcut", ())):      # keep only the top sheet (and its thin rim) of a wrap layer
+            import bmesh
+            bm = bmesh.new(); bm.from_mesh(o.data)
+            bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], dist=1e-4, plane_co=(0, 0, 3.3), plane_no=(0, 0, 1), clear_inner=True)
+            bm.to_mesh(o.data); bm.free()
         o.data.materials.append(mats[key]); n += 1
         bpy.context.view_layer.objects.active = o
         try: bpy.ops.object.shade_smooth_by_angle(angle=math.radians(35))

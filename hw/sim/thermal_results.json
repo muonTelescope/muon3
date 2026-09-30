@@ -1,22 +1,22 @@
 {
  "A_low": {
-  "board_max_K": 9.96,
-  "air_K": 3.99,
-  "bme_K": 5.39
+  "board_max_K": 7.16,
+  "air_K": 1.86,
+  "bme_K": 4.8
  },
  "A": {
-  "board_max_K": 19.68,
-  "air_K": 7.13,
-  "bme_K": 9.2
+  "board_max_K": 12.66,
+  "air_K": 3.33,
+  "bme_K": 8.75
  },
  "B": {
-  "board_max_K": 19.85,
-  "air_K": 7.3,
-  "bme_K": 9.88
+  "board_max_K": 12.71,
+  "air_K": 3.38,
+  "bme_K": 8.87
  },
  "C": {
-  "board_max_K": 19.84,
-  "air_K": 7.3,
-  "bme_K": 13.39
+  "board_max_K": 12.73,
+  "air_K": 3.38,
+  "bme_K": 9.73
  }
 }

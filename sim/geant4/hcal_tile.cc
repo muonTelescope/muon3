@@ -17,13 +17,13 @@
 
 static void PrintUsage() {
   G4cout << "Usage: hcal_tile [-g gdml_file] [--tile-center x y z hx hy] [macro]\n"
-         << "  -g gdml   Path to assembly GDML (default: gdml/InnerHCalTile01_EJ200_assembly.gdml)\n"
+         << "  -g json   Path to a tile mesh JSON (default: gdml/mesh/InnerHCalTile01_EJ200_mesh.json)\n"
          << "  --tile-center x y z hx hy   Tile center (mm) and half-extents for the gun\n"
          << "  macro     Optional batch macro; omit for interactive vis session\n";
 }
 
 int main(int argc, char** argv) {
-  G4String gdml = "gdml/InnerHCalTile01_EJ200_assembly.gdml";
+  G4String gdml = "gdml/mesh/InnerHCalTile01_EJ200_mesh.json";
   G4String macro;
   // Defaults for InnerHCalTile01 (~120 x 191 x 7 mm starting at origin)
   G4double x0 = 60. * mm, y0 = 95. * mm, z0 = 0.;

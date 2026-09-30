@@ -289,6 +289,7 @@ G4VPhysicalVolume* HcalTileDetectorConstruction::Construct() {
   // their bend begins, and a G4 volume cannot straddle a boundary, so by default the pocket is filled (an extruded hull):
   // the fibers then end flush with the tile edge, facing the coupler cavity. HCAL_POCKET=1 restores the mesh.
   G4VSolid* tileSolid = nullptr;
+  std::vector<G4TwoVector> hullPoly;                // outline of the extruded tile (empty with HCAL_POCKET)
   if (std::getenv("HCAL_POCKET")) {
   auto* tess = new G4TessellatedSolid("InnerHCalTile_PS-SOL");
   for (size_t i = 0; i + 2 < facesFlat.size(); i += 3) {
@@ -312,64 +313,18 @@ G4VPhysicalVolume* HcalTileDetectorConstruction::Construct() {
     double area = 0;
     for (size_t i = 0; i < poly.size(); ++i) { const auto& p = poly[i]; const auto& q = poly[(i + 1) % poly.size()]; area += p.x() * q.y() - q.x() * p.y(); }
     if (area > 0) std::reverse(poly.begin(), poly.end());                     // G4ExtrudedSolid wants clockwise
+    hullPoly = poly;
     tileSolid = new G4ExtrudedSolid("InnerHCalTile_PS-SOL", poly, 0.5 * (zmax - zmin), {0, 0}, 1, {0, 0}, 1);
   }
   auto* scintLV = new G4LogicalVolume(tileSolid, scintMat, "InnerHCalTile_PS");
   auto* scintPV = new G4PVPlacement(nullptr, G4ThreeVector(0, 0, std::getenv("HCAL_POCKET") ? 0.0 : z_mid), scintLV, "InnerHCalTile_PS", worldLV, false, 0);
 
   // ---- Fiber: epoxy-filled groove > PMMA cladding > PS core, nested INSIDE the tile ----
-  // The mesh-JSON path is a polyline with sharp corners; a fiber only guides light round a bend of radius >~ 25 mm, so
-  // corners become tangent arcs (R <= 25 mm, clamped to 45 % of the adjacent legs) sampled every 6 degrees. Straight
-  // pieces are trimmed at the joints so neighbours never overlap. Inside the tile each piece sits in an epoxy groove; in
-  // the connector pocket (void) the bare fiber runs in air up to the coupler.
-  const std::string pj = json.find("\"pocket\"") == std::string::npos ? std::string() : json.substr(json.find("\"pocket\""), 200);
-  const double yFloor = ExtractNumber(pj, "y_floor", ymax / mm) * mm;
-  const double px0 = ExtractNumber(pj, "x0", 0) * mm, px1 = ExtractNumber(pj, "x1", 0) * mm;
-  // The mesh path is a polyline. Its serpentine turns are 3-point stand-ins for semicircles: the legs are 56.78 mm apart, so
-  // a turn is a half-circle of R = 28.4 mm (>= the 25 mm minimum bend radius of the tile design); other corners become
-  // tangent arcs. Bends are sampled every 1 degree and each chord is a G4CutTubs whose end planes are the mitre planes
-  // shared with its neighbours, so the joints are gap- and overlap-free and the guide is smooth to 1 degree. (G4Torus
-  // arcs were tried first: the quartic solver is unreliable for a 0.65 mm tube on a 28 mm ring - photons hopped from core
-  // to tile to groove at every torus joint.)
-  std::vector<FiberPt> dense;
-  auto arcPts = [&](FiberPt c, double R, double a1, double da) {
-    const int nseg = std::max(2, (int)std::ceil(std::abs(da) / (1.0 * deg)));
-    for (int k = 0; k <= nseg; ++k) dense.push_back({c.x + R * std::cos(a1 + da * k / nseg), c.y + R * std::sin(a1 + da * k / nseg)});
-  };
-  auto buildPath = [&](const std::vector<FiberPt>& p) {
-    struct Tok { bool arc; FiberPt p, s, e, c; double R, a1, da; };
-    std::vector<Tok> tk{{false, p[0], {}, {}, {}, 0, 0, 0}};
-    for (size_t i = 1; i < p.size();) {
-      const FiberPt& pr = tk.back().arc ? tk.back().e : tk.back().p;
-      if (i + 3 < p.size() && std::abs(p[i].y - pr.y) < 1e-3 && std::abs(p[i + 1].x - p[i].x) < 1e-3 &&
-          std::abs(p[i + 3].y - p[i + 2].y) < 1e-3 && std::abs(p[i + 2].y - p[i].y) > 20 * mm) {
-        const double sgn = p[i].x > pr.x ? 1.0 : -1.0, R = 0.5 * std::abs(p[i].y - p[i + 2].y);
-        const double cx = p[i].x - sgn * R, cy = 0.5 * (p[i].y + p[i + 2].y), sy = p[i].y > cy ? 1.0 : -1.0;
-        tk.push_back({true, {}, {cx, p[i].y}, {cx, p[i + 2].y}, {cx, cy}, R, sy * 90 * deg, -sy * sgn * 180 * deg});
-        i += 3;
-      } else { tk.push_back({false, p[i], {}, {}, {}, 0, 0, 0}); ++i; }
-    }
-    dense.clear(); dense.push_back(tk[0].p);
-    for (size_t k = 1; k < tk.size(); ++k) {
-      const Tok& t = tk[k]; const FiberPt cur = dense.back();
-      if (t.arc) { dense.push_back(t.s); arcPts(t.c, t.R, t.a1, t.da); continue; }
-      if (k + 1 == tk.size()) { dense.push_back(t.p); continue; }
-      const FiberPt nx = tk[k + 1].arc ? tk[k + 1].s : tk[k + 1].p;
-      double ax = cur.x - t.p.x, ay = cur.y - t.p.y, bx = nx.x - t.p.x, by = nx.y - t.p.y;
-      const double la = std::hypot(ax, ay), lb = std::hypot(bx, by);
-      ax /= la; ay /= la; bx /= lb; by /= lb;
-      const double th = std::acos(std::max(-1.0, std::min(1.0, ax * bx + ay * by)));
-      if (th > M_PI - 1e-3 || th < 1e-3) continue;
-      const double kA = (k == 1) ? 0.95 : 0.45, kB = (k + 2 == tk.size()) ? 0.95 : 0.45;
-      const double tt = std::min(25 * mm / std::tan(th / 2), std::min(kA * la, kB * lb)), Rr = tt * std::tan(th / 2);
-      double cx = ax + bx, cy = ay + by; const double lc = std::hypot(cx, cy); cx /= lc; cy /= lc;
-      const FiberPt C{t.p.x + cx * Rr / std::sin(th / 2), t.p.y + cy * Rr / std::sin(th / 2)};
-      const double a1 = std::atan2(t.p.y + ay * tt - C.y, t.p.x + ax * tt - C.x);
-      const double da = std::remainder(std::atan2(t.p.y + by * tt - C.y, t.p.x + bx * tt - C.x) - a1, 2 * M_PI);
-      dense.push_back({t.p.x + ax * tt, t.p.y + ay * tt}); arcPts(C, Rr, a1, da);
-    }
-    return dense;
-  };
+  // ONE closed loop (cad/sphenix_hcal/scripts/fiber_loop.py, after Aidala et al. 2018 Fig. 6): both ends leave the SiPM edge
+  // side by side, two S-bends (R >= 25 mm) lead to two parallel legs, a semicircle closes the loop near the far edge. The JSON
+  // holds the centre line as a dense polyline (arcs every 1 degree); each chord is a G4CutTubs whose end planes are the mitre
+  // planes shared with its neighbours. (True torus segments were tried first: the quartic solver is unreliable for a 0.65 mm
+  // tube on a 25 mm ring - photons hopped from core to tile to groove at every torus joint.)
   int fiberId = 0;
   auto placeFiber = [&](const std::vector<FiberPt>& path, double zOff) {
     std::vector<FiberPt> q;                                        // drop repeated points
@@ -397,30 +352,43 @@ G4VPhysicalVolume* HcalTileDetectorConstruction::Construct() {
   if (fiberPath.size() >= 2) {
     std::vector<FiberPt> raw;
     for (auto p : fiberPath) raw.push_back({p.x * mm, p.y * mm});
-    // the mesh path doubles back along y = 8 (a loop closed on itself): two half-loops A (exit-left -> hairpin) and
-    // B (hairpin -> exit-right) in separate mid-plane layers, as the loop's two legs must cross three others.
-    // NOTE the loop is NOT closed here: photons heading for the far end are lost there (the real loop carries them round).
-    size_t hp = raw.size() - 1;
-    for (size_t i = 1; i + 1 < raw.size(); ++i) {
-      const double ax = raw[i].x - raw[i - 1].x, ay = raw[i].y - raw[i - 1].y, bx = raw[i + 1].x - raw[i].x, by = raw[i + 1].y - raw[i].y;
-      if (ax * bx + ay * by < -0.9 * std::hypot(ax, ay) * std::hypot(bx, by)) { hp = i; break; }
-    }
-    placeFiber(buildPath(std::vector<FiberPt>(raw.begin(), raw.begin() + hp + 1)), +0.8 * mm);
-    if (hp + 1 < raw.size()) placeFiber(buildPath(std::vector<FiberPt>(raw.begin() + hp, raw.end())), -0.8 * mm);
+    placeFiber(raw, 0.0);
   }
 
-  // ---- Coating and wrap shells (bbox-based) ----
+  // ---- Coating (50 um) and wrap (100 um Al foil, 30 um cling film, 100 um black vinyl): shells around the tile outline ----
   G4double dx = xmax - xmin, dy = ymax - ymin, dz = zmax - zmin;
   G4ThreeVector c(0.5 * (xmin + xmax), 0.5 * (ymin + ymax), 0.5 * (zmin + zmax));
   const double sxw = (std::abs(sx) > 0.1 * mm) ? sx : 0.5 * (xmin + xmax);
   auto* window = new G4Box("CouplerWindow", 0.5 * bsx, 1.0 * mm, 2.2 * mm);   // opening for the whole coupler footprint
   const G4ThreeVector winAt(sxw - c.x(), ymax - c.y(), z_mid - c.z());
+  // Convex outline grown outward by d (mitred corners): the coating and every wrap layer follow the tile's real outline,
+  // slanted edges included (the first version used the bounding box, which leaves a wedge of air on slanted tiles).
+  auto grow = [&](double d) {
+    std::vector<G4TwoVector> o; const size_t n = hullPoly.size();
+    double cx = 0, cy = 0; for (auto& q : hullPoly) { cx += q.x() / n; cy += q.y() / n; }
+    for (size_t i = 0; i < n; ++i) {
+      const auto &a = hullPoly[(i + n - 1) % n], &b = hullPoly[i], &e = hullPoly[(i + 1) % n];
+      auto nrm = [&](const G4TwoVector& p, const G4TwoVector& q) {
+        G4TwoVector t = q - p; G4TwoVector v(t.y() / t.mag(), -t.x() / t.mag());
+        if (v.x() * (0.5 * (p.x() + q.x()) - cx) + v.y() * (0.5 * (p.y() + q.y()) - cy) < 0) v = -v; return v; };
+      const G4TwoVector n0 = nrm(a, b), n1 = nrm(b, e);
+      o.push_back(b + (n0 + n1) * (d / (1 + n0.x() * n1.x() + n0.y() * n1.y())));
+    }
+    return o;
+  };
   auto shell = [&](const char* name, double r0, double r1, G4Material* m) {
-    auto* o = new G4Box(G4String(name) + "O", 0.5 * dx + r1, 0.5 * dy + r1, 0.5 * dz + r1);
-    auto* in = new G4Box(G4String(name) + "I", 0.5 * dx + r0, 0.5 * dy + r0, 0.5 * dz + r0);
+    G4VSolid *o, *in; G4ThreeVector at = c, wat = winAt;
+    if (!hullPoly.empty()) {
+      o = new G4ExtrudedSolid(G4String(name) + "O", grow(r1), 0.5 * dz + r1, {0, 0}, 1, {0, 0}, 1);
+      in = new G4ExtrudedSolid(G4String(name) + "I", r0 > 0 ? grow(r0) : hullPoly, 0.5 * dz + r0, {0, 0}, 1, {0, 0}, 1);
+      at = G4ThreeVector(0, 0, z_mid); wat = G4ThreeVector(sxw, ymax, 0);
+    } else {
+      o = new G4Box(G4String(name) + "O", 0.5 * dx + r1, 0.5 * dy + r1, 0.5 * dz + r1);
+      in = new G4Box(G4String(name) + "I", 0.5 * dx + r0, 0.5 * dy + r0, 0.5 * dz + r0);
+    }
     auto* hollow = new G4SubtractionSolid(G4String(name) + "H", o, in);
-    auto* lv = new G4LogicalVolume(new G4SubtractionSolid(name, hollow, window, nullptr, winAt), m, G4String(name) + "LV");
-    new G4PVPlacement(nullptr, c, lv, name, worldLV, false, 0);
+    auto* lv = new G4LogicalVolume(new G4SubtractionSolid(name, hollow, window, nullptr, wat), m, G4String(name) + "LV");
+    new G4PVPlacement(nullptr, at, lv, name, worldLV, false, 0);
     return lv;
   };
   auto* coatLV = shell("DiffuseCoating", 0, coat_t, coating);
@@ -431,14 +399,8 @@ G4VPhysicalVolume* HcalTileDetectorConstruction::Construct() {
   (void)foilLV;
 
   // ---- Coupler + Hamamatsu S12572-33-015P ----
-  // Black ABS block on the SiPM edge (mesh JSON: 48.9 mm wide, straddling both fiber exits, which are 43 mm apart).
-  // The source CAD does not show how one 3 x 3 mm SiPM sees both ends, so there are two coupler models:
-  //   direct (default): each fiber end faces a 3 x 3 mm SiPM window across the published 0.75 mm air gap (Aidala et al.,
-  //                     Table II) - i.e. the two fibers deliver to the SiPM the way the paper describes, the 43 mm spacing
-  //                     being a CAD simplification;
-  //   cavity (HCAL_COUPLER=cavity): one 3 x 3 mm SiPM at the middle of a 47 mm white mixing slot. Light diffuses 21 mm
-  //                     along a 3 mm slot at 10 % loss per bounce, so almost none arrives: NOT a credible coupler.
-  const bool cavityMode = std::getenv("HCAL_COUPLER") && std::string(std::getenv("HCAL_COUPLER")) == "cavity";
+  // Compact black ABS block on the SiPM edge (16 mm wide): both fiber ends, 1.2 mm apart, face ONE 3 x 3 mm SiPM centred
+  // between them across the published 0.75 mm air gap (Aidala et al., Table II and Fig. 6c).
   const double wrapOut = coat_t + foil_t + cling_t + vinyl_t + 0.01 * mm;
   const double by0 = ymax + wrapOut, by1 = ymax + 6.0 * mm;
   G4double sipmFace = 3.0 * mm, sipmDepth = 1.5 * mm;   // S12572-33-015P active area 3 x 3 mm^2
@@ -448,15 +410,13 @@ G4VPhysicalVolume* HcalTileDetectorConstruction::Construct() {
   sx = sxw; sz = z_mid;
   struct Chamber { double cx, hx, top, sipmCy; };
   std::vector<Chamber> chambers;
-  if (cavityMode) chambers.push_back({sxw, 0.5 * bsx - 1.0 * mm, ymax + 2.8 * mm, ymax + 2.8 * mm - 0.5 * mm + 0.5 * ssy});
-  else for (double fx : {fiberPath.front().x * mm, fiberPath.back().x * mm})
-    chambers.push_back({fx, 2.0 * mm, ymax + fAirGapMm * mm, ymax + fAirGapMm * mm + 0.5 * ssy});
+  chambers.push_back({sxw, 2.5 * mm, ymax + fAirGapMm * mm, ymax + fAirGapMm * mm + 0.5 * ssy});
   const double blkCy = 0.5 * (by0 + by1);
   G4VSolid* blockSolid = new G4Box("BlockerBox", 0.5 * bsx, 0.5 * (by1 - by0), 0.5 * bsz);
   int nch = 0;
   for (const auto& ch : chambers) {
     const double h = ch.top - by0 + 0.02 * mm;
-    blockSolid = new G4SubtractionSolid("BlockerC" + std::to_string(nch), blockSolid, new G4Box("Cav", ch.hx, 0.5 * h, cavityMode ? 1.6 * mm : 2.0 * mm), nullptr,
+    blockSolid = new G4SubtractionSolid("BlockerC" + std::to_string(nch), blockSolid, new G4Box("Cav", ch.hx, 0.5 * h, 2.0 * mm), nullptr,
                                         G4ThreeVector(ch.cx - sxw, by0 - 0.02 * mm + 0.5 * h - blkCy, 0));
     blockSolid = new G4SubtractionSolid("BlockerS" + std::to_string(nch++), blockSolid, new G4Box("SiPMCut", 0.5 * ssx, 0.5 * ssy, 0.5 * ssz), nullptr,
                                         G4ThreeVector(ch.cx - sxw, ch.sipmCy - blkCy, 0));
@@ -551,8 +511,7 @@ void HcalTileDetectorConstruction::AttachOpticalProperties() {
   fReflectorSurf->SetMaterialPropertiesTable(refMPT);
   fCouplerSurf = new G4OpticalSurface("CouplerWhite", unified, groundfrontpainted, dielectric_dielectric);
   auto* cpMPT = new G4MaterialPropertiesTable();
-  const bool cav = std::getenv("HCAL_COUPLER") && std::string(std::getenv("HCAL_COUPLER")) == "cavity";
-  G4double cpR[2] = {cav ? 0.90 : 0.05, cav ? 0.90 : 0.05};   // white mixing cavity, or a black light blocker
+  G4double cpR[2] = {0.05, 0.05};   // black light blocker
   cpMPT->AddProperty("REFLECTIVITY", refE, cpR, 2);
   fCouplerSurf->SetMaterialPropertiesTable(cpMPT);
 }

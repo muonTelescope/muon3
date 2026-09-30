@@ -39,6 +39,13 @@ def main():
     x = np.asarray(data["x_mm"], dtype=float)
     y = np.asarray(data["y_mm"], dtype=float)
 
+    # The gun fires from 50 mm above the tile at angles up to 50 deg: about 9 % of the muons leave by a side edge or miss the
+    # tile, deposit < 0.3 MeV and give no light. They are a geometric acceptance loss, not a light-yield one, so the yield
+    # statistics below use the muons that cross the tile.
+    cross = edep > 0.3
+    edep_all, det_all, prod_all, x_all, y_all = edep, det, prod, x, y
+    edep, det, prod, x, y = edep[cross], det[cross], prod[cross], x[cross], y[cross]
+
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
     # 1) Energy deposit spectrum
@@ -102,12 +109,16 @@ def main():
     plt.close(fig)
 
     summary = {
-        "n_events": int(len(edep)),
+        "n_events": int(len(edep)),   # muons that cross the tile
         "mean_edep_MeV": float(np.mean(edep)),
         "std_edep_MeV": float(np.std(edep)),
         "mean_pe": float(np.mean(det)),
         "std_pe": float(np.std(det)),
         "mean_photons_prod": float(np.mean(prod)),
+        "n_generated": int(len(edep_all)),
+        "crossing_fraction": float(cross.mean()),
+        "min_pe": float(np.min(det)),
+        "frac_ge_3pe": float(np.mean(det >= 3)), "frac_ge_5pe": float(np.mean(det >= 5)), "frac_ge_8pe": float(np.mean(det >= 8)),
         "csv": csv_path.name,
     }
     out_json = ROOT / "sim/geant4" / f"{args.tag}_summary.json"

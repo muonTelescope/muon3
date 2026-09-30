@@ -5,6 +5,8 @@ Model (mm, board frame from hw/out/board.json, z = 0 at the board underside):
   (grounded); the external antenna of the WROOM-1U: an inverted-L on the lid's outer face (8.4 mm feed from the ground plane
   at the module's U.FL jack + 22 mm arm, lumped 50 ohm port at the plane); U.FL jacks with the tile coax shields (AC-grounded
   through 100 nF) leaving through the case wall; ABS case shell (er 2.8, tan d 0.01).
+  Rev D: the board is a 337 x 40 mm strip; the hub (ESP32 at x = 196) sits between cells 1 and 2, so the four inputs are
+  8, 78, 92 (cell 2 is 22 mm away at the far side) ... mm from the antenna feed: the coupling is now set by distance along the board.
   Victims: each channel's SIG trace on L1 from the U.FL pin to the OPA356 IN- pin, 50 ohm at the jack end (the coax)
   and a 50 ohm port at the TIA end: |S(k,1)| is the antenna -> TIA-input coupling.
 Variants:  none | can (stamped shield frame+lid over each AFE, stitched to L2) | abs (same shape, printed ABS: no metal)
@@ -54,14 +56,15 @@ if "noisland" not in VARIANT:
 
 # ---- ESP32-S3-WROOM can (18 x ~19 mm, 3.1 mm tall), walls stitched to L2 ----
 u = parts["U1"]
-cx0, cx1, cy0, cy1, ztop = u["x0"] + 0.4, 92.3 - 3.0, u["y0"] + 0.8, u["y1"] - 0.8, T + 3.1   # the can has a corner notch round the U.FL jack at (92.3, 51.0)
+AX, AY = u["x"] + 7.7, u["y"] + 6.0                 # the module's U.FL jack (offset from the module centre, rot 270)
+cx0, cx1, cy0, cy1, ztop = u["x0"] + 0.4, AX - 3.0, u["y0"] + 0.8, u["y1"] - 0.8, T + 3.1   # the can has a corner notch round the U.FL jack
 box(gnd, [cx0, cy0, ztop], [cx1, cy1, ztop], 6)
 for a, b in (([cx0, cy0, ZP], [cx1, cy0, ztop]), ([cx0, cy1, ZP], [cx1, cy1, ztop]),
              ([cx0, cy0, ZP], [cx0, cy1, ztop]), ([cx1, cy0, ZP], [cx1, cy1, ztop])):
     box(gnd, a, b, 6)
 
 # ---- inverted-F antenna in the keepout (on the ground layer's level, like the module's own PCB antenna) ----
-AX, AY, ZA = 92.3, 51.0, 9.7                       # the module's U.FL jack (board x, y) and the lid's outer face
+ZA = 9.7                                          # the lid's outer face
 ARM = float(os.environ.get("ARM", 19.5))            # inverted-L: 8.4 mm feed + ARM mm along the lid, ~ lambda/4 at 2.44 GHz
 box(gnd, [AX - 0.5, AY - 0.5, ZP + 1.0], [AX + 0.5, AY + 0.5, ZA], 7)            # pigtail centre conductor up through the lid hole
 box(gnd, [AX - ARM, AY - 0.5, ZA - 0.2], [AX + 0.5, AY + 0.5, ZA], 7)             # the FPC antenna on the lid's outer face
@@ -106,7 +109,7 @@ if VARIANT in ("can", "abs"):
         box(mat, [xj + 0.6, y0, zb], [x1, y0 + (0 if VARIANT == "can" else t), zt], 9)
         box(mat, [xj - 0.6, y0, T + 0.3], [xj + 0.6, y0 + (0 if VARIANT == "can" else t), zt], 9)
 
-# ---- ABS case shell (outer 90 x 56 x 16.5, walls 2.4, board underside 7.0 above the outer floor) ----
+# ---- ABS case shell (one long box here; the real case is three segments; walls 2.4, board underside 7.0 above the outer floor) ----
 cz0, cz1 = -7.0, 16.5 - 7.0
 cxa, cya, cxb, cyb, wl = -3.0, -3.0, W + 3.0, H + 3.0, 2.4   # case.py: WALL 2.4 + GAP 0.6
 for a, b in (([cxa, cya, cz0], [cxb, cyb, cz0 + wl]), ([cxa, cya, cz1 - 2.5], [cxb, cyb, cz1]),
