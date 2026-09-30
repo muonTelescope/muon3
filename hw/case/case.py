@@ -51,6 +51,9 @@ def rbox(x0, y0, x1, y1, z0, z1, r):
         b = b.makeFillet(r, edges)
     return b
 
+def box_xy(x0, y0, x1, y1, z0, z1):   # board coordinates (y down)
+    return Part.makeBox(x1 - x0, y1 - y0, z1 - z0, App.Vector(x0, by(y1), z0))
+
 def cyl(x, y, z0, z1, d):
     return Part.makeCylinder(d / 2, z1 - z0, App.Vector(x, by(y), z0))
 
@@ -70,6 +73,12 @@ base, lid = shell.common(below), shell.cut(below)
 for h in B["holes"]:
     base = base.fuse(cyl(h["x"], h["y"], Z_FLOOR - 0.01, Z_BB, BOSS_D))
     base = base.cut(cyl(h["x"], h["y"], Z_BB - INSERT_DEPTH, Z_BB + 0.1, INSERT_D))
+
+# ---------- floor mounting holes: the base is screwed to the tile-stack back plate (M3 button-head from inside, so the
+# heads sit in the 4.6 mm gap under the board; the board's underside carries no parts) ----------
+FLOOR_SCREWS = [(24, 8), (72, 8), (28, 56), (52, 56)]        # board coordinates, clear of bosses, BME ribs and vents
+for (x, y) in FLOOR_SCREWS:
+    base = base.cut(cyl(x, y, -1, Z_FLOOR + 0.1, 3.4))
 
 # ---------- lid: spacer columns + counterbored screw holes ----------
 for h in B["holes"]:
@@ -130,6 +139,16 @@ for k in range(8):
     base = base.cut(Part.makeBox(1.6, 14, FLOOR + 1, App.Vector(x, by(u1["y1"]) + 2.5, -0.5)))
     lid = lid.cut(Part.makeBox(1.6, 14, TOP + 1, App.Vector(x, by(u1["y1"]) + 2.5, Z_CEIL - 0.5)))
 
+# ---------- external antenna (ESP32-S3-WROOM-1U): pigtail hole over the module's U.FL, a shallow groove for the cable, and a
+# recess in the lid's outer face for a 35 x 10 mm self-adhesive 2.4 GHz FPC antenna (outside the case: no plastic-and-board
+# detuning, no shielding by the AFE, and ≥ 10 cm of coax between the antenna and the SiPM inputs) ----------
+ANT_HOLE = (92.3, 51.0)                                         # board coordinates of the module's U.FL jack
+ANT_BOX = (52.0, 52.5, 88.0, 59.5)                              # antenna recess x0, y0, x1, y1 (board coordinates)
+lid = lid.cut(cyl(ANT_HOLE[0], ANT_HOLE[1], Z_CEIL - 1, Z_TOP + 1, 3.2))
+lid = lid.cut(box_xy(ANT_BOX[0], ANT_BOX[1], ANT_BOX[2], ANT_BOX[3], Z_TOP - 0.7, Z_TOP + 0.1))
+for (xa, ya, xb, yb) in ((ANT_HOLE[0], ANT_HOLE[1], 90.0, 53.5), (90.0, 53.5, ANT_BOX[2] - 0.5, 53.5)):
+    lid = lid.cut(box_xy(min(xa, xb) - 0.8, min(ya, yb) - 0.8, max(xa, xb) + 0.8, max(ya, yb) + 0.8, Z_TOP - 0.8, Z_TOP + 0.1))
+
 # ---------- access: BOOT pin hole, STATUS light pipe ----------
 for p in B["parts"]:
     if p["value"] == "BOOT":
@@ -154,7 +173,9 @@ info = {
     "outer_mm": [round(X1 - X0, 2), round(Y1 - Y0, 2), round(Z_TOP, 2)],
     "board_z": [round(Z_BB, 2), round(Z_BT, 2)], "split_z": round(Z_MID, 2),
     "screw": f"ISO 4762 M3x{SCREW}", "screw_engagement_mm": round(engage, 2),
-    "inserts": "4x M3 x 5.7 heat-set (hole Ø4.0 x 6.0)",
+    "inserts": "4x M3 x 5.7 heat-set (hole Ø4.0 x 6.0)", "antenna_hole": ANT_HOLE, "antenna_recess": ANT_BOX,
+    "floor_screws_board_xy": FLOOR_SCREWS, "z_floor": Z_FLOOR, "z_board_bottom": Z_BB, "z_split": Z_MID,
+    "outer_xyz0": [X0, by(Y1), 0], "board_hw": [W, H],
     "base_volume_cm3": round(base.Volume / 1000, 1), "lid_volume_cm3": round(lid.Volume / 1000, 1),
 }
 json.dump(info, open(os.path.join(OUT, "case.json"), "w"), indent=1)

@@ -4,7 +4,7 @@
 //   y 0–22   : 4 channel cells, 20 mm pitch; U.FL at the top of each (tile coax enters the case above it)
 //   y 23–40  : shared bias/threshold/baseline feeds, DACs, charge injection, HV boost (centre-left)
 //   left     : BME280 on a slotted island (≥ 20 mm from any TIA input) · STEMMA QT · USB-C
-//   right    : ESP32-S3 low on the right edge (antenna ≥ 10 mm from the nearest cell) + AMS1117
+//   right    : ESP32-S3-WROOM-1U (external U.FL antenna outside the case) low on the right + AMS1117
 //   y 61.4   : 22-pad probe row, 2.54 mm pitch
 import type { Floorplan } from "./place.ts";
 import { TEST_ROW } from "./design.ts";
@@ -25,7 +25,7 @@ export const floorplan: Floorplan = {
     ...Object.fromEntries(JACK_X.map((x, k) => [`J${2 + k}`, { x, y: JACK_Y, rot: 0 }])), // U.FL, shell pads toward the edge
     J1: { x: 4.7, y: 51.5, rot: 270 },  // USB-C, opening on the left edge
     J6: { x: 3.25, y: 42.0, rot: 90 },  // STEMMA QT (JST-SH: opening on the left edge)
-    U1: { x: W - 16.45, y: 45, rot: 270 }, // ESP32-S3, antenna flush with the right edge
+    U1: { x: W - 11.4, y: 45, rot: 270 }, // ESP32-S3-WROOM-1U: its U.FL connector faces the right edge; the antenna is outside the case
     U2: { x: 4.2, y: 28.8, rot: 0 },    // BME280 on its island
     C1: { x: 4.2, y: 32.0, rot: 0 },
     ...Object.fromEntries(TEST_ROW.map((_, k) => [`TP${k + 1}`, { x: ROW_X0 + 2.54 * k, y: ROW_Y, rot: 0 }])),
@@ -41,7 +41,6 @@ export const floorplan: Floorplan = {
     testrow: { x: W / 2, y: ROW_Y },
   },
   keepouts: [
-    { x0: W - 6.4, y0: 34, x1: W, y1: 56, why: "ESP32 antenna: no copper, no parts", copper: true },
     { x0: 0, y0: 0, x1: 7, y1: 7, why: "M3 hole" }, { x0: W - 7, y0: 0, x1: W, y1: 7, why: "M3 hole" },
     { x0: 0, y0: H - 7, x1: 7, y1: H, why: "M3 hole" }, { x0: W - 7, y0: H - 7, x1: W, y1: H, why: "M3 hole" },
     { x0: 0, y0: ISLAND.y0 - 1.4, x1: ISLAND.armX + 1.0, y1: ISLAND.y1 + 1.4, why: "BME280 island (parts fixed)" },

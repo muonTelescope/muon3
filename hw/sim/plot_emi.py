@@ -23,7 +23,7 @@ if os.path.exists(h5):
                         vmin=-50, vmax=0, cmap="magma", shading="auto")
     ax.set_aspect("equal"); ax.invert_yaxis()
     fig.colorbar(im_, ax=ax, label="|E| 1.2 mm above the parts (dB re max)")
-ax.set(title="2.44 GHz field, ESP32 antenna at the right edge (as built)", xlabel="x (mm)", ylabel="y (mm)")
+ax.set(title="2.44 GHz field 1.2 mm above the parts, external antenna on the lid (as built)", xlabel="x (mm)", ylabel="y (mm)")
 
 bx = fig.add_subplot(1, 3, 3)
 ch = np.arange(4)

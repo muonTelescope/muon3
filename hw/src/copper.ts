@@ -7,6 +7,7 @@ import { pt, sub, add, mul, norm, len, dist, pointInPoly, type Pt } from "./geom
 
 const MAX_R = 8;
 
+export const taperStats = { wide: 0, ends: 0 };
 export function toCopper(b: Board, r: Router, opts: { smooth?: boolean } = {}) {
   b.tracks = []; b.vias = [];
   const smooth = opts.smooth !== false;
@@ -58,6 +59,63 @@ export function toCopper(b: Board, r: Router, opts: { smooth?: boolean } = {}) {
       // segment k (pts[k]→pts[k+1]) is only as wide as the narrower of its two cells
       const sw = pts.slice(1).map((_, k) => Math.min(p.width[k], p.width[k + 1]));
       if (pts.length === 1) { pts.push(pts[0]); sw.push(p.width[0]); }
+      /**
+       * Taper: a track that leaves a pad starts as wide as the pad's narrow side (up to 0.45 mm) and narrows linearly to the
+       * net width over ~4x the width difference (0.4-1.0 mm of copper length, following corners and arcs), in 6 steps. Each
+       * step is kept only where the wider copper still clears its neighbours (in all four cells); otherwise it falls back
+       * towards the net width.
+       */
+      type El = Seg | Arc;
+      const elLen = (x: El) => x.kind === "seg" ? dist(x.a, x.b) : Math.hypot(x.a.x - x.c.x, x.a.y - x.c.y) * Math.abs(arcSweep(x));
+      const arcSweep = (x: Arc) => {
+        const a0 = Math.atan2(x.a.y - x.c.y, x.a.x - x.c.x), a1 = Math.atan2(x.b.y - x.c.y, x.b.x - x.c.x);
+        const d = ((a1 - a0) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+        return x.ccw ? d : d - 2 * Math.PI;
+      };
+      const elAt = (x: El, t: number): Pt => {
+        if (x.kind === "seg") return pt(x.a.x + (x.b.x - x.a.x) * t, x.a.y + (x.b.y - x.a.y) * t);
+        const a0 = Math.atan2(x.a.y - x.c.y, x.a.x - x.c.x), R = Math.hypot(x.a.x - x.c.x, x.a.y - x.c.y), th = a0 + arcSweep(x) * t;
+        return pt(x.c.x + R * Math.cos(th), x.c.y + R * Math.sin(th));
+      };
+      const elSub = (x: El, t0: number, t1: number): El => x.kind === "seg" ? { kind: "seg", a: elAt(x, t0), b: elAt(x, t1) } : { ...x, a: elAt(x, t0), b: elAt(x, t1) };
+      const elRev = (x: El): El => x.kind === "seg" ? { kind: "seg", a: x.b, b: x.a } : { ...x, a: x.b, b: x.a, ccw: !x.ccw };
+      const elPts = (x: El) => x.kind === "seg" ? [x.a, x.b] : arcPoints(x.a, x.b, x.c, x.ccw, r.pitch / 2);
+      const taperEnd = (path: El[], atStart: boolean, pad: NonNullable<typeof pa>, w: number): { width: number; path: El[] }[] => {
+        const one = [{ width: w, path }];
+        taperStats.ends++;
+        const wp = Math.round(Math.min(Math.max(Math.min(pad.w, pad.h) * 0.9, w), 0.45) * 200) / 200;
+        if (wp <= w + 0.02) return one;
+        const seq = atStart ? path.slice() : path.slice().reverse().map(elRev);       // from the pad outwards
+        const e = Math.max(pad.w, pad.h) / 2, Lt = Math.min(Math.max(4 * (wp - w), 0.4), 1.0), K = 6;
+        const total = seq.reduce((sum, x) => sum + elLen(x), 0);
+        if (total < e + 0.12) return one;
+        const Ltt = Math.min(Lt, total - e - 0.05);
+        const bps = [e, ...Array.from({ length: K }, (_, k) => e + (Ltt * (k + 1)) / K)];   // breakpoints along the path from the pad centre
+        const widthAt = (s: number) => s <= e ? wp : Math.round((wp + (w - wp) * Math.min(1, (s - e) / Ltt)) * 200) / 200;
+        const pieces: { width: number; path: El[] }[] = [];
+        let s0 = 0, prev = wp, rest: El[] = [];
+        for (const x of seq) {
+          const L = elLen(x); let t = 0;
+          for (const bp of bps) {
+            if (bp <= s0 + 1e-9 || bp >= s0 + L - 1e-9 || bp <= s0 + t * L + 1e-9) continue;
+            const t1 = (bp - s0) / L, sub = elSub(x, t, t1);
+            let ww = Math.min(widthAt(0.5 * (s0 + t * L + bp)), prev);
+            const stepIdx = pieces.length;
+            while (stepIdx > 0 && ww > w + 1e-6 && !elPts(sub).every((q, i, arr) => i === 0 || segLegal(arr[i - 1], q, u => everywhere(p.layer, u, ww / 2 + cls.halfClear), r.pitch / 2))) ww = Math.max(w, ww - 0.025);
+            pieces.push({ width: ww, path: [sub] }); prev = ww; if (ww > w + 1e-6) taperStats.wide++; t = t1;
+          }
+          // remainder of this element after the last breakpoint that fell inside it
+          const tail = t > 0 ? elSub(x, t, 1) : x;
+          if (s0 + L <= e + Ltt + 1e-9) {                                             // element still inside the taper: one step
+            let ww = Math.min(widthAt(s0 + t * L + 0.5 * (1 - t) * L), prev);
+            while (pieces.length > 0 && ww > w + 1e-6 && !elPts(tail).every((q, i, arr) => i === 0 || segLegal(arr[i - 1], q, u => everywhere(p.layer, u, ww / 2 + cls.halfClear), r.pitch / 2))) ww = Math.max(w, ww - 0.025);
+            pieces.push({ width: ww, path: [tail] }); prev = ww; if (ww > w + 1e-6) taperStats.wide++;
+          } else rest.push(tail);
+          s0 += L;
+        }
+        const head = rest.length ? [{ width: w, path: atStart ? rest : rest.slice().reverse().map(elRev) }] : [];
+        return [...head, ...pieces.map(pc => atStart ? pc : { width: pc.width, path: pc.path.map(elRev) })];
+      };
       let start = 0;
       for (let i = 1; i <= sw.length; i++) {
         if (i < sw.length && sw[i] === sw[start] && !pinned.has(i)) continue;
@@ -66,7 +124,11 @@ export function toCopper(b: Board, r: Router, opts: { smooth?: boolean } = {}) {
         if (run.length >= 2) {
           const legal = (q: Pt) => everywhere(p.layer, q, w / 2 + cls.halfClear);
           const taut = smooth ? pull(run, legal, r.pitch / 2) : run;
-          out.push({ layer: ROUTE_LAYERS[p.layer], width: w, path: smooth ? fillet(taut, legal, r.pitch / 2) : segs(taut) });
+          let path = smooth ? fillet(taut, legal, r.pitch / 2) : segs(taut);
+          let pieces = [{ width: w, path }];
+          if (smooth && start === 0 && pa) pieces = taperEnd(path, true, pa, w);
+          if (smooth && i === sw.length && pb) { const last = pieces[0]; pieces = [...taperEnd(last.path, false, pb, w), ...pieces.slice(1)]; }
+          for (const pc of pieces) out.push({ layer: ROUTE_LAYERS[p.layer], width: pc.width, path: pc.path });
         }
         start = i;
       }

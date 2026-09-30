@@ -1,13 +1,13 @@
 // Build: netlist -> placement -> (routing) -> Gerbers, drill, BOM/CPL, SVG previews.
 import { mkdirSync, writeFileSync } from "node:fs";
-import { build as buildCircuit } from "./design.ts";
+import { build as buildCircuit, P } from "./design.ts";
 import { Board, ROUTE_LAYERS, PLANE_LAYERS, slotPath } from "./board.ts";
 import { place } from "./place.ts";
 import { floorplan, W, H, MOUNT_HOLES, ISLAND, CELLS } from "./floorplan.ts";
 import { renderSvg, ratsnest } from "./svg.ts";
 import { writeGerbers } from "./gerber.ts";
 import { autoroute } from "./autoroute.ts";
-import { toCopper } from "./copper.ts";
+import { toCopper, taperStats } from "./copper.ts";
 import { writeKicad } from "./kicad.ts";
 import { checkBoard } from "./drc.ts";
 import { swapPins } from "./pinswap.ts";
@@ -36,7 +36,7 @@ for (const h of MOUNT_HOLES) board.holes.push({ at: h, d: 3.2, plated: false });
   board.noPlane.push({ x0: 0, y0: I.y0 - r, x1: xr + r + 0.2, y1: I.y1 + r },
                      { x0: xr, y0: I.neckY0 - r, x1: I.armX + r + 0.2, y1: I.neckY1 + r }); }
 place(board, floorplan);
-const mcuU = circuit.parts.find(p => p.lcsc === "C2913198")!.ref;
+const mcuU = circuit.parts.find(p => p.lcsc === P.esp32)!.ref;
 console.log("  ESP32 hit-pin swap:", swapPins(board, mcuU, /^HIT\d$/).join(" "));
 const rats = ratsnest(board);
 const ratLen = rats.reduce((s, r) => s + Math.hypot(r.a.x - r.b.x, r.a.y - r.b.y), 0);
@@ -47,6 +47,7 @@ writeFileSync(OUT + "placement.svg", renderSvg(board, { rats: true, title: "Muon
 const router = autoroute(board, floorplan.keepouts.filter(k => k.copper), CELLS); // placement-only keepouts don't block copper
 
 toCopper(board, router, { smooth: process.env.SMOOTH !== "0" });
+console.log(`  taper: ${taperStats.ends} pad exits considered, ${taperStats.wide} tapered steps kept`);
 buildPlanes(board, PLANE_LAYERS, floorplan.keepouts);
 footprintSilk(board);
 labels(board, "2026-09-30");

@@ -28,10 +28,10 @@ G_ISLAND = K_CU * 4 * 0.127e-3 * 35e-6 / 2.6e-3 + K_FR4 * 1.5e-3
 
 # ---- heat sources (W) [EST: ESP32 Wi-Fi connected, modem-sleep average] ----
 PROFILES = {  # ESP32 + AMS1117 (5 V -> 3.3 V drop x load) — the rest is fixed
-    "wifi-on": {"C2913198": 0.30, "C6186": 0.17},   # 240 MHz, Wi-Fi associated, no power save  [EST ~90 mA avg]
-    "low":     {"C2913198": 0.13, "C6186": 0.07},   # 80 MHz + WIFI_PS_MAX_MODEM, uploads batched [EST ~40 mA avg]
+    "wifi-on": {"C3013946": 0.30, "C6186": 0.17},   # 240 MHz, Wi-Fi associated, no power save  [EST ~90 mA avg]
+    "low":     {"C3013946": 0.13, "C6186": 0.07},   # 80 MHz + WIFI_PS_MAX_MODEM, uploads batched [EST ~40 mA avg]
 }
-SRC = {"C2913198": 0.30, "C6186": 0.17, "C485517": 0.043, "C183100": 0.015, "C20613263": 0.0036,
+SRC = {"C3013946": 0.30, "C6186": 0.17, "C485517": 0.043, "C183100": 0.015, "C20613263": 0.0036,
        "C100023": 0.020, "C8545": 0.0, "C478093": 0.003, "C92489": 0.00001}
 
 # ---- convection / radiation coefficients (W/m²K) and air-path conductances ----

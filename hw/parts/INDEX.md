@@ -42,7 +42,7 @@ TI parts also have `datasheet_full.pdf` where LCSC's copy is abridged.
 | R27, R32, R37, R42 | 100 | (generic) |  | R0402 | [C25076](https://jlcpcb.com/partdetail/C25076) | C25744 | [pdf](C25744/datasheet.pdf) (457 kB) | [step](C25744/model.step) |
 | R29, R34, R39, R44 | 33 | (generic) |  | R0402 | [C25105](https://jlcpcb.com/partdetail/C25105) | C25744 | [pdf](C25744/datasheet.pdf) (457 kB) | [step](C25744/model.step) |
 | SW1 | BOOT | TS-1187A-B-A-B | XKB Connection(中国星坤) | SW-SMD_4P-L5.1-W5.1-P3.70-LS6.5-TL_H1.5 | [C318884](https://jlcpcb.com/partdetail/C318884) |  | [pdf](C318884/datasheet.pdf) (786 kB) | [step](C318884/model.step) |
-| U1 | ESP32-S3-WROOM-1-N8 | ESP32-S3-WROOM-1-N8 | ESPRESSIF(乐鑫) | WIFIM-SMD_ESP32-S3-WROOM-1-N8 | [C2913198](https://jlcpcb.com/partdetail/C2913198) |  | [pdf](C2913198/datasheet.pdf) (777 kB) | [step](C2913198/model.step) |
+| U1 | ESP32-S3-WROOM-1U-N16R8 | ESP32-S3-WROOM-1U-N16R8 | ESPRESSIF(乐鑫) | WIRELM-SMD_ESP32-S3-WROOM-1U | [C3013946](https://jlcpcb.com/partdetail/C3013946) |  | [pdf](C3013946/datasheet.pdf) (835 kB) | [step](C3013946/model.step) |
 | U2 | BME280 | BME280 | Bosch(博世) | LGA-8_BME280_BL | [C92489](https://jlcpcb.com/partdetail/C92489) |  | [pdf](C92489/datasheet.pdf) (1478 kB) | [step](C92489/model.step) |
 | U3 | USBLC6-2SC6 | USBLC6-2SC6 | UMW(友台半导体) | SOT-23-6_L2.9-W1.6-P0.95-LS2.8-BL | [C2687116](https://jlcpcb.com/partdetail/C2687116) |  | [pdf](C2687116/datasheet.pdf) (224 kB) | [step](C2687116/model.step) |
 | U4 | AMS1117-3.3 | AMS1117-3.3 | Advanced Monolithic Systems | SOT-223-3_L6.5-W3.4-P2.30-LS7.0-BR | [C6186](https://jlcpcb.com/partdetail/C6186) |  | [pdf](C6186/datasheet.pdf) (93 kB) | [step](C6186/model.step) |

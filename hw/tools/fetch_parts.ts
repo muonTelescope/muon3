@@ -156,6 +156,9 @@ export async function fetchPart(lcsc: string, opts: { assets: boolean; datasheet
     datasheet: j.packageDetail.dataStr.head.c_para?.link ?? j.lcsc?.url ?? "", footprint: fp,
     pins: parsePins(j.dataStr),
   };
+  // the -1U module has the same 41-pad castellated pinout as the -1 (PCB antenna) module, but EasyEDA's symbol lists only 12 pins
+  const SIBLING_PINOUT: Record<string, string> = { C3013946: "C2913198" };
+  if (SIBLING_PINOUT[lcsc]) info.pins = JSON.parse(readFileSync(ROOT + SIBLING_PINOUT[lcsc] + "/part.json", "utf8")).pins;
   mkdirSync(dir, { recursive: true });
   writeFileSync(cached, JSON.stringify(info, null, 1));
   if (opts.assets) {

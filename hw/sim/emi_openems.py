@@ -1,11 +1,11 @@
 """openEMS FDTD: ESP32 Wi-Fi antenna -> AFE input coupling, board inside the ABS case.
 
 Model (mm, board frame from hw/out/board.json, z = 0 at the board underside):
-  FR4 1.6 mm (er 4.3, tan d 0.02), L2 GND plane at z 1.39 (pulled back 0.3 mm, open under the antenna keepout and
-  the BME island); ESP32 metal can (grounded); printed inverted-F antenna in the keepout, lumped 50 ohm feed at the
-  ground edge (stands in for the module's own meander IFA: same place, same band); 4 edge SMA bodies (shell = HV,
-  AC-grounded through 100 nF); ABS case shell (er 2.8, tan d 0.01).
-  Victims: each channel's SIG trace on L1 from the SMA pin to the OPA356 IN- pin, 50 ohm at the jack end (the coax)
+  FR4 1.6 mm (er 4.3, tan d 0.02), L2 GND plane at z 1.39 (pulled back 0.3 mm, open under the BME island); ESP32 metal can
+  (grounded); the external antenna of the WROOM-1U: an inverted-L on the lid's outer face (8.4 mm feed from the ground plane
+  at the module's U.FL jack + 22 mm arm, lumped 50 ohm port at the plane); U.FL jacks with the tile coax shields (AC-grounded
+  through 100 nF) leaving through the case wall; ABS case shell (er 2.8, tan d 0.01).
+  Victims: each channel's SIG trace on L1 from the U.FL pin to the OPA356 IN- pin, 50 ohm at the jack end (the coax)
   and a 50 ohm port at the TIA end: |S(k,1)| is the antenna -> TIA-input coupling.
 Variants:  none | can (stamped shield frame+lid over each AFE, stitched to L2) | abs (same shape, printed ABS: no metal)
            | none-noisland (as none, but L2 kept solid under the BME island: isolates the island void's effect)
@@ -46,10 +46,7 @@ box(fr4, [0, 0, 0], [W, H, T], 1)
 
 # ---- L2 plane: board minus antenna keepout (x > 77.6, y 20..42) and the island's no-plane rect ----
 E = 0.3
-KO = (W - 6.4, parts["U1"]["y0"] - 1.4, W, parts["U1"]["y1"] + 1.4)
-segs = [(E, E, KO[0], H - E), (KO[0], E, W - E, KO[1]), (KO[0], KO[3], W - E, H - E)]
-for (x0, y0, x1, y1) in segs:
-    box(gnd, [x0, y0, ZP], [x1, y1, ZP], 5)
+box(gnd, [E, E, ZP], [W - E, H - E, ZP], 5)              # solid L2 (the WROOM-1U has no PCB antenna, so no keep-out)
 # thermal-island plane voids: FR4 at higher priority overrides the sheet there
 if "noisland" not in VARIANT:
     for r in B.get("noPlane", []):
@@ -57,20 +54,19 @@ if "noisland" not in VARIANT:
 
 # ---- ESP32-S3-WROOM can (18 x ~19 mm, 3.1 mm tall), walls stitched to L2 ----
 u = parts["U1"]
-cx0, cx1, cy0, cy1, ztop = u["x0"] + 0.4, KO[0] - 0.4, u["y0"] + 0.8, u["y1"] - 0.8, T + 3.1
+cx0, cx1, cy0, cy1, ztop = u["x0"] + 0.4, 92.3 - 3.0, u["y0"] + 0.8, u["y1"] - 0.8, T + 3.1   # the can has a corner notch round the U.FL jack at (92.3, 51.0)
 box(gnd, [cx0, cy0, ztop], [cx1, cy1, ztop], 6)
 for a, b in (([cx0, cy0, ZP], [cx1, cy0, ztop]), ([cx0, cy1, ZP], [cx1, cy1, ztop]),
              ([cx0, cy0, ZP], [cx0, cy1, ztop]), ([cx1, cy0, ZP], [cx1, cy1, ztop])):
     box(gnd, a, b, 6)
 
 # ---- inverted-F antenna in the keepout (on the ground layer's level, like the module's own PCB antenna) ----
-ga, xa = KO[0], KO[0] + 3.9                       # ground edge, radiating arm x
-ya0 = KO[1] + 3.0
-box(gnd, [ga, ya0, ZP], [xa + 0.4, ya0 + 0.4, ZP], 7)            # shorting stub
-box(gnd, [xa, ya0, ZP], [xa + 0.4, ya0 + 16.8, ZP], 7)           # radiating arm: tuned to resonate at 2.44 GHz
-box(gnd, [ga + 0.5, ya0 + 2.5, ZP], [xa + 0.4, ya0 + 2.9, ZP], 7)  # feed leg
-ant = FDTD.AddLumpedPort(1, 50, [ga, ya0 + 2.5, ZP], [ga + 0.5, ya0 + 2.9, ZP], "x", excite=1.0, priority=8)
-xs.update((ga, ga + 0.5)); ys.update((ya0 + 2.5, ya0 + 2.9))
+AX, AY, ZA = 92.3, 51.0, 9.7                       # the module's U.FL jack (board x, y) and the lid's outer face
+ARM = float(os.environ.get("ARM", 19.5))            # inverted-L: 8.4 mm feed + ARM mm along the lid, ~ lambda/4 at 2.44 GHz
+box(gnd, [AX - 0.5, AY - 0.5, ZP + 1.0], [AX + 0.5, AY + 0.5, ZA], 7)            # pigtail centre conductor up through the lid hole
+box(gnd, [AX - ARM, AY - 0.5, ZA - 0.2], [AX + 0.5, AY + 0.5, ZA], 7)             # the FPC antenna on the lid's outer face
+ant = FDTD.AddLumpedPort(1, 50, [AX - 0.5, AY - 0.5, ZP], [AX + 0.5, AY + 0.5, ZP + 1.0], "z", excite=1.0, priority=8)
+xs.update((AX - 0.5, AX + 0.5)); ys.update((AY - 0.5, AY + 0.5)); zs.update((ZP + 1.0, ZA))
 
 # ---- U.FL jacks + tile coax: the shield (AC-grounded by 100 nF at the jack) leaves through the case wall and runs
 #      to the absorbing boundary, i.e. a long cable that can pick up Wi-Fi as a common-mode antenna ----

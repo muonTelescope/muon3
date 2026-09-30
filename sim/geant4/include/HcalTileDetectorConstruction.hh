@@ -34,7 +34,7 @@ public:
 
 private:
   void AttachOpticalProperties();
-  void SetupSurfaces(G4VPhysicalVolume* world, G4VPhysicalVolume* tile);
+  void SetupSurfaces(G4VPhysicalVolume* world, G4VPhysicalVolume* tile, G4VPhysicalVolume* block);
 
   G4String fGdmlPath;
   G4double fScintYield = 8000.;   // ph/MeV: extruded PS + PTP/POPOP [EST, tune to measured p.e./MIP]
@@ -44,6 +44,7 @@ private:
   /// Air gap fiber-end to SiPM face [mm] (sPHENIX tile coupler design).
   G4double fAirGapMm = 0.75;
   G4OpticalSurface* fReflectorSurf = nullptr;
+  G4OpticalSurface* fCouplerSurf = nullptr;
 };
 
 #endif

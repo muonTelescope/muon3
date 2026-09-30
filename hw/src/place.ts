@@ -126,7 +126,7 @@ export function place(b: Board, fp: Floorplan, iters = 400) {
     }
     sync();
     // try rotations for two-pin parts every 50 iterations: pick the one with shortest pin-to-centroid sum
-    if (it % 50 === 49) for (const p of movable) bestRotation(p, netPins, railPins);
+    if (it % 50 === 49) for (const p of movable) bestRotation(p, it >= iters * 0.6, netPins, railPins);
   }
   if (cells) {
     const leads = movable.filter(isLead), rest = movable.filter(p => !isLead(p));
@@ -137,18 +137,28 @@ export function place(b: Board, fp: Floorplan, iters = 400) {
   sync(); // followers = leader + k·pitch exactly (pitch is a multiple of the 0.1 mm routing grid)
 }
 
-function bestRotation(p: Part, ...maps: Map<string, { p: Part; off: Pt }[]>[]) {
-  let best = p.place!.rot, bestCost = Infinity;
-  for (const rot of [0, 90, 180, 270]) {
-    p.place!.rot = rot;
-    let cost = 0;
+/**
+ * Pick the rotation that shortens the part's nets. Orthogonal angles first; in the final passes small parts (up to 6 pads) may
+ * take any multiple of 15° if that shortens their nets by another 10 %: a resistor between two pins that sit 30° off the grid
+ * then escapes straight instead of dog-legging, which is what makes the copper smooth.
+ */
+function bestRotation(p: Part, finer: boolean, ...maps: Map<string, { p: Part; off: Pt }[]>[]) {
+  const costAt = (rot: number) => {
+    p.place!.rot = rot; let cost = 0;
     for (const m of maps) for (const pins of m.values()) {
       if (!pins.some(q => q.p === p) || pins.length < 2) continue;
       const ws = pins.map(q => apply(q.p.place!, q.off));
       const cx = ws.reduce((s, w) => s + w.x, 0) / ws.length, cy = ws.reduce((s, w) => s + w.y, 0) / ws.length;
       pins.forEach((q, i) => { if (q.p === p) cost += Math.hypot(ws[i].x - cx, ws[i].y - cy); });
     }
-    if (cost < bestCost - 1e-6) { bestCost = cost; best = rot; }
+    return cost;
+  };
+  let best = p.place!.rot, bestCost = Infinity;
+  for (const rot of [0, 90, 180, 270]) { const c = costAt(rot); if (c < bestCost - 1e-6) { bestCost = c; best = rot; } }
+  if (finer && p.info.footprint.pads.length <= 6) {
+    let fine = best, fineCost = bestCost * 0.9;
+    for (let rot = 15; rot < 360; rot += 15) { if (rot % 90 === 0) continue; const c = costAt(rot); if (c < fineCost - 1e-6) { fineCost = c; fine = rot; } }
+    best = fine;
   }
   p.place!.rot = best;
 }

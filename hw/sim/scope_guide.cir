@@ -78,8 +78,8 @@ reset
 tran 0.2n 800n 0 0.5n
 linearize v(tia) v(hit)
 wrdata pe1.txt v(tia) v(hit)
-* mean muon
-alterparam NPE=58
+* mean muon (19.5 p.e.: Geant4 tile 01, sim/geant4, direct-coupler model)
+alterparam NPE=20
 reset
 tran 0.2n 800n 0 0.5n
 linearize v(tia) v(hit)

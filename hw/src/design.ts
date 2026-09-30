@@ -3,7 +3,7 @@
 import { Circuit } from "./circuit.ts";
 
 export const P = {
-  esp32: "C2913198",     // ESP32-S3-WROOM-1-N8 (PCB antenna, -40..85 C)
+  esp32: "C3013946",     // ESP32-S3-WROOM-1U-N16R8: U.FL antenna connector (no PCB antenna: the antenna sits outside the case), 16 MB flash + 8 MB octal PSRAM (IO35-37 reserved)
   mc34063: "C100023",    // TI MC34063ADR boost controller (bias); replaces MAX1932 ($6.09 → $0.15 at 100)
   opa356: "C183100",     // OPA356AIDBVR 200 MHz RRIO TIA, one per channel [SIM afe_s12572_tia.cir]
   lmv7219: "C20613263",  // LMV7219M5 7 ns comparator

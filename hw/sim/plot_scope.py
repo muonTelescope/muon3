@@ -61,7 +61,7 @@ tot_m = np.sum(m[:, 2] > 1.65) * (m[1, 0] - m[0, 0])
 screen(axs[1, 0], m[:, 0], [(2, (p[:, 1] - bp) * 10, 0.1, 1.5, "1 p.e. ×10"), (4, m[:, 1] - bm, 0.1, -0.5, "muon"),
                             (3, m[:, 2], 2.0, -3.2, "HIT0")],
        100e-9, "③ Tile on, bias at V_op: dark pulse vs. muon", t0=0.1e-6,
-       meas=(f"1 p.e. {pe*1e3:.1f} mV", f"muon (58 p.e.) {mu*1e3:.0f} mV", f"TOT {tot_m*1e9:.0f} ns", f"VTH 35 mV ≈ {35/(pe*1e3):.0f} p.e."))
+       meas=(f"1 p.e. {pe*1e3:.1f} mV", f"mean muon (20 p.e.) {mu*1e3:.0f} mV", f"TOT {tot_m*1e9:.0f} ns", f"VTH 29 mV = {29/(pe*1e3):.0f} p.e."))
 
 # 4) bias power-up: HV_MON on the probe row
 for v, ch in (("0", 1), ("1.0", 2), ("2.048", 3)):

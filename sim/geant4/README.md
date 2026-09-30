@@ -1,135 +1,103 @@
-# Muon3 Geant4 Panel + WLS Fiber + SiPM Simulation
+# Geant4 light-yield models
 
-Full particle + optical photon simulation of one (or more) 200×200×10 mm plastic scintillator panel(s) with embedded looped WLS fiber read out by a MicroFC-30035 SiPM.
+Two programs share this CMake project:
 
-**Purpose**
-- Predict light yield (photoelectrons at SiPM) as function of muon impact position, angle, and energy.
-- Study fiber loop collection uniformity and single-end readout efficiency.
-- Generate realistic pulse time profiles and photon arrival statistics for AFE / ToT validation.
-- Support design of calibration (charge vs. optical injection) and threshold settings.
+- **`hcal_tile`** (current): one decommissioned sPHENIX inner-HCal tile with its WLS fiber, coupler and Hamamatsu
+  S12572-33-015P. This is the model behind the Muon3 station's threshold and efficiency numbers.
+- `muon_panel` (legacy): the 200 × 200 × 10 mm looped-fiber panel of the earlier July design (MicroFC-30035). Kept for
+  reference; not used by the station.
 
-**Requirements**
-- Geant4 11.0 or newer, built with CMake (recommended with Qt or OpenGL visualization).
-- C++17 compiler.
-- Optional: ROOT (for ntuples) — the example falls back to plain text/CSV output if ROOT is absent.
-- Optional: gdml support if you want to export geometry.
+## Result (tile 01, 400 muons through the tile at random positions)
 
-**Quick build & run**
+| | |
+|---|---|
+| Energy deposit | 1.31 MeV mean |
+| **Photoelectrons per muon** | **19.5 mean** (σ 11, median 19, max 67) |
+| Efficiency at a 5 p.e. threshold | **90 %** (a 3 p.e. threshold: about 95 %) |
+| Per muon: scintillation photons → absorbed by the fiber → re-emitted → reach a SiPM window → detected | 15 300 → 3 650 → 3 370 → 108 → 20 |
+
+![Plots](../../figures/hcal_inner_tile_summary.png)
+
+The earlier documents quoted **58 p.e. per muon**. That number never came from the optical transport: whenever no tracked
+photon reached the SiPM, the event action substituted `E_dep × 10 000 photons/MeV × 1.2 % × 0.25`, which is 57 p.e. at
+1.9 MeV. That fallback is now opt-in (`HCAL_EFFECTIVE_YIELD=1`).
+
+## How the transport was debugged
+
+With the model as first written, tracked photons produced **0.0–0.1 p.e. per muon**. `HCAL_DEBUG=1` makes the stepping
+action write `photon_fate.csv` (where and how every photon of the first `HCAL_DEBUG_EVENTS` events ended) and
+`photon_tracks.csv` (every step of a sample of photons); `scripts/debug_photons.py` turns them into the figure below.
+The first render of the model looked like the yellow fibers hanging outside a green plate, and the fates told the rest:
+
+1. **Mirrored fiber pieces.** `G4PVPlacement` takes the *inverse* of the rotation that turns the tube; every diagonal
+   piece was mirrored about its path and left the tile by 5.8 mm.
+2. **Spectra on a coarse grid.** Y11 absorbs above about 2.7 eV and emits below it. On an 8-point grid the two overlapped,
+   so re-emitted photons were re-absorbed at once (and cascaded).
+3. **No refractive index on the SiPM.** Geant4 kills an optical photon at a boundary when the next material has no
+   `RINDEX`, so not one photon ever entered the SiPM volume.
+4. **Reflector as a skin on the tile.** It also sat between the tile and its fibers. The coating is now a border surface,
+   and a second one covers light that comes back onto the tile edge from the coupler.
+5. **Sharp corners and 3 mm chords.** A 1 mm fiber only guides round bends of radius above about 25 mm. The mesh path is
+   a polyline whose serpentine turns are three-point stand-ins for semicircles (legs 56.78 mm apart, so R = 28.4 mm);
+   they are rebuilt as true semicircles, and every bend is sampled every 1° with mitre-cut `G4CutTubs` chords. (`G4Torus`
+   arcs were tried first; the quartic solver is unreliable for a 0.65 mm tube on a 28 mm ring, and photons hopped from
+   core to tile to groove at every joint.)
+6. **The connector pocket.** A fiber that bends across the pocket floor cannot be one volume, so the pocket is filled
+   (`HCAL_POCKET=1` restores the mesh) and the fibers end flush with the tile's SiPM edge.
+7. **The coupler.** With one SiPM 21 mm from each fiber end, even a white mixing slot delivers almost nothing: photons
+   random-walk along a 3 mm slot losing 10 % per bounce, and 1.4 % of them arrive. See below.
+
+![Debug figure](../../figures/hcal_geant4_debug.png)
+
+*Left: sampled guided photons that reached the SiPM (colored paths) and where other guided photons left the fiber (grey).
+Middle: the loss funnel. Right: where every photon ends.*
+
+## What the model assumes (and does not know)
+
+- **Tile:** extruded polystyrene + 1.5 % PTP + 0.01 % POPOP, 7 mm, n = 1.59, attenuation 2.2 m, POPOP emission at 420 nm,
+  decay 2.4 ns, **8000 photons/MeV (an estimate)**; 50 µm painted TiO₂ reflector (R = 0.95, Lambertian); wrap of Al foil,
+  cling film and black vinyl. Source: Aidala et al., IEEE TNS 65 (2018), Table II.
+- **Fiber:** Kuraray Y11(200) single-clad, 1 mm: PS core (n = 1.59, radius 0.49 mm) in PMMA cladding (n = 1.49), in an
+  epoxy groove (EPO-TEK 301, n = 1.52); absorption at 430 nm, emission at 476 nm, decay 7 ns, attenuation 3.5 m.
+- **The loop is not closed.** The mesh path doubles back on itself at the far end (a loop closed on itself), so it is
+  built as two half-loops A and B in separate mid-plane layers (they must cross three other legs). Photons heading for
+  the far end are lost there; in the real loop they travel round and arrive at the second SiPM window. The real yield is
+  therefore higher, by up to about 1.7× for the trapped light.
+- **The coupler is a hypothesis.** The source CAD has both fiber ends 43 mm apart and one SiPM between them. The default
+  (`direct`) follows the paper's description: each fiber end faces a 3 × 3 mm SiPM window across the published 0.75 mm
+  air gap. `HCAL_COUPLER=cavity` puts a 47 mm white mixing slot with one SiPM in the middle instead: 0.3 p.e. per muon.
+  **Ask GSU how the real coupler brings both ends to the SiPM.**
+- **Tiles 02–12 are not simulated.** Their fiber paths in the mesh files run outside the scintillator (see
+  `hw/docs/ASSEMBLY.md`); `hw/case/assembly.py` rebuilds valid paths, but the Geant4 model still reads tile 01's.
+- **Photo-detection** is a flat PDE of 0.25 on photons reaching the SiPM; no cross-talk, after-pulsing or saturation
+  (40 000 pixels, so saturation is small at 20 p.e.).
+
+## Build and run
+
+Geant4 11.4 from conda-forge is enough (`micromamba create -p g4 -c conda-forge geant4 cmake make cxx-compiler`, about 3.5 GB;
+the environment's CMake needs `-DEXPAT_LIBRARY` and `-DZLIB_LIBRARY` pointing at its own `libexpat.1.dylib` / `libz.1.dylib`).
+Run one heavy job at a time (`../../tools/memguard.sh`).
 
 ```bash
-cd physics/sim/geant4
-mkdir -p build && cd build
-cmake .. -DGeant4_DIR=/path/to/geant4/install/lib/Geant4-11.2.0   # or let CMake find it
-make -j$(nproc)
-./muon_panel macros/run.mac
-# or with visualization:
-./muon_panel macros/vis.mac
-
-# sPHENIX Inner HCal tile assembly (tessellated original + fiber + coating + wrap + blocker + SiPM)
-./hcal_tile -g gdml/InnerHCalTile01_EJ200_assembly.gdml \
-  --tile-center 60 95 0 55 90 macros/hcal_tile_run.mac
+mkdir build && cd build && cmake .. -DCMAKE_PREFIX_PATH=$CONDA_PREFIX && make -j2 hcal_tile
+printf '/run/initialize\n/run/beamOn 400\n' > run.mac
+ln -s ../gdml gdml && ./hcal_tile run.mac                      # muon_panel_hits.csv: one row per event
+HCAL_DEBUG=1 HCAL_DEBUG_EVENTS=20 ./hcal_tile run.mac          # + photon_fate.csv, photon_tracks.csv
+python3 ../scripts/debug_photons.py . ../gdml/mesh/InnerHCalTile01_EJ200_mesh.json debug.png
 python3 ../scripts/plot_hcal_tile_results.py --csv muon_panel_hits.csv
 ```
 
-**Important macros**
-- `macros/run.mac` — batch run, 1000 vertical muons, text output.
-- `macros/vis.mac` — interactive with OpenGL + trajectory + optical photon tracks (slow for many photons).
-- `macros/scan_position.mac` — example for position-dependent yield study.
-- `macros/hcal_tile_run.mac` / `hcal_tile_vis.mac` — Inner HCal tile batch / visualization.
+| Variable | Effect |
+|---|---|
+| `HCAL_DEBUG`, `HCAL_DEBUG_EVENTS` | photon fate and track logs |
+| `HCAL_COUPLER=cavity` | white mixing-slot coupler instead of two SiPM windows |
+| `HCAL_POCKET=1` | keep the connector pocket in the tile solid |
+| `HCAL_EFFECTIVE_YIELD=1` | the old fallback formula (not a transport result) |
 
-**Geometry (configurable in PanelDetectorConstruction)**
-- Scintillator box: 200×200×10 mm, EJ-200 equivalent material.
-- Milled groove (approximated as a rounded rectangular loop path ~1.3 mm wide).
-- WLS fiber: core + cladding, looped with two straight legs exiting one edge to a connector "port".
-- Wrapping: highly reflective diffuse or specular surface on all faces except fiber exit.
-- SiPM: 3×3 mm sensitive face optically coupled to one fiber end (simple dielectric interface + quantum efficiency applied in SD).
+The 400-event run behind the table is `hcal_tile01_400events.csv`.
 
-**Physics**
-- Standard EM (muons, electrons, gammas).
-- Optical physics enabled (G4OpticalPhysics).
-- Scintillation process in the plastic.
-- Wavelength shifting in the fiber core.
-- Surface properties: polished groove interface (optical cement), diffuse reflector on outer surfaces.
-- No hadronic physics needed for MIP muons in thin plastic.
+## Legacy panel model
 
-**Output (default text mode)**
-- Per event: primary muon position, deposited energy in scint, number of optical photons produced, number shifted in fiber, number detected at SiPM (after PDE).
-- Summary histograms printed at end.
-- Files: `muon_panel_hits.csv`, `photon_stats.txt`
-
-To enable ROOT ntuples, build with `-DWITH_ROOT=ON` and have ROOT in your environment (Geant4 must have been built with analysis/root).
-
-**Building against a system Geant4**
-
-A helper script is provided:
-
-```bash
-cd sim/geant4
-./build_with_system_geant4.sh $HOME/geant4/install     # adjust path
-```
-
-Or manually:
-
-```bash
-mkdir build && cd build
-cmake -DGeant4_DIR=$HOME/geant4/install/lib/Geant4-11.3.0 ..
-make -j
-```
-
-See `build_with_system_geant4.sh` for more details.
-
-**Tuning parameters (critical)**
-Edit `src/PanelDetectorConstruction.cc` or pass via macros/UI commands:
-- Scintillation yield (photons/MeV)
-- Fiber absorption length, WLS efficiency, trapping fraction
-- Surface reflectivity (0.85–0.98 realistic)
-- SiPM PDE for the shifted wavelength (typical 30–45 % for green on MicroFC-30035)
-- Groove-fiber optical coupling loss
-
-**Example studies you can run**
-1. Light yield map: vary gun position in X/Y, fit uniformity.
-2. Angular dependence (0° vertical vs 60° inclined).
-3. Effect of fiber loop radius / groove polish quality.
-4. Export photon arrival time distribution → feed into ngspice AFE model (convolve with single-p.e. response).
-5. Compare with measured single-p.e. staircase from real panels.
-
-**Relation to other models**
-- Geant4 → photon count + time series at SiPM → use as input charge or scaled current source in `../circuit/`
-- The Python models in `../python/` can take mean p.e. from here for rate / coincidence Monte Carlo.
-
-**References**
-- EJ-200 datasheet (Eljen)
-- Kuraray WLS fiber (Y-11 / K-11) technical notes
-- onsemi MicroFC-30035 product spec (PDE vs wavelength)
-- Historical muonTelescope panel assembly notes (see `reference_documentation/repositories/scintillatorPanel`)
-- phyxch/fiberPanel — GEANT4 simulation of scintillation light collection from a scintillator panel with embedded fiber (https://github.com/phyxch/fiberPanel). Cloned locally under `reference_documentation/repositories/fiberPanel/`. Provides material mass-fraction definitions (EJ-200), optical cement (EJ-500), WLS Y-11 modeling, Al wrapping + sensor hole, position-dependent collection studies, and SiPM photon counting SD. The current looped-fiber model builds on and extends this prior work from the same collaboration (Xiaochun He / GSU group).
-- phyxch/magnetocosmics — Cosmic ray propagation in geomagnetic field (https://github.com/phyxch/magnetocosmics). Reference for more realistic primary muon/ shower generation in future updates.
-
-See the comprehensive paper `Muon3_Simulation_Studies.tex` (base directory) for full results, citations, and details of 2026 model improvements (realistic cosmic spectrum + angular distribution, refined geometry and optics). The paper is formatted following sPHENIX publication conventions.
-
-**Limitations of this starter model**
-- Simplified groove as union of tori/cylinders (real milled groove is more complex).
-- No surface roughness scattering modeled in detail (can add UNIFIED model).
-- Single fiber end readout (the real design uses one end).
-- No afterpulsing / crosstalk in SiPM (apply statistically in post-processing).
-- Cosmic muon spectrum not included (use GPS with appropriate angular + energy distribution for realism; see phyxch/magnetocosmics for geomagnetic tracking reference).
-
-**Related external work (same group)**
-The current looped model is informed by and cross-checked against `reference_documentation/repositories/fiberPanel` (straight-fiber Geant4 study with configurable fiber position, precise EJ-200 mass fractions, full optical surfaces, WLS + SiPM photon counting). Material definitions were harmonized with that reference.
-
-**sPHENIX Inner HCal tiles (`hcal_tile`)**
-- Originals: `reference_documentation/repositories/sPHENIX_HCal/` and `cad/sphenix_hcal/originals/gdml/` (unmodified tile GDMLs).
-- STEP assemblies (scintillator + fiber + coating + wrap + light blocker + SiPM): `cad/sphenix_hcal/step/`.
-- Mesh JSON used at runtime (no Geant4 GDML dependency): `gdml/mesh/*_mesh.json`.
-- **Photosensor: Hamamatsu S12572-33-015P** (sPHENIX HCal MPPC), **not** the Muon3 MicroFC-30035:
-  - 3×3 mm², 15 μm pixels (~40 000), PDE **0.25**
-  - Dual fiber ends into a plastic coupler with **~0.75 mm air gap** to the SiPM face
-  - Effective yield: `N_pe = edep_MeV × 10000 × 0.012 × 0.25` ≈ **30 p.e./MeV** (Poisson-sampled); optical SD still applies Hamamatsu PDE to any tracked photons that hit `SiPMLV`
-  - Refs: Aidala et al. IEEE TNS 65 (2018); Hamamatsu S12572 datasheet
-- Example results (tile 01, 200 events): ⟨Edep⟩ ≈ 1.92 MeV, ⟨p.e.⟩ ≈ 58 — see `hcal_tile_hits.csv`.
-- **ROOT plots** (preferred): from repo root  
-  `root -l -b -q 'sim/reports/root_hcal_and_geant4.C'`  
-  writes `figures/hcal_inner_tile_*.png`, `figures/root_hcal_combined.png`, and mirrors under `plots/`.
-- Build: `make hcal_tile` (same CMake project as `muon_panel`).
-
-Improve the Muon3 loop-panel geometry further with CAD groove import once the mechanical model is frozen; HCal tile STEP/tessellated import is already wired via `hcal_tile`.
+`muon_panel` (`macros/run.mac`, `vis.mac`, `scan_position.mac`) simulates a 200 × 200 × 10 mm EJ-200 panel with a looped
+WLS fiber and a MicroFC-30035; it comes from the July architecture and the `phyxch/fiberPanel` work of the same group
+(`reference_documentation/repositories/fiberPanel`). Its material definitions were harmonised with that reference.

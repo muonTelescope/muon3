@@ -40,8 +40,6 @@ def main():
     y = np.asarray(data["y_mm"], dtype=float)
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    g4_plots = ROOT / "sim/geant4/plots"
-    g4_plots.mkdir(parents=True, exist_ok=True)
 
     # 1) Energy deposit spectrum
     fig, ax = plt.subplots(figsize=(7, 4.5))
@@ -52,7 +50,7 @@ def main():
     ax.set_title("sPHENIX Inner HCal tile — MIP energy deposit (Geant4)")
     ax.legend()
     fig.tight_layout()
-    for d in (args.out_dir, g4_plots):
+    for d in (args.out_dir,):
         fig.savefig(d / f"{args.tag}_edep.png", dpi=160)
     plt.close(fig)
 
@@ -65,7 +63,7 @@ def main():
     ax.set_title("sPHENIX Inner HCal tile — SiPM yield (Geant4 optical)")
     ax.legend()
     fig.tight_layout()
-    for d in (args.out_dir, g4_plots):
+    for d in (args.out_dir,):
         fig.savefig(d / f"{args.tag}_pe.png", dpi=160)
     plt.close(fig)
 
@@ -79,7 +77,7 @@ def main():
     ax.set_title("Inner HCal tile — mean edep vs impact position")
     ax.set_aspect("equal", adjustable="box")
     fig.tight_layout()
-    for d in (args.out_dir, g4_plots):
+    for d in (args.out_dir,):
         fig.savefig(d / f"{args.tag}_yield_map.png", dpi=160)
     plt.close(fig)
 
@@ -99,7 +97,7 @@ def main():
         fontsize=11,
     )
     fig.tight_layout()
-    for d in (args.out_dir, g4_plots):
+    for d in (args.out_dir,):
         fig.savefig(d / f"{args.tag}_summary.png", dpi=160)
     plt.close(fig)
 
@@ -110,14 +108,14 @@ def main():
         "mean_pe": float(np.mean(det)),
         "std_pe": float(np.std(det)),
         "mean_photons_prod": float(np.mean(prod)),
-        "csv": str(csv_path),
+        "csv": csv_path.name,
     }
-    out_json = g4_plots / f"{args.tag}_summary.json"
+    out_json = ROOT / "sim/geant4" / f"{args.tag}_summary.json"
     import json
 
     out_json.write_text(json.dumps(summary, indent=2))
     print(json.dumps(summary, indent=2))
-    print(f"Figures written to {args.out_dir} and {g4_plots}")
+    print(f"Figures written to {args.out_dir}; summary in {out_json}")
 
 
 if __name__ == "__main__":
