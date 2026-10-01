@@ -528,6 +528,20 @@ python3 ../scripts/debug_photons.py . ../gdml/mesh/InnerHCalTile01_EJ200_mesh.js
 
 ---
 
+## Wright-style detector layouts (3 matched panels, printed + M3 only)
+
+Five architectural layouts for one detector of **three identical tiles** stacked 100 mm apart and exactly registered, so triple-coincidence overlap is 100 % for a vertical track. Panel holders now carry LED strips (5 mm edge-lit strip inside the wall plus a visible light band on the outer wall). Everything except tiles, PCBs, SiPM, LEDs, fiber and wires is 3D-printed; every joint is an M3 cap screw with a captive hex nut. Models are built in ClassCAD (`tools/classcad/wright/`), rendered with `hw/case/wright/render.py`.
+
+| Fallingwater (tile 7) | Guggenheim (tile 10) |
+|---|---|
+| ![Fallingwater](hw/docs/wright/wright_A_fallingwater.png) | ![Guggenheim](hw/docs/wright/wright_B_guggenheim.png) |
+| **Robie (tile 9)** | **Hanna (tile 4)** |
+| ![Robie](hw/docs/wright/wright_C_robie.png) | ![Hanna](hw/docs/wright/wright_D_hanna.png) |
+
+![Taliesin (tile 5)](hw/docs/wright/wright_E_taliesin.png)
+
+Regenerate: `python3 hw/case/wright/tile_data.py 7 10 9 4 5 && node tools/classcad/wright/build.mjs && blender -b --factory-startup --python hw/case/wright/render.py -- A hw/docs/wright`. Outputs (STEP/STL per material group, manifest) go to `hw/out/wright/<layout>/`. Geometry is generated, not print-tested; tile wrap, fiber and wire thickness are shown schematically, and tiles 11–12 are too wide for a 230 mm bed without a second holder split.
+
 ## 9. Design notes, open questions, repository map
 
 ### Design notes
