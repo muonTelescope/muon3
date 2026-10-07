@@ -64,6 +64,8 @@ export class Scene {
   cyl(g, d, h, c, R = I4()) { return this._add({ g, k: 'cyl', d, h, M: mul(this.M, mul(T(...c), R)), cuts: [] }); }
   prism(g, poly, z0, z1, cuts = []) { return this._add({ g, k: 'prism', poly, h: z1 - z0, M: mul(this.M, T(0, 0, z0)), cuts: cuts.map(q => ({ ...q, M: mul(this.M, q.M) })) }); }
   ring(g, outer, inner, z0, z1, cuts = []) { return this._add({ g, k: 'ring', outer, inner, h: z1 - z0, M: mul(this.M, T(0, 0, z0)), cuts: cuts.map(q => ({ ...q, M: mul(this.M, q.M) })) }); }
+  /** solid of revolution: closed profile [(r,z)...] revolved about the z axis */
+  rev(g, prof) { return this._add({ g, k: 'rev', poly: prof, M: mul(this.M, Rx(Math.PI / 2)), cuts: [] }); }
   hex(g, r, z0, z1, rot = 0) { return this.prism(g, Array.from({ length: 6 }, (_, i) => [r * Math.cos(rot + i * Math.PI / 3), r * Math.sin(rot + i * Math.PI / 3)]), z0, z1); }
   /** cutter box description (local matrix, composed with the stack when attached) */
   static cutBox(s, c, R = I4()) { return { k: 'box', s, M: mul(T(...c), R) }; }
@@ -92,6 +94,7 @@ async function make(p){
  if(p.k==='box')return (await api.v1.solid.box({id:eif,length:p.s[0],width:p.s[1],height:p.s[2],rotation:p.rot,translation:p.tr})).result;
  if(p.k==='cyl')return (await api.v1.solid.cylinder({id:eif,diameter:p.d,height:p.h,rotation:p.rot,translation:p.tr})).result;
  if(p.k==='prism')return extrude(p.poly,p.h,p.rot,p.tr);
+ if(p.k==='rev'){const sh=await profile(p.poly);return (await api.v1.solid.revolve({id:eif,originPos:[0,0,0],direction:[0,1,0],angle:2*Math.PI,curves:sh,rotation:p.rot,translation:p.tr})).result;}
  if(p.k==='ring'){const o=await extrude(p.outer,p.h,p.rot,p.tr);
    const inner=await extrude(p.inner,p.h+1,p.rot,[p.tr[0]-0.5*p.dz[0],p.tr[1]-0.5*p.dz[1],p.tr[2]-0.5*p.dz[2]]);
    return (await api.v1.solid.subtraction({id:eif,target:o,tools:[inner]})).result;}
@@ -103,4 +106,20 @@ for(const p of DATA){
  ids.push(id);}
 if(bad)throw Error('null solids: '+bad);
 return {solids:ids.length};`;
+}
+
+/** convex CCW polygon with a different outward offset per edge d[i] (edge i = P[i]->P[i+1]) */
+export function offsetVar(P, d) {
+  const n = P.length, L = P.map((a, i) => { const b = P[(i + 1) % n], l = Math.hypot(b[0] - a[0], b[1] - a[1]), e = [(b[0] - a[0]) / l, (b[1] - a[1]) / l]; return { p: [a[0] + e[1] * d[i], a[1] - e[0] * d[i]], e }; });
+  return P.map((_, i) => { const { p: p1, e: e1 } = L[(i + n - 1) % n], { p: p2, e: e2 } = L[i]; const den = e1[0] * e2[1] - e1[1] * e2[0]; const t = ((p2[0] - p1[0]) * e2[1] - (p2[1] - p1[1]) * e2[0]) / den; return [p1[0] + t * e1[0], p1[1] + t * e1[1]]; });
+}
+/** Sutherland-Hodgman clip of a convex polygon against the half-plane y<=c (side -1) or y>=c (side +1) */
+export function clipY(P, c, side) {
+  const ins = p => side < 0 ? p[1] <= c : p[1] >= c, out = [];
+  for (let i = 0; i < P.length; i++) {
+    const a = P[i], b = P[(i + 1) % P.length];
+    if (ins(a)) out.push(a);
+    if (ins(a) !== ins(b)) { const t = (c - a[1]) / (b[1] - a[1]); out.push([a[0] + t * (b[0] - a[0]), c]); }
+  }
+  return out;
 }

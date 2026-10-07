@@ -1,9 +1,9 @@
 // node tools/classcad/wright/build.mjs [A B C D E]  -> hw/out/wright/<L>/{<group>.stl,<group>.step,manifest.json}
 import fs from 'node:fs'; import path from 'node:path'; import { fileURLToPath } from 'node:url';
-import { session } from '../rt.mjs'; import { Scene, groupScript, pt } from './lib.mjs'; import { LAYOUTS } from './layouts.mjs';
+import { session } from '../rt.mjs'; import { Scene, groupScript, pt } from './lib.mjs'; import { LAYOUTS as OLD } from './layouts.mjs'; import { LAMP } from './lamp.mjs'; import { POTS } from './pots.mjs'; import { SPINE } from './spine.mjs'; import { TILEPOT } from './tilepot.mjs'; const LAYOUTS = { ...OLD, ...LAMP, ...POTS, ...SPINE, ...TILEPOT };
 const here = path.dirname(fileURLToPath(import.meta.url)), root = path.resolve(here, '../../..');
 const TILES = JSON.parse(fs.readFileSync(path.join(here, 'tiles.json')));
-const which = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(LAYOUTS);
+const which = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(OLD);
 const { client, call } = await session();
 try {
   for (const L of which) {
@@ -24,6 +24,6 @@ try {
       console.log(L, g, prims.length);
     }
     const panels = res.Ms.map(M => ({ M, fiber: D.fiber.map(([x, y]) => pt(M, [x - cx, y - cy, 0])) }));
-    fs.writeFileSync(path.join(out, 'manifest.json'), JSON.stringify({ layout: L, name: LAYOUTS[L].name, tile: res.tile, cam: res.cam, panels, wires: S.wires, tally: S.tally, report: rep }, null, 1));
+    fs.writeFileSync(path.join(out, 'manifest.json'), JSON.stringify({ layout: L, name: LAYOUTS[L].name, tile: res.tile, cutX: res.cutX, cam: res.cam, style: res.style, panels, wires: S.wires, tally: S.tally, report: rep }, null, 1));
   }
 } finally { await client.close(); }
