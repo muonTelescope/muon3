@@ -14,7 +14,7 @@ const PRIORITY: [RegExp, number][] = [
 
 type Cells = { groups: string[]; pitch: number };
 
-export function autoroute(b: Board, keepouts: { x0: number; y0: number; x1: number; y1: number }[], cells?: Cells, log = console.log) {
+export function autoroute(b: Board, keepouts: { x0: number; y0: number; x1: number; y1: number }[], cells?: Cells, log = console.log, maxPasses = 4000) {
   const t0 = performance.now();
   const r = new Router(b, keepouts, 0.1);
   if (cells) routeCells(b, r, cells, log);
@@ -31,8 +31,9 @@ export function autoroute(b: Board, keepouts: { x0: number; y0: number; x1: numb
 
   const rips = new Map<string, number>();
   let pass = 0;
-  while (queue.length && pass < 4000) {
+  while (queue.length && pass < maxPasses) {
     pass++;
+    if (pass % 50 === 0) log(`  route pass ${pass}, ${queue.length} nets queued`);
     const net = queue.shift()!;
     r.ripUp(net);
     const soft = (rips.get(net) ?? 0) < 25;

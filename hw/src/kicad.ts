@@ -59,14 +59,14 @@ function arcMid(a: { x: number; y: number }, b: { x: number; y: number }, c: { x
   return pt(c.x + r * Math.cos(a0 + sw / 2), c.y + r * Math.sin(a0 + sw / 2));
 }
 
-function footprint(b: Board, p: Part, nid: (n: string) => number): string {
+export function footprint(b: Board, p: Part, nid: (n: string) => number): string {
   const pl = p.place!, fp = p.info.footprint;
   const out: string[] = [];
   out.push(`(footprint ${q("muon3:" + fp.name)} (layer "F.Cu") (uuid ${q(uuid())}) (at ${f(pl.x)} ${f(pl.y)} ${pl.rot})`);
   out.push(`(property "Reference" ${q(p.ref)} (at 0 0 ${pl.rot}) (layer "F.Fab") (uuid ${q(uuid())}) (effects (font (size 0.5 0.5) (thickness 0.08))))`);
   out.push(`(property "Value" ${q(p.value)} (at 0 0 ${pl.rot}) (layer "F.Fab") (hide yes) (uuid ${q(uuid())}) (effects (font (size 0.5 0.5))))`);
   out.push(`(property "LCSC" ${q(p.lcsc)} (at 0 0 0) (layer "F.Fab") (hide yes) (uuid ${q(uuid())}) (effects (font (size 0.5 0.5))))`);
-  out.push(p.lcsc === "TP" ? `(attr smd exclude_from_pos_files exclude_from_bom)` : `(attr smd)`);
+  out.push(p.lcsc === "TP" ? `(attr smd exclude_from_pos_files exclude_from_bom)` : `(attr ${fp.pads.some(pd => pd.layer === "multi") ? "through_hole" : "smd"})`);
   for (const pd of fp.pads) {
     const net = p.pads[pd.num];
     const netS = net ? ` (net ${nid(net)} ${q(net)})` : "";
@@ -87,8 +87,8 @@ function footprint(b: Board, p: Part, nid: (n: string) => number): string {
   for (const h of fp.holes) out.push(`(pad "" np_thru_hole circle (at ${f(h.x)} ${f(h.y)}) (size ${f(h.d)} ${f(h.d)}) (drill ${f(h.d)}) (layers "*.Cu" "*.Mask") (uuid ${q(uuid())}))`);
   const bb = fp.bbox;
   out.push(`(fp_rect (start ${f(bb.x0)} ${f(bb.y0)}) (end ${f(bb.x1)} ${f(bb.y1)}) (stroke (width 0.05) (type solid)) (fill no) (layer "F.CrtYd") (uuid ${q(uuid())}))`);
-  const m = fp.model, step = PARTS + (p.info.lcsc) + "/model.step";
-  const ov = MODEL_OVERRIDE[p.info.lcsc];
+  const m = fp.model, step = PARTS + (p.info.footprintSource ?? p.info.lcsc) + "/model.step";
+  const ov = MODEL_OVERRIDE[p.info.footprintSource ?? p.info.lcsc];
   if (ov) out.push(`(model ${q(ov.file)} (offset (xyz ${ov.dx ?? 0} 0 0)) (scale (xyz 1 1 1)) (rotate (xyz 0 0 0)))`);
   else if (m) out.push(`(model ${q(step)} (offset (xyz ${f(m.ox)} ${f(-m.oy)} ${f(m.z)})) (scale (xyz 1 1 1)) (rotate (xyz ${m.rot.map(v => -v).join(" ")})))`);
   out.push(")");
@@ -106,7 +106,7 @@ function project() {
     net_settings: {
       classes: [
         { name: "Default", clearance: RULES.clearance, track_width: RULES.track, via_diameter: RULES.viaDia, via_drill: RULES.viaDrill, priority: 2147483647 },
-        { name: "HV", clearance: 0.26, track_width: netClass("HV").width, via_diameter: RULES.viaDia, via_drill: RULES.viaDrill, priority: 0 },
+        { name: "HV", clearance: RULES.hvClearance, track_width: netClass("HV").width, via_diameter: RULES.viaDia, via_drill: RULES.viaDrill, priority: 0 },
       ],
       netclass_patterns: hvNets.map(n => ({ netclass: "HV", pattern: n })),
       meta: { version: 4 },
@@ -117,9 +117,9 @@ function project() {
 
 function dru() {
   return `(version 1)
-# Manufacturer land patterns (EasyEDA/LCSC) are accepted as-is between pads of the same part.
-(rule "intra-footprint pads" (constraint clearance (min 0.08mm)) (condition "A.Type == 'Pad' && B.Type == 'Pad' && A.Parent == B.Parent"))
-(rule "intra-footprint holes" (constraint hole_clearance (min 0.1mm)) (condition "A.Type == 'Pad' && B.Type == 'Pad' && A.Parent == B.Parent"))
+# Only the original biased U.FL land pattern has a fixed 0.45 mm pad gap.
+# This exception covers pad-to-pad geometry inside that connector, never traces/vias.
+(rule "UFL manufacturer pads" (constraint clearance (min 0.4mm)) (condition "A.Type == 'Pad' && B.Type == 'Pad' && A.Parent == B.Parent && A.Library_Link == 'muon3:RF-SMD_FRF05002-JSS103M'"))
 # Edge-launch SMA: its land pattern runs to the board edge by design.
 (rule "edge SMA" (constraint edge_clearance (min 0.15mm)) (condition "A.Type == 'Pad' && A.Library_Link == 'muon3:SMA-SMD_BWSMA-KE-P001'"))
 `;

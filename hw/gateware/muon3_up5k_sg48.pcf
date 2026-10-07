@@ -1,0 +1,12 @@
+# Matches hw/src/modular.ts contract; iCE40UP5K-SG48, all signal banks 3V3.
+set_io clk 35
+set_io hit[0] 2
+set_io hit[1] 3
+set_io hit[2] 4
+set_io hit[3] 6
+set_io spi_cs_n 23
+set_io spi_sck 25
+set_io spi_mosi 26
+set_io spi_miso 27
+set_io irq 28
+set_io reset 31

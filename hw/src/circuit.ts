@@ -38,7 +38,9 @@ export class Circuit {
   /** Add a part by LCSC code. conn maps pin name (or pad number) -> net name. */
   async add(prefix: string, lcsc: string, conn: Record<string, string>, opts: { value?: string; ref?: string; footprintFrom?: string; noPasteBottom?: boolean } = {}) {
     // Passives take footprint + 3D model from one representative part per package (one EasyEDA fetch per package).
-    const info = await fetchPart(opts.footprintFrom ?? lcsc, { assets: true, datasheet: !opts.footprintFrom });
+    const geometry = await fetchPart(opts.footprintFrom ?? lcsc, { assets: process.env.HW_OFFLINE !== "1", datasheet: !opts.footprintFrom });
+    const actual = opts.footprintFrom ? await fetchPart(lcsc, { assets: false, datasheet: false }) : geometry;
+    const info = { ...actual, footprintSource: geometry.lcsc, footprint: structuredClone(geometry.footprint), pins: geometry.pins };
     if (opts.noPasteBottom) info.footprint.pads = info.footprint.pads.map(pd => pd.layer === "bottom" ? { ...pd, nopaste: true } : pd);
     const ref = opts.ref ?? this.nextRef(prefix);
     if (opts.ref && this.parts.some(q => q.ref === opts.ref)) throw new Error(`duplicate ref ${opts.ref}`);
@@ -59,8 +61,10 @@ export class Circuit {
   async l(value: string, a: string, b: string, lcsc: string) { return this.add("L", lcsc, { "1": a, "2": b }, { value }); }
 
   private async two(prefix: string, kind: "resistor" | "capacitor", value: string, pkg: string, a: string, b: string, volts = 0) {
-    // Default: snap to the nearest JLC basic value (no loading fee). "=4.99k" forces the exact value.
-    const lcsc = await passive(kind, value.startsWith("=") ? value.slice(1) : value.startsWith("~") ? value : "~" + value, pkg, volts);
+    // A labeled electrical value must match the selected component. Explicit approximate values
+    // are rejected until the caller records the actual chosen value.
+    if (value.startsWith("~")) throw new Error("Approximate passive selection needs an explicit actual value: " + value);
+    const lcsc = await passive(kind, value.replace(/^=/, ""), pkg, volts);
     value = value.replace(/^[=~]/, "");
     const rep = PACKAGE_REP[(kind === "resistor" ? "R" : "C") + pkg];
     if (!rep) throw new Error(`no footprint representative for ${kind} ${pkg}`);

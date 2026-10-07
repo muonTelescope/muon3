@@ -24,7 +24,7 @@ export type Footprint = {
   model?: { uuid: string; ox: number; oy: number; z: number; rot: [number, number, number] };
 };
 export type PartInfo = {
-  lcsc: string; mpn: string; manufacturer: string; package: string;
+  lcsc: string; mpn: string; manufacturer: string; package: string; footprintSource?: string;
   jlcClass: string; datasheet: string; footprint: Footprint;
   pins: Record<string, string>; // pad number -> symbol pin name
 };
@@ -181,7 +181,8 @@ export async function fetchPart(lcsc: string, opts: { assets: boolean; datasheet
 if (import.meta.main) {
   const ids = process.argv.slice(2);
   // no args: every part the design uses (building the design fetches them as a side effect)
-  const list = ids.length ? ids : [...new Set((await (await import("../src/design.ts")).build()).parts.map(p => p.info.lcsc))];
+  const modular = await import("../src/modular.ts");
+  const list = ids.length ? ids : [...new Set((await Promise.all([modular.detector(), modular.controller()])).flatMap(c => c.parts).filter(p => p.lcsc !== "TP").map(p => p.info.lcsc))];
   const report = async (id: string) => {
     try {
       const p = await fetchPart(id);

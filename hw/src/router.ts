@@ -10,17 +10,17 @@ export const PLANE = new Set(["GND"]);
 const HV_NETS = /^(HV|HV_SW|HV_RAW|HV_FB_MID|HVJ\d|HV_MON_MID)$/;
 // IPC-2221 external 1 oz, ≤20 °C rise: 1.78 A (ILIM cap) -> 0.44 mm; per-cell branch ≤0.45 A.
 const POWER_W: Record<string, number> = {
-  "5V": 0.5, "3V3": 0.4, "3V3A": 0.3, HV_SW: 0.3, // USB 5 V feeds the LDOs + 136 mA boost pulses
+  "5V": 0.5, "VBUS_USB": 0.5, "3V3": 0.4, "3V3A": 0.3, HV_SW: 0.3, // USB 5 V feeds the LDOs + 136 mA boost pulses
 };
 /** Raster quantisation margin: the grid router plans with clearance + 2×GRID_MARGIN, DRC checks the true rule. */
 const GRID_MARGIN = 0.04;
 const HOLE_GAP = 0.25; // JLC min drill-to-drill (edge to edge)
 /** The design-rule half-clearance (no grid margin) — what DRC enforces. */
-export function ruleHalfClear(net: string) { return HV_NETS.test(net) ? 0.2 : netClass(net).halfClear - GRID_MARGIN; }
+export function ruleHalfClear(net: string) { return HV_NETS.test(net) ? RULES.hvClearance - RULES.clearance / 2 : netClass(net).halfClear - GRID_MARGIN; }
 export function netClass(net: string): NetClass {
   const hc = RULES.clearance / 2 + GRID_MARGIN;
   // HV ≤ 80 V at ≤ 1.7 mA: IPC-2221 B4 (coated external) 0.13 mm, B1 (internal) 0.10 mm; we keep ≥ 0.26 mm to anything
-  if (HV_NETS.test(net)) return { width: 0.2, halfClear: 0.2 + GRID_MARGIN + 0.03, neck: RULES.track };
+  if (HV_NETS.test(net)) return { width: 0.2, halfClear: RULES.hvClearance - RULES.clearance / 2 + GRID_MARGIN, neck: RULES.track };
   if (POWER_W[net]) return { width: POWER_W[net], halfClear: hc, neck: RULES.track };
   return { width: RULES.track, halfClear: hc };
 }

@@ -49,6 +49,10 @@ sim/geant4/testbuild/
 
 # --- tscircuit board-as-code (repo root) ---
 /node_modules/
+**/node_modules/
 /dist/
 # Keep manifests despite the blanket *.json ignore above
 # bun.lock is not *.json, so it is tracked for reproducibility
+!tools/classcad/package.json
+!tools/classcad/package-lock.json
+!hw/parts/**/part.json

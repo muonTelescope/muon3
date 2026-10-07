@@ -1,0 +1,23 @@
+menu "Muon3 prototype"
+config MUON_POWER_BUDGET_VERIFIED
+    bool "Bench supply and cable verified for at least 1.5 A (manual override)"
+    default n
+    help
+        Keep disabled until supply capability is verified. Automated calibrated
+        CC1/CC2 detection is not implemented. This only permits optional Wi-Fi;
+        it never enables SiPM bias.
+config MUON_WIFI_SSID
+    string "Optional classroom Wi-Fi SSID (empty disables Wi-Fi)"
+    default ""
+    depends on MUON_POWER_BUDGET_VERIFIED
+config MUON_WIFI_PASSWORD
+    string "Wi-Fi password"
+    default ""
+config MUON_UDP_HOST
+    string "UDP collector IPv4 address (empty disables UDP)"
+    default ""
+config MUON_UDP_PORT
+    int "UDP collector port"
+    range 1024 65535
+    default 3333
+endmenu

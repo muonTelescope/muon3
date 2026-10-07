@@ -12,7 +12,7 @@ export const PLANE_LAYERS = [GND1];
 /** Design rules (JLC 6-layer capability with margin). */
 export const RULES = {
   track: 0.127, clearance: 0.127, // 5/5 mil signal
-  power: 0.3, hvClearance: 0.5,   // HV nets: IPC-2221 B2 ~0.25 mm @ 100 V; we use 0.5
+  power: 0.3, hvClearance: 0.64,   // HV nets: IPC-2221 B2 ~0.25 mm @ 100 V; we use 0.5
   viaDrill: 0.3, viaDia: 0.5,     // JLC free via size
   edge: 0.3, hole: 0.3,
 };
