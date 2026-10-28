@@ -22,7 +22,8 @@ three-segment case covers the board. There is no display: the station reports ov
 0. [Quick start](#quick-start) · [How a muon becomes a count](#how-a-muon-becomes-a-count) · 1. [What you get](#1-what-you-get) · 2. [Bill of materials and cost](#2-bill-of-materials-and-cost) · 3. [Install it: step by step](#3-install-it-step-by-step)
 · 4. [Test and calibrate](#4-test-and-calibrate) · 5. [The 12 tile shapes](#5-the-12-tile-shapes) · 6. [The electronics](#6-the-electronics)
 · 7. [Simulated performance](#7-simulated-performance) · 8. [Regenerate the design files](#8-regenerate-the-design-files)
-· 9. [Design notes, open questions, repository map](#9-design-notes-open-questions-repository-map)
+· 9. [The bench test board](#9-the-bench-test-board) · 10. [Wright-style detector layouts](#10-wright-style-detector-layouts)
+· 11. [Design notes, open questions, repository map](#11-design-notes-open-questions-repository-map)
 
 ---
 
@@ -451,11 +452,11 @@ cavity over the amplifiers did not help; not re-run for this layout.)
 | [Bun](https://bun.sh) | board-as-code (TypeScript → Gerbers) | `brew install oven-sh/bun/bun` |
 | KiCad 10 (`kicad-cli`, tested with 10.0.6) | DRC oracle, PCB STEP and 3D render | `brew install --cask kicad` |
 | FreeCAD 1.x (`freecadcmd`) | case, frame and assembly | `brew install --cask freecad` |
-| Blender 4.x | assembly renders | `brew install --cask blender` |
+| Blender 4.x or 5.x | assembly renders, bench board renders (tested with 5.2) | `brew install --cask blender` |
 | Python 3 with numpy, matplotlib | fiber-loop generator, plots | `pip install numpy matplotlib` |
 | ImageMagick (`magick`) | montages | `brew install imagemagick` |
 | ngspice | bias, front end, scope screens | `brew install ngspice` |
-| openEMS + Python bindings (optional) | EMI study | build from source against Homebrew (VTK 9.7); see the `CSXCAD_INSTALL_PATH=/opt/homebrew pip install --no-build-isolation CSXCAD/python openEMS/python` recipe |
+| openEMS + Python bindings (optional) | EMI study | build from source against Homebrew (VTK 9.7); see the `CSXCAD_INSTALL_PATH=/opt/homebrew pip install --no-build-isolation CSXCAD/python openEMS/python` recipe. The bindings must be rebuilt whenever libCSXCAD is: a stale extension segfaults on `ContinuousStructure()`. The bench crosstalk check writes the openEMS XML itself and needs only the `openEMS` binary |
 | Geant4 11.4 (optional) | light yield | `micromamba create -p g4 -c conda-forge geant4 cmake make cxx-compiler` (about 3.5 GB) |
 
 Heavy jobs (board build, FreeCAD, ngspice, openEMS, Geant4, Blender) go through `tools/memguard.sh -l <MB> -- cmd`, one at a time: the
@@ -528,7 +529,83 @@ python3 ../scripts/debug_photons.py . ../gdml/mesh/InnerHCalTile01_EJ200_mesh.js
 
 ---
 
-## Wright-style detector layouts (3 matched panels, printed + M3 only)
+## 9. The bench test board
+
+Before the long station board is ordered, a small **bench board (Rev A, 150 × 70 mm, 4 layers, 251 parts on the top side)** tests
+the same analog chain with every stage exposed. It lives on the `bench-board` branch.
+
+- **Four channels**, each the station's cell: SiPM on an edge SMA (shell = bias), BAV99 clamp, OPA356 TIA (33 kΩ ‖ 2.7 pF),
+  LMV7219 comparator. Per channel, three U.FL jacks (INJ in, TIA out, CMP out) and five test loops (TIA, TIAC, VTH, CMP, GND).
+- **iCE40UP5K FPGA** for hit timing and coincidences, configured by the ESP32 over SPI (flash footprint, not fitted).
+- **ESP32-S3-WROOM-1-N8** for USB and Wi-Fi (PCB antenna over a copper cut-out at the right-hand edge). **STEMMA QT** for sensors.
+- **Bias** from a bench supply (JST XH) or the on-board MC34063 boost, chosen by the EXT / GEN jumper J4.
+- **LED pulser** (SN74LVC1G17, FPGA-driven) for SiPM gain calibration. A row of 40 labelled test loops along the top edge.
+
+| | |
+|---|---|
+| ![Bench board](hw/docs/bench/bench_hero.jpg) | ![Exploded stack-up](hw/docs/bench/bench_layers.jpg) |
+| ![Top](hw/docs/bench/bench_top.jpg) | ![Bottom](hw/docs/bench/bench_bottom.jpg) |
+| ![Channel cell](hw/docs/bench/bench_cell.jpg) | ![FPGA, bias boost, regulators, ESP32](hw/docs/bench/bench_core.jpg) |
+
+![Copper, layer by layer](hw/docs/bench/bench_copper.jpg)
+
+*Blender (Cycles) renders from KiCad's GLB export: parts, copper on all four layers, mask and silk. Bottom row of the table:
+channel 1 from the SMA edge, and the FPGA, bias boost, regulators and ESP32. The copper sheet shows each layer alone over a dark core; L4 is seen from below.*
+
+### Simulated checks on the routed copper
+
+The scripts read the routed tracks, vias and pads from `hw/out/bench/board.json`, so they check this layout, not a schematic.
+Nothing here is measured yet.
+
+| Check | Result | How |
+|---|---|---|
+| DC drop at peak load | 5 V ≤ 53 mV (MC34063), 3V3 ≤ 48 mV (ESP32), 3V3A ≤ 15 mV, 1V2 2.4 mV | each rail's copper as a resistor network, ngspice |
+| Power-trace heating | ≤ **1.4 K** above the board, on the 0.127 mm necks of the L3 5 V feed at 0.56 A continuous | 1-D heat flow per track piece (copper + FR4 to L2), ngspice currents |
+| Board temperature, 25 °C still air | typical (0.96 W): 41 °C max, all junctions ≤ 45 °C. Worst (2.4 W, Wi-Fi TX nonstop, 100 mA on QT): 69 °C max, AMS1117 junction 82 °C, ESP32 73 °C | 2-D heat spreading, h = 10 W/m²K per face |
+| TIA stability | peaking 0.0 / 0.8 / 1.1 dB (SMA open / SiPM on the SMA / SiPM on 50 cm coax), bandwidth 1.8–2.1 MHz, 33 kΩ | ngspice AC, input C from the layout (8.9 pF) |
+| Pulses | 9.7 mV per p.e. (9.4 mV through coax), 80–190 ns rise, one comparator pulse per event | ngspice transient |
+| Comparator → input feedback | re-triggers only above about 30 fF (100 fF through coax: 4 pulses). The layout's CMP-to-SIG coupling is below the screen's 1 fF floor | ngspice sweep + coupling screen |
+| Crosstalk into the inputs | SIG ≤ 0.08 p.e. (its own injection trace), INJ_D ≤ 0.05 p.e. | parallel-run and crossing screen on every net pair |
+| HIT3 → INJ (15.7 mm side by side on L3) | screen 567 fF, openEMS **815 fF** (about 690 fF after the self-test's +18 % bias) | openEMS FDTD on a 21 × 18 mm crop of the real copper |
+| Bias ripple | HV 68.4 V with 4.2 mVpp. TIA output 15 µVpp = 0.0015 p.e. | ngspice, 120 ms, last 10 ms |
+
+![Thermal](hw/docs/bench/sim_thermal.png)
+
+**What the checks found:**
+
+- **The necked power traces are fine.** The router may neck a power track to 0.127 mm next to a pad. The 5 V feed to the regulators
+  runs on L3 (15 µm inner copper) with two such necks, 1.0 and 1.25 mm long. The IPC-2221 chart puts them at +207 K, because it
+  assumes an infinitely long trace. A short neck is cooled through the wide copper at both ends, and the heat-flow model gives +1.4 K.
+- **L3 and L4 have no plane next to them.** L2 is the only plane. L3 sits 1.07 mm from it, so a 0.127 mm track there is 146 Ω
+  (L1: 89 Ω), and L3 and L4 tracks couple through the 0.21 mm prepreg between them. That is harmless at these speeds (USB full speed,
+  SPI, µs pulses). A faster Rev B wants a GND pour on L3/L4 or six layers.
+- **HIT3 runs beside INJ.** While the FPGA drives INJ, the pin's low impedance shorts whatever HIT3 couples in. During FPGA
+  configuration INJ is not driven: each HIT3 edge would then put about 2 p.e. into all four channels (openEMS coupling). Hold INJ
+  low with a pull-down, or route the two apart in Rev B.
+- **openEMS checks the screen.** On two parallel 10 mm traces the FDTD result is within +18 % of a 2-D field solution (49.5 against
+  42.1 fF). Most of the difference is a known FDTD bias: a zero-thickness strip acts about half a cell wider. On the real HIT3 / INJ
+  copper (1.4 M cells, 10 min) openEMS finds 815 fF where the screen estimated 567 fF: the screen is 20–40 % low for L3, where no
+  plane is close, so its small results elsewhere (≤ 0.08 p.e.) still have a wide margin.
+
+![Front end](hw/docs/bench/sim_afe.png)
+
+![Trace checks](hw/docs/bench/sim_traces.png)
+
+### Regenerate
+
+```bash
+cd hw
+bun run bench && bun run bench:drc       # board → out/bench/ (Gerbers, BOM, CPL, KiCad file, board.json); DRC: 0 errors, 0 unconnected
+bun run bench:sim                        # DC drop, crosstalk screen, front end, bias ripple, thermal → out/bench/sim/, docs/bench/sim_*.png
+../tools/memguard.sh -l 3500 -- python3 sim/bench_xtalk_openems.py --selftest            # openEMS against a 2-D field solve (3 min)
+../tools/memguard.sh -l 3500 -- python3 sim/bench_xtalk_openems.py INJ HIT3 72 49 93 67  # coupling on the real copper (about 10 min)
+../tools/memguard.sh -l 3000 -- /Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3 case/bench/export_3d.py
+../tools/memguard.sh -l 4000 -- blender -b --factory-startup --python case/bench/render_board.py -- out/bench/renders 1 128
+```
+
+## 10. Wright-style detector layouts
+
+Three matched panels, printed parts and M3 screws only.
 
 Five architectural layouts for one detector of **three identical tiles** stacked 100 mm apart and exactly registered, so triple-coincidence overlap is 100 % for a vertical track. Panel holders now carry LED strips (5 mm edge-lit strip inside the wall plus a visible light band on the outer wall). Everything except tiles, PCBs, SiPM, LEDs, fiber and wires is 3D-printed; every joint is an M3 cap screw with a captive hex nut. Models are built in ClassCAD (`tools/classcad/wright/`), rendered with `hw/case/wright/render.py`.
 
@@ -542,7 +619,9 @@ Five architectural layouts for one detector of **three identical tiles** stacked
 
 Regenerate: `python3 hw/case/wright/tile_data.py 7 10 9 4 5 && node tools/classcad/wright/build.mjs && blender -b --factory-startup --python hw/case/wright/render.py -- A hw/docs/wright`. Outputs (STEP/STL per material group, manifest) go to `hw/out/wright/<layout>/`. Geometry is generated, not print-tested; tile wrap, fiber and wire thickness are shown schematically, and tiles 11–12 are too wide for a 230 mm bed without a second holder split.
 
-## 9. Design notes, open questions, repository map
+---
+
+## 11. Design notes, open questions, repository map
 
 ### Design notes
 
@@ -577,11 +656,11 @@ Regenerate: `python3 hw/case/wright/tile_data.py 7 10 9 4 5 && node tools/classc
 
 | Path | What |
 |---|---|
-| `hw/src/` | Board as code: `design.ts` (netlist), `floorplan.ts` + `place.ts` (placement, identical cells), `router.ts` + `autoroute.ts` (routing), `copper.ts` (smoothing, tapers), `planes.ts`, `silk.ts` + `labels.ts`, `gerber.ts`, `jlc.ts`, `kicad.ts`, `drc.ts`, `build.ts` (the driver) |
+| `hw/src/` | Board as code: `design.ts` (netlist), `floorplan.ts` + `place.ts` (placement, identical cells), `router.ts` + `autoroute.ts` (routing), `copper.ts` (smoothing, tapers), `planes.ts`, `silk.ts` + `labels.ts`, `gerber.ts`, `jlc.ts`, `kicad.ts`, `drc.ts`, `build.ts` (the driver). `bench/` holds the bench board's netlist, floorplan, labels and driver on the same engine |
 | `hw/tools/` | `fetch_parts.ts` (LCSC/EasyEDA parts), `cost.ts` and `bom_cost.ts` (BOM and landed cost), `station_test.py` (factory test and the firmware's USB protocol), `cell_identity.py` (copper check) |
-| `hw/case/` | `case.py` (three case segments), `assembly.py` (FreeCAD tile stack, frame, plate, cables), `render_assembly.py` (Blender), `assembly_doc.py` (copies renders, refills the shape table here), `build_assemblies.sh` |
-| `hw/sim/` | ngspice (bias, front end, ripple, scope screens), `thermal.py`, `emi_openems.py` and their plot scripts |
-| `hw/docs/` | The figures used in this README: board renders, simulation plots, `assembly/` renders |
+| `hw/case/` | `case.py` (three case segments), `assembly.py` (FreeCAD tile stack, frame, plate, cables), `render_assembly.py` (Blender), `assembly_doc.py` (copies renders, refills the shape table here), `build_assemblies.sh`. `bench/`: GLB export, Blender board renders, mount render. `wright/`: the Wright layout renders |
+| `hw/sim/` | ngspice (bias, front end, ripple, scope screens), `thermal.py`, `emi_openems.py` and their plot scripts. `bench_*.py`: the bench board checks on its routed copper (section 9) |
+| `hw/docs/` | The figures used in this README: board renders, simulation plots, `assembly/`, `bench/` and `wright/` renders |
 | `hw/parts/` | The parts index and one folder per LCSC part (datasheets and 3D models are fetched on demand, not redistributed) |
 | `hw/out/` | Generated (git-ignored): Gerbers, BOM/CPL, KiCad file, case and assembly files |
 | `cad/sphenix_hcal/` | `tile_params.json`, the original tile GDMLs, `scripts/fiber_loop.py` (the fiber-loop generator), `scripts/parse_inner_tile.py`, `scripts/export_mesh_json.py`, and one STEP per tile shape in `step/` |
@@ -589,6 +668,8 @@ Regenerate: `python3 hw/case/wright/tile_data.py 7 10 9 4 5 && node tools/classc
 | `sim/python/` | `coincidence_rates.py` (coincidence and accidental rates), `sipm_to_tot.py` (SiPM charge to time over threshold) |
 | `figures/` | Geant4 result plots used in this README |
 | `tools/memguard.sh` | Runs heavy jobs under a memory cap |
+| `tools/classcad/` | ClassCAD models (via its MCP server): the Wright layouts and the bench board mount. run `npm install` there first (`package.json` pins the MCP server and client); `node_modules/` is not tracked |
+| `video/` | The assembly-guide video and the music video (Rust, fframes; each has its own README) and the three.js detector scene they use |
 | `reference_documentation/` | Archived `muonTelescope` repositories, publications and earlier reviews |
 
 The LaTeX paper, the July reports and charts, the Octave plots, the Vision Pro visualiser, the Google-Drive scripts and the July

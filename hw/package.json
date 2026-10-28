@@ -9,6 +9,9 @@
     "index": "bun tools/parts_index.ts",
     "cost": "bun tools/cost.ts",
     "jlc": "bun tools/jlc.ts",
-    "drc": "cd out/kicad && kicad-cli pcb drc --refill-zones --severity-error --severity-warning -o drc.json muon3.kicad_pcb"
+    "drc": "cd out/kicad && kicad-cli pcb drc --refill-zones --severity-error --severity-warning -o drc.json muon3.kicad_pcb",
+    "bench": "bun src/bench/build.ts",
+    "bench:drc": "cd out/bench/kicad && kicad-cli pcb drc --refill-zones --severity-error --severity-warning -o drc.json muon3.kicad_pcb",
+    "bench:sim": "python3 sim/bench_traces.py && python3 sim/bench_afe.py && python3 sim/bench_thermal.py"
   }
 }

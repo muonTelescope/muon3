@@ -1,54 +1,55 @@
-
+# OS and editors
 .DS_Store
+**/.DS_Store
+
+# Credentials (never commit)
 .rclone.conf
+
+# Python
 .venv/
+*.pyc
+**/__pycache__/
+
+# Node / Bun (manifests and bun.lock are tracked; installed packages are not)
+node_modules/
+/dist/
+
+# Generated data. *.json is ignored repo-wide; source JSON is force-added or re-included by a nested .gitignore (hw/)
+*.json
+*.log
+*.root
+*.out
+*.tar.gz
+*.tgz
+
+# Compiled code (firmware, gateware, C++)
+*.bin
+*.d
+*.elf
+*.o
+**/.build/
+**/build*/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# LaTeX leftovers
 *.asc
 *.aux
 *.bbl
-*.bin
 *.blg
-*.d
-*.elf
 *.fls
-*.json
-*.log
-*.o
-*.out
-*.pyc
-*.root
-*.tar.gz
-*.tgz
 *.toc
-**/__pycache__/
-**/.build/
-**/.DS_Store
+
+# CAD intermediates (STEP and the FreeCAD documents under hw/out are regenerated)
 **/*.FCBak
-**/build*/
-# Additional build artifacts
-# Firmware/gateware build artifacts
-# Large data / build
-# OS
-# Python cache etc already covered
-# Regenerable CAD intermediates (STEP/FCStd are kept)
-# Simulation generated artifacts
 cad/sphenix_hcal/step/*.FCStd
 cad/sphenix_hcal/stl/
-cmake_install.cmake
-CMakeCache.txt
-CMakeFiles/
-geant4-data/
-Makefile
-sim/geant4/*.csv
-sim/geant4/build_clean/
-sim/geant4/build*/
-sim/geant4/build/
-sim/geant4/build2/
-sim/geant4/build3/
-sim/geant4/plots/
-sim/geant4/testbuild/
 
-# --- tscircuit board-as-code (repo root) ---
-/node_modules/
-/dist/
-# Keep manifests despite the blanket *.json ignore above
-# bun.lock is not *.json, so it is tracked for reproducibility
+# Geant4 data and runs
+geant4-data/
+sim/geant4/*.csv
+sim/geant4/build*/
+sim/geant4/testbuild/
+sim/geant4/plots/

@@ -57,7 +57,11 @@ writeFileSync(OUT + "board.json", JSON.stringify({
     return { ref: p.ref, lcsc: p.lcsc, value: p.value, mpn: p.info.mpn, x: p.place!.x, y: p.place!.y, rot: p.place!.rot,
       x0: Math.min(...xs), y0: Math.min(...ys), x1: Math.max(...xs), y1: Math.max(...ys) };
   }),
-}, null, 1));
+  // copper for the simulations (hw/sim/bench_*.py): segments (arcs as chords), vias, pads; layers 0..3 = L1..L4, L2 = GND plane
+  tracks: board.tracks.flatMap(t => t.path.map(s => ({ net: t.net, layer: t.layer, w: t.width, a: [s.a.x, s.a.y], b: [s.b.x, s.b.y] }))),
+  vias: board.vias.map(v => ({ net: v.net, x: v.at.x, y: v.at.y, d: v.dia, drill: v.drill })),
+  pads: board.allPads().map(q => ({ ref: q.ref, num: q.num, net: q.net, layer: q.layer, x: q.c.x, y: q.c.y, poly: q.poly.map(c => [c.x, c.y]) })),
+}));
 
 const chk = checkBoard(board);
 console.log(`  JS DRC: ${chk.clearance.length} clearance, ${chk.open.length} nets open`);

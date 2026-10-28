@@ -44,6 +44,8 @@ export function writeKicad(b: Board, path: string, title = "Muon3 station") {
     }
   }
   for (const v of b.vias) o.push(`(via (at ${f(v.at.x)} ${f(v.at.y)}) (size ${v.dia}) (drill ${v.drill}) (layers "F.Cu" "B.Cu") (net ${nid(v.net)}) (uuid ${q(uuid())}))`);
+  // silkscreen exactly as the Gerbers have it (footprint outlines + labels), so 3D exports and viewers show it
+  for (const l of b.silk) o.push(`(gr_line (start ${f(l.a.x)} ${f(l.a.y)}) (end ${f(l.b.x)} ${f(l.b.y)}) (stroke (width ${f(l.w)}) (type solid)) (layer ${q(l.layer === "bottom" ? "B.SilkS" : "F.SilkS")}) (uuid ${q(uuid())}))`);
   for (const z of b.zones) o.push(`(zone (net ${nid(z.net)}) (net_name ${q(z.net)}) (layer ${q(LAYERS[z.layer])}) (uuid ${q(uuid())}) (hatch edge 0.5) (connect_pads yes (clearance ${RULES.clearance})) (min_thickness 0.15) (filled_areas_thickness no) (fill yes (thermal_gap 0.25) (thermal_bridge_width 0.3) (island_removal_mode 0)) (polygon (pts ${z.outline.map(p => `(xy ${f(p.x)} ${f(p.y)})`).join(" ")})))`);
   o.push(")");
   writeFileSync(path, o.join("\n") + "\n");
