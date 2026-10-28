@@ -1,6 +1,6 @@
 // Per-line BOM cost at the production quantity: which parts dominate, which are JLC "extended" (one-off loading fee each).
-// Usage: bun tools/bom_cost.ts [boards=100]
-import { build } from "../src/design.ts";
+// Usage: bun tools/bom_cost.ts [boards=100]   (BOARD=bench for the bench board)
+const { build } = await import(process.env.BOARD === "bench" ? "../src/bench/design.ts" : "../src/design.ts");
 import { search, priceAt } from "./jlc.ts";
 const N = Number(process.argv[2] ?? 100);
 const c = await build();

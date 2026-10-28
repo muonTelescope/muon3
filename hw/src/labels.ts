@@ -61,7 +61,7 @@ export function labels(b: Board, date: string) {
 function isRow(ref: string) { const k = Number(ref.replace("TP", "")); return /^TP\d+$/.test(ref) && k >= 1 && k <= TEST_ROW.length; }
 
 /** Drop silk segments that would print on exposed copper (pad + 0.1 mm mask expansion). */
-function clipSilkOverPads(b: Board) {
+export function clipSilkOverPads(b: Board) {
   const pads = b.allPads();
   b.silk = b.silk.filter(s => {
     const side = s.layer;

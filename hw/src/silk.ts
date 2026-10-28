@@ -21,7 +21,7 @@ const G: Record<string, number[][]> = {
   "6": [[3, 0, 1, 0, 0, 1, 0, 5, 1, 6, 3, 6, 4, 5, 4, 4, 3, 3, 0, 3]], "7": [[0, 0, 4, 0, 1, 6]],
   "8": [[1, 0, 3, 0, 4, 1, 4, 2, 3, 3, 1, 3, 0, 2, 0, 1, 1, 0], [1, 3, 0, 4, 0, 5, 1, 6, 3, 6, 4, 5, 4, 4, 3, 3]],
   "9": [[4, 3, 1, 3, 0, 2, 0, 1, 1, 0, 3, 0, 4, 1, 4, 5, 3, 6, 1, 6]],
-  "-": [[1, 3, 3, 3]], "+": [[0, 3, 4, 3], [2, 1, 2, 5]], ".": [[2, 5.5, 2, 6]], "/": [[0, 6, 4, 0]], ":": [[2, 1.5, 2, 2], [2, 4.5, 2, 5]],
+  "-": [[1, 3, 3, 3]], ",": [[2.2, 5, 2.2, 5.6, 1.4, 7]], "+": [[0, 3, 4, 3], [2, 1, 2, 5]], ".": [[2, 5.5, 2, 6]], "/": [[0, 6, 4, 0]], ":": [[2, 1.5, 2, 2], [2, 4.5, 2, 5]],
   "(": [[3, 0, 2, 1, 2, 5, 3, 6]], ")": [[1, 0, 2, 1, 2, 5, 1, 6]], "!": [[2, 0, 2, 4], [2, 5.5, 2, 6]], "=": [[0, 2, 4, 2], [0, 4, 4, 4]],
   "_": [[0, 6, 4, 6]], ">": [[0, 0, 4, 3, 0, 6]], "<": [[4, 0, 0, 3, 4, 6]], "&": [[4, 6, 1, 2, 1, 1, 2, 0, 3, 1, 3, 2, 0, 4, 0, 5, 1, 6, 2, 6, 4, 4]],
   "%": [[0, 6, 4, 0], [0, 0, 1, 0, 1, 1, 0, 1, 0, 0], [3, 5, 4, 5, 4, 6, 3, 6, 3, 5]], "'": [[2, 0, 2, 1.5]], "°": [[1, 0, 2, 0, 2, 1, 1, 1, 1, 0]],
@@ -66,9 +66,13 @@ export function textBox(s: string, at: Pt, h: number, opts: { rot?: number; alig
 type Box = { x0: number; y0: number; x1: number; y1: number };
 const taken = new WeakMap<Board, Box[]>();
 /** Place a label at the first candidate whose box clears pads, holes, slots, other labels and the board edge. */
-export function label(b: Board, s: string, candidates: Pt[], h = 0.8, opts: { rot?: number; align?: Align } = {}): boolean {
+export function label(b: Board, s: string, candidates: Pt[], h = 0.8, opts: { rot?: number; align?: Align; avoidSilk?: boolean } = {}): boolean {
   const boxes = taken.get(b) ?? (taken.set(b, []), taken.get(b)!);
   const pads = b.allPads().filter(p => p.layer !== "bottom");
+  const segs = opts.avoidSilk ? b.silk.filter(l => l.layer === "top") : [];
+  // and never inside another part's body (a label inside an outline touches no silk line but names the wrong part)
+  const bodies = opts.avoidSilk ? b.parts.filter(p => p.place && p.place.side !== "bottom").map(p => { const c = b.courtyard(p, 0);
+    return { x0: Math.min(...c.map(q => q.x)), y0: Math.min(...c.map(q => q.y)), x1: Math.max(...c.map(q => q.x)), y1: Math.max(...c.map(q => q.y)) }; }) : [];
   const clear = (bx: Box) => {
     if (bx.x0 < 0.4 || bx.y0 < 0.4 || bx.x1 > b.w - 0.4 || bx.y1 > b.h - 0.4) return false;
     const g = { x0: bx.x0 - 0.15, y0: bx.y0 - 0.15, x1: bx.x1 + 0.15, y1: bx.y1 + 0.15 };
@@ -80,13 +84,29 @@ export function label(b: Board, s: string, candidates: Pt[], h = 0.8, opts: { ro
       if (b.cutouts.some(c => pointInPoly(q, c) || distPtPoly(q, c) < 0.25)) return false;
     }
     for (const hh of b.holes) if (hit({ x0: hh.at.x - hh.d / 2, y0: hh.at.y - hh.d / 2, x1: hh.at.x + hh.d / 2, y1: hh.at.y + hh.d / 2 })) return false;
-    return !boxes.some(hit);
+    if (segs.some(l => segHitsBox(l.a, l.b, { x0: g.x0 - l.w / 2 - 0.15, y0: g.y0 - l.w / 2 - 0.15, x1: g.x1 + l.w / 2 + 0.15, y1: g.y1 + l.w / 2 + 0.15 }))) return false;
+    return !boxes.some(hit) && !bodies.some(hit);
   };
   for (const at of candidates) {
     const bx = textBox(s, at, h, opts);
     if (clear(bx)) { text(b, s, at, h, opts); boxes.push(bx); return true; }
   }
   return false;
+}
+
+/** Keep later labels off a region (an outline drawn dashed, a symbol). */
+export function reserve(b: Board, bx: Box) { (taken.get(b) ?? (taken.set(b, []), taken.get(b)!)).push(bx); }
+
+/** Does segment a–c touch the box? (Liang–Barsky clip) */
+function segHitsBox(a: Pt, c: Pt, bx: Box) {
+  if (Math.max(a.x, c.x) < bx.x0 || Math.min(a.x, c.x) > bx.x1 || Math.max(a.y, c.y) < bx.y0 || Math.min(a.y, c.y) > bx.y1) return false;
+  let t0 = 0, t1 = 1; const dx = c.x - a.x, dy = c.y - a.y;
+  for (const [p, q] of [[-dx, a.x - bx.x0], [dx, bx.x1 - a.x], [-dy, a.y - bx.y0], [dy, bx.y1 - a.y]]) {
+    if (p === 0) { if (q < 0) return false; continue; }
+    const r = q / p;
+    if (p < 0) { if (r > t1) return false; if (r > t0) t0 = r; } else { if (r < t0) return false; if (r < t1) t1 = r; }
+  }
+  return true;
 }
 
 /** Candidate anchor points around a box (above, below, right, left), for centred text. */

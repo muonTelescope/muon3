@@ -7,10 +7,10 @@ import { mst } from "./svg.ts";
 export type NetClass = { width: number; halfClear: number; neck?: number };
 export const PLANE = new Set(["GND"]);
 // HV class (up to 85 V): the boost switch node, rectified output, bias distribution and dividers.
-const HV_NETS = /^(HV|HV_SW|HV_RAW|HV_FB_MID|HVJ\d|HV_MON_MID)$/;
+const HV_NETS = /^(HV|HV_SW|HV_RAW|HV_FB_MID|HVJ\d|HV_MON_MID|HV_IN|HV_D|HV_LED|HV_EXT|HV_GEN)$/; // HV_IN/HV_D/HV_LED: bench board external bias input
 // IPC-2221 external 1 oz, ≤20 °C rise: 1.78 A (ILIM cap) -> 0.44 mm; per-cell branch ≤0.45 A.
 const POWER_W: Record<string, number> = {
-  "5V": 0.5, "3V3": 0.4, "3V3A": 0.3, HV_SW: 0.3, // USB 5 V feeds the LDOs + 136 mA boost pulses
+  "5V": 0.5, "3V3": 0.4, "3V3A": 0.3, "1V2": 0.3, HV_SW: 0.3, // USB 5 V feeds the LDOs + 136 mA boost pulses
 };
 /** Raster quantisation margin: the grid router plans with clearance + 2×GRID_MARGIN, DRC checks the true rule. */
 const GRID_MARGIN = 0.04;

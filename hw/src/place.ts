@@ -10,6 +10,8 @@ export type Floorplan = {
   keepouts: { x0: number; y0: number; x1: number; y1: number; why: string; copper?: boolean; cell?: string }[]; // copper: also no routing; cell: that group may use it
   /** Identical channel cells: groups[0] is placed inside `box`, groups[k] are exact copies shifted by k·pitch in x. */
   cells?: { groups: string[]; pitch: number; box: { x0: number; y0: number; x1: number; y1: number } };
+  /** keep every part at 0/90/180/270° (no 15° steps): square silkscreen and easy hand probing */
+  orthogonal?: boolean;
 };
 
 type Box = { x0: number; y0: number; x1: number; y1: number };
@@ -126,7 +128,7 @@ export function place(b: Board, fp: Floorplan, iters = 400) {
     }
     sync();
     // try rotations for two-pin parts every 50 iterations: pick the one with shortest pin-to-centroid sum
-    if (it % 50 === 49) for (const p of movable) bestRotation(p, it >= iters * 0.6, netPins, railPins);
+    if (it % 50 === 49) for (const p of movable) bestRotation(p, !fp.orthogonal && it >= iters * 0.6, netPins, railPins);
   }
   if (cells) {
     const leads = movable.filter(isLead), rest = movable.filter(p => !isLead(p));

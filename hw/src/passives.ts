@@ -11,7 +11,7 @@ export function parseValue(v: string): number {
   return Number(m[1]) * mult[m[2]];
 }
 
-type Row = { lcsc: number; stock: number; is_basic: boolean; is_preferred: boolean; voltage_rating?: number; tolerance_fraction?: number; temperature_coefficient?: string };
+type Row = { lcsc: number; stock: number | null; is_basic: boolean; is_preferred: boolean; voltage_rating?: number; tolerance_fraction?: number; temperature_coefficient?: string };
 
 const E24 = [1.0, 1.1, 1.2, 1.3, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9, 4.3, 4.7, 5.1, 5.6, 6.2, 6.8, 7.5, 8.2, 9.1];
 const E96 = Array.from({ length: 96 }, (_, i) => Math.round(100 * 10 ** (i / 96)) / 100);
@@ -37,13 +37,14 @@ async function passiveExact(kind: "resistor" | "capacitor", v: number, pkg: stri
   const f = CACHE + encodeURIComponent(key) + ".txt";
   if (existsSync(f)) return readFileSync(f, "utf8") || undefined;
   const url = kind === "resistor"
-    ? `https://jlcsearch.tscircuit.com/resistors/list.json?resistance=${v}&package=${pkg}`
-    : `https://jlcsearch.tscircuit.com/capacitors/list.json?capacitance=${v}&package=${pkg}`;
+    ? `https://jlcsearch.tscircuit.com/resistors/list.json?resistance=${v}&package=${pkg}${basicOnly ? "&is_basic=true" : ""}`
+    : `https://jlcsearch.tscircuit.com/capacitors/list.json?capacitance=${v}&package=${pkg}${basicOnly ? "&is_basic=true" : ""}`;
   const rows: Row[] = (await (await fetch(url)).json())[kind === "resistor" ? "resistors" : "capacitors"];
-  const ok = rows.filter(r => r.stock > 1000 && (!minVolts || (r.voltage_rating ?? 0) >= minVolts)
+  // jlcsearch stopped reporting stock (null) in Oct 2026: then trust JLC basic/preferred parts, which JLC keeps stocked
+  const ok = rows.filter(r => (r.stock == null ? r.is_basic || r.is_preferred : r.stock > 1000) && (!minVolts || (r.voltage_rating ?? 0) >= minVolts)
     // small caps must be C0G/NP0 for the TIA feedback / timing paths
     && (kind !== "capacitor" || v >= 1e-9 || /C0G|NP0/i.test(r.temperature_coefficient ?? "")));
-  const score = (r: Row) => (r.is_basic ? 2e9 : r.is_preferred ? 1e9 : 0) + Math.min(r.stock, 9e8);
+  const score = (r: Row) => (r.is_basic ? 2e9 : r.is_preferred ? 1e9 : 0) + Math.min(r.stock ?? 0, 9e8);
   const best = ok.filter(r => !basicOnly || r.is_basic || r.is_preferred).sort((a, b) => score(b) - score(a))[0];
   if (!best) {
     if (basicOnly) { writeFileSync(f, ""); return undefined; }
